@@ -300,7 +300,9 @@ child: Column(
                                      ),
                                ),
                                SizedBox(height: 90),
-                               Button(textButton: "Sign up", onTap: (){})
+                               Button(textButton: "Sign up", onTap: (){
+                                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> verifyPage()));
+                               })
                          
                     
                       ],

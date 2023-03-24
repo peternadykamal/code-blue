@@ -10,6 +10,12 @@ class NumPad extends StatelessWidget {
   final TextEditingController controller;
   final Function delete;
   final Function onSubmit;
+  
+  final Function(int) onNumberSelected;
+
+
+
+
 
   const NumPad({
     Key? key,
@@ -19,6 +25,9 @@ class NumPad extends StatelessWidget {
     required this.delete,
     required this.onSubmit,
     required this.controller,
+    required this.onNumberSelected
+  
+
   }) : super(key: key);
 
 

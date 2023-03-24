@@ -1,0 +1,21 @@
+{
+  "Signup": "الاشتراك",
+  "Login": "الدخول",
+  "welcome": "مرحبا،",
+  "glad": "سعيد برؤيتك",
+  "email": "ايميل",
+  "forgetpass": "نسيت كلمة المرور؟",
+  "password": "كلمة السر",
+  "confirmpass": "تأكيد كلمة السر",
+  "createacc": "إنشاء حساب ،",
+  "getstarted": "لتبدأ الآن!",
+  "phoneverification": "تحقق من هاتفك",
+  "yourec": "سوف تتلقى",
+  "fourcode": "رمز مكون من اربعة أرقام",
+  "toverify": "للتحقق.",
+  "phonenumber": "رقم التليفون",
+  "verifycodesentto": "تم إرسال الرمز إلى <رقم الهاتف>",
+  "didnotreceive": "لم تتلق رمز؟",
+  "Requestagain": "اطلب مرة أخرى",
+  "Verifyandcreate": "التحقق وانشاء حساب"
+}

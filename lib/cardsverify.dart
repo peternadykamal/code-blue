@@ -4,7 +4,8 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:gradproject/style.dart';
 
 class cardverify extends StatelessWidget {
-  const cardverify({super.key});
+  TextEditingController controllerpad;
+  cardverify({ required this.controllerpad});
 
   @override
   Widget build(BuildContext context) {
@@ -17,8 +18,10 @@ class cardverify extends StatelessWidget {
         
         child: Center(child: Container(
           margin: EdgeInsets.only(top: 20),
-          child: Text("_____",style: TextStyle(color: Mycolors.textcolor)))),
-      ),
+          
+            
+            child: TextField(controller:controllerpad ,decoration: InputDecoration(hintText: ("___"),hintStyle: TextStyle(),),style: TextStyle(color: Mycolors.textcolor))))),
+      
     );
   }
 }

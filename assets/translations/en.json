@@ -1,0 +1,21 @@
+{
+  "Signup": "Sign Up",
+  "Login": "Login",
+  "welcome": "Welcome ,",
+  "glad": "Glad To See You",
+  "email": "Email",
+  "forgetpass": "forget password?",
+  "password": "password",
+  "confirmpass": "confirm password",
+  "createacc": "Create Account ,",
+  "getstarted": "To Get Started Now!",
+  "phoneverification": "Verify your phone",
+  "yourec": "you'll receive",
+  "fourcode": "a 4 digit code",
+  "toverify": "to verify.",
+  "phonenumber": "Phone number",
+  "verifycodesentto": "Code is sent to <phone number>",
+  "didnotreceive": "Didn't receive code ?",
+  "Requestagain": "Request again",
+  "Verifyandcreate": "VERIFY AND CREATE ACCOUNT"
+}

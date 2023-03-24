@@ -1,14 +1,18 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:gradproject/button.dart';
+import 'package:gradproject/main.dart';
 import 'package:gradproject/passwordFormField.dart';
 import 'package:gradproject/splashscreen.dart';
 import 'package:gradproject/style.dart';
 import 'package:gradproject/emailFormField.dart';
+import 'package:gradproject/translations/locale_keys.g.dart';
 import 'package:gradproject/verification.dart';
+import 'dart:ui';
 
 class authPage extends StatefulWidget {
   const authPage({super.key});
@@ -25,9 +29,11 @@ class _authPageState extends State<authPage> {
   final _confirmpasscontrollersignUp = TextEditingController();
   bool selectlogin = true;
   bool selectSignUp = false;
+  
 
   bool passwordVisible = true;
   bool confirmpasswordVisible = true;
+
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +47,11 @@ class _authPageState extends State<authPage> {
           child: Column(
             children: [
               Container(
-                margin: EdgeInsets.only(left: 220),
+                margin: EdgeInsets.only(left: 
+
+
+
+MediaQuery.of(context).size.width * 0.6 ),
                 child: Row(
                   children: [
                     TextButton(
@@ -60,12 +70,12 @@ class _authPageState extends State<authPage> {
                                   color: Mycolors.splashback,
                                   width: 3.0,
                                 ))),
-                                child: Text("Login",
+                                child: Text(LocaleKeys.Login.tr(),
                                     style: TextStyle(
                                         fontSize: 14,
                                         color: Mycolors.textcolor,
                                         fontFamily: 'Arial')))
-                            : Text("Login",
+                            : Text(LocaleKeys.Login.tr(),
                                 style: TextStyle(
                                     fontSize: 14, color: Mycolors.notpressed))),
                     TextButton(
@@ -84,12 +94,12 @@ class _authPageState extends State<authPage> {
                                   color: Mycolors.splashback,
                                   width: 3.0,
                                 ))),
-                                child: Text("Sign up",
+                                child: Text(LocaleKeys.Signup.tr(),
                                     style: TextStyle(
                                         fontSize: 14,
                                         color: Mycolors.textcolor,
                                         fontFamily: 'Arial')))
-                            : Text("Sign up",
+                            : Text(LocaleKeys.Signup.tr(),
                                 style: TextStyle(
                                     fontSize: 14, color: Mycolors.notpressed))),
                   ],
@@ -105,14 +115,14 @@ class _authPageState extends State<authPage> {
                           children: [
                             Padding(
                               padding: const EdgeInsets.only(right: 90.0),
-                              child: Text("Welcome ,",
+                              child: Text(LocaleKeys.welcome.tr(),
                                   style: TextStyle(
                                       fontSize: 35,
                                       color: Mycolors.textcolor,
                                       fontWeight: FontWeight.bold,
                                       fontFamily: 'Arial')),
                             ),
-                            Text("Glad To See You ",
+                            Text(LocaleKeys.glad.tr(),
                                 style: TextStyle(
                                     fontSize: 35,
                                     color: Mycolors.textcolor,
@@ -125,7 +135,7 @@ class _authPageState extends State<authPage> {
                                 child: TextFieldWidget(
                                     control: _emailcontrollerlogin,
                                     fillingcolor: Mycolors.fillingcolor,
-                                    hint: "Email",
+                                    hint: LocaleKeys.email.tr(),
                                     keyboard: TextInputType.emailAddress,
                                     obsecure: false)),
                             Container(
@@ -144,7 +154,7 @@ class _authPageState extends State<authPage> {
                                       fontSize: 17,
                                       fontFamily: 'Arial',
                                       fontWeight: FontWeight.w700),
-                                  hintText: "Password",
+                                  hintText: LocaleKeys.password.tr(),
                                   filled: true,
                                   fillColor: Mycolors.fillingcolor,
                                   prefixIcon: Padding(
@@ -192,14 +202,43 @@ class _authPageState extends State<authPage> {
                                             builder: (BuildContext context) =>
                                                 const verifyPage()));
                                   },
-                                  child: Text("forget password?",
+                                  child: Text(LocaleKeys.forgetpass.tr(),
                                       style: TextStyle(
                                           fontFamily: 'Arial',
                                           color: Mycolors.textcolor,
                                           fontSize: 13))),
                             ),
                             SizedBox(height: 100),
-                            Button(textButton: "Login", onTap: () {})
+                            Button(textButton: LocaleKeys.Login.tr(), onTap: () {Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> verifyPage()));}),
+SizedBox(height: 80),
+
+  Row(
+    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    children: [
+  InkWell(
+  onTap: ()async{
+    await context.setLocale(Locale("en"));
+
+
+  },
+     child:Text("English",style: TextStyle(
+                                        fontSize: 14,
+                                        color: Mycolors.textcolor,
+                                        fontFamily: 'Arial'))
+  ),
+  InkWell(
+    onTap: ()async{
+    await context.setLocale(Locale("ar"));
+
+
+  },
+    child: Text("Arabic",style: TextStyle(
+                                        fontSize: 14,
+                                        color: Mycolors.textcolor,
+                                        fontFamily: 'Arial')))
+
+    ],
+  )
                           ],
                         ),
                       ),
@@ -215,13 +254,13 @@ class _authPageState extends State<authPage> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text("Create Account ,",
+                          Text(LocaleKeys.createacc.tr(),
                               style: TextStyle(
                                   fontSize: 35,
                                   color: Mycolors.textcolor,
                                   fontWeight: FontWeight.bold,
                                   fontFamily: 'Arial')),
-                          Text("To Get Started Now!",
+                          Text(LocaleKeys.getstarted.tr(),
                               style: TextStyle(
                                   fontSize: 35,
                                   color: Mycolors.textcolor,
@@ -233,7 +272,7 @@ class _authPageState extends State<authPage> {
                               child: TextFieldWidget(
                                   control: _emailcontrollersignUp,
                                   fillingcolor: Mycolors.fillingcolor,
-                                  hint: "Email",
+                                  hint: LocaleKeys.email.tr(),
                                   keyboard: TextInputType.emailAddress,
                                   obsecure: false)),
                           Container(
@@ -251,7 +290,7 @@ class _authPageState extends State<authPage> {
                                     color: Mycolors.notpressed,
                                     fontSize: 17,
                                     fontWeight: FontWeight.w700),
-                                hintText: "Password",
+                                hintText: LocaleKeys.password.tr(),
                                 filled: true,
                                 fillColor: Mycolors.fillingcolor,
                                 prefixIcon: Padding(
@@ -303,7 +342,7 @@ class _authPageState extends State<authPage> {
                                     color: Mycolors.notpressed,
                                     fontSize: 17,
                                     fontWeight: FontWeight.w700),
-                                hintText: "Confirm Password",
+                                hintText: LocaleKeys.confirmpass.tr(),
                                 filled: true,
                                 fillColor: Mycolors.fillingcolor,
                                 prefixIcon: Padding(
@@ -342,7 +381,7 @@ class _authPageState extends State<authPage> {
                           ),
                           SizedBox(height: 90),
                           Button(
-                              textButton: "Sign up",
+                              textButton: LocaleKeys.Signup.tr(),
                               onTap: () {
                                 FirebaseAuth.instance
                                     .createUserWithEmailAndPassword(
@@ -354,7 +393,7 @@ class _authPageState extends State<authPage> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              splashScreen()));
+                                              verifyPage()));
                                 }).onError((error, stackTrace) {
                                   print("error");
                                 });

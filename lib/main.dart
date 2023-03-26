@@ -8,7 +8,7 @@ import 'package:gradproject/translations/codegen_loader.g.dart';
 import 'dart:ui'; //for mobile
 
 
-Locale deviceLocale = window.locale;
+Locale deviceLocale = window.locale; 
 String langCode = deviceLocale.languageCode;
 
 Future <void> main() async {

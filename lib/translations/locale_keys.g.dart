@@ -20,5 +20,14 @@ abstract class  LocaleKeys {
   static const didnotreceive = 'didnotreceive';
   static const Requestagain = 'Requestagain';
   static const Verifyandcreate = 'Verifyandcreate';
+  static const Enteryourphone = 'Enteryourphone';
+  static const Continue = 'Continue';
+  static const three = 'three';
+  static const four = 'four';
+  static const five = 'five';
+  static const six = 'six';
+  static const seven = 'seven';
+  static const eight = 'eight';
+  static const nine = 'nine';
 
 }

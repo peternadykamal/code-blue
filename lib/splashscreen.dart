@@ -1,8 +1,10 @@
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:gradproject/main.dart';
 import 'package:gradproject/style.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
@@ -21,7 +23,10 @@ class _splashScreenState extends State<splashScreen> {
   void initState() {
   
     super.initState();
-    Timer(Duration(seconds: 10), () => Navigator.pushReplacement(context, MaterialPageRoute(builder:(context) => authPage() )) );
+    Timer(Duration(seconds: 10), () async => {
+      await context.setLocale(Locale(langCode)),
+      Navigator.pushReplacement(context, MaterialPageRoute(builder:(context) => authPage() ))
+    } );
   }
   @override
   Widget build(BuildContext context) {

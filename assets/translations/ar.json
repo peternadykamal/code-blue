@@ -17,5 +17,17 @@
   "verifycodesentto": "تم إرسال الرمز إلى <رقم الهاتف>",
   "didnotreceive": "لم تتلق رمز؟",
   "Requestagain": "اطلب مرة أخرى",
-  "Verifyandcreate": "التحقق وانشاء حساب"
+  "Verifyandcreate": "التحقق وانشاء حساب",
+  "Enteryourphone": "أدخل هاتفك",
+  "Continue": "استمر",
+  "one": "١",
+  "two": "٢",
+  "three": "٣",
+  "four": "٤",
+  "five": "٥",
+  "six": "٦",
+  "seven": "٧",
+  "eight": "٨",
+  "nine": "٩",
+  "zero": "٠"
 }

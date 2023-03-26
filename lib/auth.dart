@@ -5,13 +5,13 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:gradproject/button.dart';
+import 'package:gradproject/continuewithphone.dart';
 import 'package:gradproject/main.dart';
 import 'package:gradproject/passwordFormField.dart';
 import 'package:gradproject/splashscreen.dart';
 import 'package:gradproject/style.dart';
 import 'package:gradproject/emailFormField.dart';
 import 'package:gradproject/translations/locale_keys.g.dart';
-import 'package:gradproject/verification.dart';
 import 'dart:ui';
 
 class authPage extends StatefulWidget {
@@ -200,7 +200,7 @@ MediaQuery.of(context).size.width * 0.6 ),
                                         context,
                                         MaterialPageRoute(
                                             builder: (BuildContext context) =>
-                                                const verifyPage()));
+                                                 ContinueWithPhone()));
                                   },
                                   child: Text(LocaleKeys.forgetpass.tr(),
                                       style: TextStyle(
@@ -209,37 +209,8 @@ MediaQuery.of(context).size.width * 0.6 ),
                                           fontSize: 13))),
                             ),
                             SizedBox(height: 100),
-                            Button(textButton: LocaleKeys.Login.tr(), onTap: () {Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> verifyPage()));}),
-SizedBox(height: 80),
-
-  Row(
-    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    children: [
-  InkWell(
-  onTap: ()async{
-    await context.setLocale(Locale("en"));
-
-
-  },
-     child:Text("English",style: TextStyle(
-                                        fontSize: 14,
-                                        color: Mycolors.textcolor,
-                                        fontFamily: 'Arial'))
-  ),
-  InkWell(
-    onTap: ()async{
-    await context.setLocale(Locale("ar"));
-
-
-  },
-    child: Text("Arabic",style: TextStyle(
-                                        fontSize: 14,
-                                        color: Mycolors.textcolor,
-                                        fontFamily: 'Arial')))
-
-    ],
-  )
-                          ],
+                            Button(textButton: LocaleKeys.Login.tr(), onTap: () {Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> ContinueWithPhone()));}),
+     ],
                         ),
                       ),
                     ),
@@ -393,7 +364,7 @@ SizedBox(height: 80),
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              verifyPage()));
+                                              ContinueWithPhone()));
                                 }).onError((error, stackTrace) {
                                   print("error");
                                 });

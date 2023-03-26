@@ -33,7 +33,19 @@ class CodegenLoader extends AssetLoader{
   "verifycodesentto": "تم إرسال الرمز إلى <رقم الهاتف>",
   "didnotreceive": "لم تتلق رمز؟",
   "Requestagain": "اطلب مرة أخرى",
-  "Verifyandcreate": "التحقق وانشاء حساب"
+  "Verifyandcreate": "التحقق وانشاء حساب",
+  "Enteryourphone": "أدخل هاتفك",
+  "Continue": "استمر",
+  "one": "١",
+  "two": "٢",
+  "three": "٣",
+  "four": "٤",
+  "five": "٥",
+  "six": "٦",
+  "seven": "٧",
+  "eight": "٨",
+  "nine": "٩",
+  "zero": "٠"
 };
 static const Map<String,dynamic> en = {
   "Signup": "Sign Up",
@@ -54,7 +66,19 @@ static const Map<String,dynamic> en = {
   "verifycodesentto": "Code is sent to <phone number>",
   "didnotreceive": "Didn't receive code ?",
   "Requestagain": "Request again",
-  "Verifyandcreate": "VERIFY AND CREATE ACCOUNT"
+  "Verifyandcreate": "VERIFY AND CREATE ACCOUNT",
+  "Enteryourphone": "Enter your phone",
+  "Continue": "Continue",
+  "one": "1",
+  "two": "2",
+  "three": "3",
+  "four": "4",
+  "five": "5",
+  "six": "6",
+  "seven": "7",
+  "eight": "8",
+  "nine": "9",
+  "zero": "0"
 };
 static const Map<String, Map<String,dynamic>> mapLocales = {"ar": ar, "en": en};
 }

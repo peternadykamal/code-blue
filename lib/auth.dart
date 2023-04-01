@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -29,11 +30,9 @@ class _authPageState extends State<authPage> {
   final _confirmpasscontrollersignUp = TextEditingController();
   bool selectlogin = true;
   bool selectSignUp = false;
-  
 
   bool passwordVisible = true;
   bool confirmpasswordVisible = true;
-
 
   @override
   Widget build(BuildContext context) {
@@ -47,11 +46,8 @@ class _authPageState extends State<authPage> {
           child: Column(
             children: [
               Container(
-                margin: EdgeInsets.only(left: 
-
-
-
-MediaQuery.of(context).size.width * 0.6 ),
+                margin: EdgeInsets.only(
+                    left: MediaQuery.of(context).size.width * 0.6),
                 child: Row(
                   children: [
                     TextButton(
@@ -200,7 +196,7 @@ MediaQuery.of(context).size.width * 0.6 ),
                                         context,
                                         MaterialPageRoute(
                                             builder: (BuildContext context) =>
-                                                 ContinueWithPhone()));
+                                                ContinueWithPhone()));
                                   },
                                   child: Text(LocaleKeys.forgetpass.tr(),
                                       style: TextStyle(
@@ -209,8 +205,16 @@ MediaQuery.of(context).size.width * 0.6 ),
                                           fontSize: 13))),
                             ),
                             SizedBox(height: 100),
-                            Button(textButton: LocaleKeys.Login.tr(), onTap: () {Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> ContinueWithPhone()));}),
-     ],
+                            Button(
+                                textButton: LocaleKeys.Login.tr(),
+                                onTap: () {
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              ContinueWithPhone()));
+                                }),
+                          ],
                         ),
                       ),
                     ),
@@ -353,7 +357,7 @@ MediaQuery.of(context).size.width * 0.6 ),
                           SizedBox(height: 90),
                           Button(
                               textButton: LocaleKeys.Signup.tr(),
-                              onTap: () {
+                              onTap: () async {
                                 FirebaseAuth.instance
                                     .createUserWithEmailAndPassword(
                                         email: _emailcontrollersignUp.text,
@@ -367,6 +371,19 @@ MediaQuery.of(context).size.width * 0.6 ),
                                               ContinueWithPhone()));
                                 }).onError((error, stackTrace) {
                                   print("error");
+                                });
+                                //m4 fahm 7aga: peter
+                                User user =
+                                    await FirebaseAuth.instance.currentUser!;
+                                String uid = user.uid;
+                                DatabaseReference userRef = FirebaseDatabase
+                                    .instance
+                                    .ref()
+                                    .child("users")
+                                    .child(uid);
+                                await userRef.set({
+                                  "email": _emailcontrollersignUp.text,
+                                  "password": _passcontrollersignUp.text
                                 });
                               })
                         ],

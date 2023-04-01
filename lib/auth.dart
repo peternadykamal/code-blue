@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -9,11 +11,13 @@ import 'package:gradproject/button.dart';
 import 'package:gradproject/continuewithphone.dart';
 import 'package:gradproject/main.dart';
 import 'package:gradproject/passwordFormField.dart';
+import 'package:gradproject/repository/user_repository.dart';
 import 'package:gradproject/splashscreen.dart';
 import 'package:gradproject/style.dart';
 import 'package:gradproject/emailFormField.dart';
 import 'package:gradproject/translations/locale_keys.g.dart';
 import 'dart:ui';
+import 'repository/user_repository.dart';
 
 class authPage extends StatefulWidget {
   const authPage({super.key});
@@ -357,7 +361,7 @@ class _authPageState extends State<authPage> {
                           SizedBox(height: 90),
                           Button(
                               textButton: LocaleKeys.Signup.tr(),
-                              onTap: () async {
+                              onTap: () {
                                 FirebaseAuth.instance
                                     .createUserWithEmailAndPassword(
                                         email: _emailcontrollersignUp.text,
@@ -369,21 +373,16 @@ class _authPageState extends State<authPage> {
                                       MaterialPageRoute(
                                           builder: (context) =>
                                               ContinueWithPhone()));
+                                }).then((value) {
+                                  User user =
+                                      FirebaseAuth.instance.currentUser!;
+                                  UserProfile profile = UserProfile(
+                                      email: _emailcontrollersignUp.text);
+                                  UserRepository()
+                                      .updateUserProfile(profile)
+                                      .then((value) => null);
                                 }).onError((error, stackTrace) {
                                   print("error");
-                                });
-                                //m4 fahm 7aga: peter
-                                User user =
-                                    await FirebaseAuth.instance.currentUser!;
-                                String uid = user.uid;
-                                DatabaseReference userRef = FirebaseDatabase
-                                    .instance
-                                    .ref()
-                                    .child("users")
-                                    .child(uid);
-                                await userRef.set({
-                                  "email": _emailcontrollersignUp.text,
-                                  "password": _passcontrollersignUp.text
                                 });
                               })
                         ],

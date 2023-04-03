@@ -29,5 +29,9 @@ abstract class  LocaleKeys {
   static const seven = 'seven';
   static const eight = 'eight';
   static const nine = 'nine';
+  static const welcomeback = 'welcomeback';
+  static const username = 'username';
+  static const clickbuttonbelow = 'clickbuttonbelow';
+  static const duringemerg = 'duringemerg';
 
 }

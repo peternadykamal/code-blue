@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:gradproject/button.dart';
 import 'package:gradproject/numericpad.dart';
+import 'package:gradproject/sos.dart';
 import 'package:gradproject/style.dart';
 import 'package:gradproject/translations/locale_keys.g.dart';
 
@@ -73,13 +74,15 @@ class _VerifyPhoneState extends State<VerifyPhone> {
                     Expanded(
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
 
                           buildCodeNumberBox(code.length > 0 ? code.substring(0, 1) : ""),
                           buildCodeNumberBox(code.length > 1 ? code.substring(1, 2) : ""),
                           buildCodeNumberBox(code.length > 2 ? code.substring(2, 3) : ""),
                           buildCodeNumberBox(code.length > 3 ? code.substring(3, 4) : ""),
+                          buildCodeNumberBox(code.length > 4 ? code.substring(4, 5) : ""),
+                          buildCodeNumberBox(code.length > 5 ? code.substring(5, 6) : ""),
 
                         ],
                       ),
@@ -141,7 +144,10 @@ class _VerifyPhoneState extends State<VerifyPhone> {
                     Container
                     (
                       margin: EdgeInsets.only(right: 20,left: 20),
-                      child: Button(textButton: LocaleKeys.Verifyandcreate.tr(), onTap: (){}))
+                      child: Button(textButton: LocaleKeys.Verifyandcreate.tr(), onTap: (){
+
+                        Navigator.pushReplacement(context, MaterialPageRoute(builder: ((context) => sosPage())));
+                      }))
 
                   ],
                 ),
@@ -153,7 +159,7 @@ class _VerifyPhoneState extends State<VerifyPhone> {
                 print(value);
                 setState(() {
                   if(value != -1){
-                    if(code.length < 4){
+                    if(code.length < 6){
                       code = code + value.toString();
                     }
                   }
@@ -175,8 +181,8 @@ class _VerifyPhoneState extends State<VerifyPhone> {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 8),
       child: SizedBox(
-        width: 60,
-        height: 60,
+        width: 43,
+        height: 43,
         child: Container(
           decoration: BoxDecoration(
             color: Color(0xFFF6F5FA),

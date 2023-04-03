@@ -45,7 +45,11 @@ class CodegenLoader extends AssetLoader{
   "seven": "٧",
   "eight": "٨",
   "nine": "٩",
-  "zero": "٠"
+  "zero": "٠",
+  "welcomeback": "مرحبًا بعودتك،",
+  "username": "<اسم المستخدم>",
+  "clickbuttonbelow": "انقر فوق الزر أدناه ",
+  "duringemerg": "أثناء الطوارئ"
 };
 static const Map<String,dynamic> en = {
   "Signup": "Sign Up",
@@ -78,7 +82,11 @@ static const Map<String,dynamic> en = {
   "seven": "7",
   "eight": "8",
   "nine": "9",
-  "zero": "0"
+  "zero": "0",
+  "welcomeback": "welcome back,",
+  "username": "<username>",
+  "clickbuttonbelow": "Click Button Below",
+  "duringemerg": "During Emergency"
 };
 static const Map<String, Map<String,dynamic>> mapLocales = {"ar": ar, "en": en};
 }

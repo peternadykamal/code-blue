@@ -14,99 +14,105 @@ class sosPage extends StatefulWidget {
   State<sosPage> createState() => _sosPageState();
 }
 
-class _sosPageState extends State<sosPage> {
- int _currentIndex=0;
+class _sosPageState extends State<sosPage> 
+with SingleTickerProviderStateMixin {
+
 bool notification=true;
- 
+  late final TabController controller;
+   void initState() {
+    controller = TabController(length: 2, vsync: this);
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
-    final tabs = [
-      Center(child:Text("data")),
-      Center(child:Column(
-          children: [
-             
-            SizedBox(height: 30),
-            Row( mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Column(children: [
-                  Text(LocaleKeys.welcomeback.tr(),style: TextStyle(color: Mycolors.notpressed,fontSize: 20,fontWeight: FontWeight.bold)),
-                  Text(LocaleKeys.username.tr(),style: TextStyle(color: Mycolors.textcolor,fontSize: 20,fontWeight: FontWeight.w700)),
-                ],),
-                SizedBox(width: 20),
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    SvgPicture.asset(
-                     notification==true ? ("assets/images/notification.svg"):("assets/images/no notification.svg")
-                    ),
-                    SizedBox(width: 10),
-                    CircleAvatar(radius: 25,
-                    child: InkWell(
-                      onTap: (){
-                        Navigator.pushReplacement(context, MaterialPageRoute(builder: ((context) => profileone())));
-                      },
-                      child: SvgPicture.asset("assets/images/default profile picture.svg")),
-                    ),
-                  ],
-                ),
+    
 
 
+    return DefaultTabController(
+      
+      
+          length: 3,
+          child: SafeArea(
+            child: Scaffold(
+              body: TabBarView(
+                children: [
 
-
-
-
-              ],
-            ),
-SizedBox(height: 80),
-Center(child: Text(LocaleKeys.clickbuttonbelow.tr(),style: TextStyle(color: Mycolors.notpressed,fontSize: 24,fontWeight: FontWeight.normal))),
-Text(LocaleKeys.duringemerg.tr(),style: TextStyle(color: Mycolors.notpressed,fontSize: 24,fontWeight: FontWeight.normal)),
-SizedBox(height: 40),
-InkWell(
-  onTap: (){},
-  child:   CircleAvatar(
-  
-    radius: 140,
-  
-  child: Stack(children:[SvgPicture.asset("assets/images/sos button.svg")]),),
-) ]),),
-
-
-Center(child:Text("")),
- ];
-
-    return SafeArea(
-      child: Scaffold(
-        body: tabs[_currentIndex],
-        
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        backgroundColor: Mycolors.splashback,
-        type: BottomNavigationBarType.fixed,
-        iconSize: 30,
-selectedItemColor: Mycolors.textcolor,
-        
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
-            label:('Chat bot'),
-          ),
-            BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label:('Home'),
-          ),
-            BottomNavigationBarItem(
-            icon: Icon(Icons.map_outlined),
-            label:('Maps'),
-          ),
+                                    Center(
+                    child: Text("2nd Screen"),
+                  ),
+                  Center(
+                    child: Column(
+            children: [
+               
+              SizedBox(height: 30),
+              Row( mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Column(children: [
+                    Text(LocaleKeys.welcomeback.tr(),style: TextStyle(color: Mycolors.notpressed,fontSize: 20,fontWeight: FontWeight.bold)),
+                    Text(LocaleKeys.username.tr(),style: TextStyle(color: Mycolors.textcolor,fontSize: 20,fontWeight: FontWeight.w700)),
+                  ],),
+                  SizedBox(width: 20),
           
-        ],
-        onTap: (index){
-          setState(() {
-            _currentIndex=index;
-          });
-        },
-        )));    
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      SvgPicture.asset(
+                       notification==true ? ("assets/images/notification.svg"):("assets/images/no notification.svg")
+                      ),
+                      SizedBox(width: 10),
+                      CircleAvatar(radius: 25,
+                      child: InkWell(
+                        onTap: (){
+                          Navigator.pushReplacement(context, MaterialPageRoute(builder: ((context) => profileone())));
+                        },
+                        child: SvgPicture.asset("assets/images/default profile picture.svg")),
+                      ),
+                    ],
+                  ),
+          
+          
+          
+          
+          
+          
+                ],
+              ),
+          SizedBox(height: 80),
+          Center(child: Text(LocaleKeys.clickbuttonbelow.tr(),style: TextStyle(color: Mycolors.notpressed,fontSize: 24,fontWeight: FontWeight.normal))),
+          Text(LocaleKeys.duringemerg.tr(),style: TextStyle(color: Mycolors.notpressed,fontSize: 24,fontWeight: FontWeight.normal)),
+          SizedBox(height: 40),
+          InkWell(
+            onTap: (){},
+            child:   CircleAvatar(
+            
+              radius: 140,
+            
+            child: Stack(children:[SvgPicture.asset("assets/images/sos button.svg")]),),
+          ) ]),),
+                  
+
+                  Center(
+                    child: Text("3rd Screen"),
+                  ),
+          
+                ],
+              ),
+              bottomNavigationBar: Material(
+                color: Mycolors.fillingcolor,
+                child: TabBar(
+                  indicatorColor:Mycolors.textcolor ,
+                          
+                  labelColor: Mycolors.textcolor,
+                    tabs: [
+                  Tab(child: Icon(Icons.chat,size: 30),),
+                  Tab(child: Icon(Icons.home,size: 30),),
+                  Tab(child: Icon(Icons.map,size: 30,),),
+                     
+                ]),
+              ),
+            ),
+          ),
+        );  
   }
 }
 

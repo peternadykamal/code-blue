@@ -17,7 +17,7 @@ import 'package:gradproject/style.dart';
 import 'package:gradproject/emailFormField.dart';
 import 'package:gradproject/translations/locale_keys.g.dart';
 import 'dart:ui';
-import 'repository/user_repository.dart';
+import 'package:gradproject/services/auth_service.dart';
 
 class authPage extends StatefulWidget {
   const authPage({super.key});
@@ -32,6 +32,7 @@ class _authPageState extends State<authPage> {
   final _passcontrollerlogin = TextEditingController();
   final _passcontrollersignUp = TextEditingController();
   final _confirmpasscontrollersignUp = TextEditingController();
+  final _usernamecontrollersignUp = TextEditingController();
   bool selectlogin = true;
   bool selectSignUp = false;
 
@@ -211,12 +212,42 @@ class _authPageState extends State<authPage> {
                             SizedBox(height: 100),
                             Button(
                                 textButton: LocaleKeys.Login.tr(),
-                                onTap: () {
-                                  Navigator.pushReplacement(
+                                onTap: () async {
+                                  // Get the text from the two input fields.
+                                  // TODO: errorMessage is a text field that displays the error message above the sign in button.
+                                  String email =
+                                      _emailcontrollerlogin.text.trim();
+                                  String password =
+                                      _passcontrollerlogin.text.trim();
+
+                                  // Check if either field is empty.
+                                  if (email.isEmpty || password.isEmpty) {
+                                    // Update the state to show an error message.
+                                    print(
+                                        'Please enter both email and password.');
+                                    return;
+                                  }
+
+                                  // Check if the user already has an account.
+                                  User? user = await AuthService()
+                                      .signInWithEmail(
+                                          email: email, password: password);
+                                  if (user == null) {
+                                    // Update the state to show an error message.
+                                    // errorMessage = 'Invalid email or password.';
+                                    print('Invalid email or password.');
+                                    return;
+                                  }
+                                  if (mounted) {
+                                    // Navigate to the next screen.
+                                    Navigator.pushReplacement(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) =>
-                                              ContinueWithPhone()));
+                                        builder: (context) =>
+                                            ContinueWithPhone(),
+                                      ),
+                                    );
+                                  }
                                 }),
                           ],
                         ),
@@ -361,29 +392,61 @@ class _authPageState extends State<authPage> {
                           SizedBox(height: 90),
                           Button(
                               textButton: LocaleKeys.Signup.tr(),
-                              onTap: () {
-                                FirebaseAuth.instance
-                                    .createUserWithEmailAndPassword(
-                                        email: _emailcontrollersignUp.text,
-                                        password: _passcontrollersignUp.text)
-                                    .then((value) {
-                                  print("account created");
-                                  Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              ContinueWithPhone()));
-                                }).then((value) {
-                                  User user =
-                                      FirebaseAuth.instance.currentUser!;
+                              onTap: () async {
+                                // until you make the text field for user name
+                                // i created _usernamecontrollersignUp in the top of _authPageState class
+                                // you can't sign up until user fill all text fields and password and confirm password match
+                                // TODO : make new text field for user name
+                                // TODO : make an error text that render error messages to the user
+                                String email =
+                                    _emailcontrollersignUp.text.trim();
+                                String password =
+                                    _passcontrollersignUp.text.trim();
+                                String username =
+                                    _usernamecontrollersignUp.text.trim();
+                                String confirmpassword =
+                                    _confirmpasscontrollersignUp.text.trim();
+                                if (_emailcontrollersignUp.text.isEmpty ||
+                                    _passcontrollersignUp.text.isEmpty ||
+                                    _confirmpasscontrollersignUp.text.isEmpty ||
+                                    _usernamecontrollersignUp.text.isEmpty) {
+                                  print("empty");
+                                  return;
+                                }
+                                // make sure that user name is less than 20 characters
+                                if (username.length > 20) {
+                                  print("username is too long");
+                                  return;
+                                }
+                                if (_passcontrollersignUp.text !=
+                                    _confirmpasscontrollersignUp.text) {
+                                  print("password not match");
+                                  return;
+                                }
+                                User? user = await AuthService()
+                                    .signUpWithEmail(
+                                        email: email, password: password);
+                                UserProfile profile = UserProfile(
+                                    email: _emailcontrollersignUp.text,
+                                    username: _usernamecontrollersignUp.text);
+                                await UserRepository()
+                                    .updateUserProfile(profile);
+                                if (user != null) {
+                                  // if user is not null then we can update user profile
+                                  // using UserRepository class
                                   UserProfile profile = UserProfile(
-                                      email: _emailcontrollersignUp.text);
-                                  UserRepository()
-                                      .updateUserProfile(profile)
-                                      .then((value) => null);
-                                }).onError((error, stackTrace) {
-                                  print("error");
-                                });
+                                      email: email, username: username);
+                                  await UserRepository()
+                                      .updateUserProfile(profile);
+                                  // after updating user profile we can navigate to home page
+                                  if (mounted) {
+                                    Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                ContinueWithPhone()));
+                                  }
+                                }
                               })
                         ],
                       ),

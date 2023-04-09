@@ -12,6 +12,7 @@ import 'package:gradproject/continuewithphone.dart';
 import 'package:gradproject/main.dart';
 import 'package:gradproject/passwordFormField.dart';
 import 'package:gradproject/repository/user_repository.dart';
+import 'package:gradproject/sos.dart';
 import 'package:gradproject/splashscreen.dart';
 import 'package:gradproject/style.dart';
 import 'package:gradproject/emailFormField.dart';
@@ -216,7 +217,7 @@ class _authPageState extends State<authPage> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              ContinueWithPhone()));
+                                              sosPage()));
                                 }),
                           ],
                         ),

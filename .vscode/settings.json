@@ -1,0 +1,8 @@
+{
+  "errorLens.enabledDiagnosticLevels": ["error", "warning"],
+  "dart.debugExternalPackageLibraries": false,
+  "dart.debugSdkLibraries": false,
+  "dart.flutterHotReloadOnSave": "all",
+  "editor.formatOnSave": true,
+  "files.autoSave": "onFocusChange"
+}

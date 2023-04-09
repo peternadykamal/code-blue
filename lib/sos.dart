@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/svg.dart' ;
 import 'package:gradproject/profile1.dart';
 import 'package:gradproject/style.dart';
 import 'package:gradproject/translations/locale_keys.g.dart';
@@ -14,34 +14,19 @@ class sosPage extends StatefulWidget {
   State<sosPage> createState() => _sosPageState();
 }
 
-class _sosPageState extends State<sosPage> 
-with SingleTickerProviderStateMixin {
+class _sosPageState extends State<sosPage>  {
 
 bool notification=true;
-  late final TabController controller;
-   void initState() {
-    controller = TabController(length: 2, vsync: this);
-    super.initState();
-  }
+ 
   @override
   Widget build(BuildContext context) {
     
 
 
-    return DefaultTabController(
-      
-      
-          length: 3,
-          child: SafeArea(
+    return 
+          SafeArea(
             child: Scaffold(
-              body: TabBarView(
-                children: [
-
-                                    Center(
-                    child: Text("2nd Screen"),
-                  ),
-                  Center(
-                    child: Column(
+              body:  Column(
             children: [
                
               SizedBox(height: 30),
@@ -88,31 +73,86 @@ bool notification=true;
               radius: 140,
             
             child: Stack(children:[SvgPicture.asset("assets/images/sos button.svg")]),),
+
+
+            
+          ),
+          SizedBox(height: 100),
+          Container(width: double.infinity,
+          height:66,
+          decoration: BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20),topRight: Radius.circular(20)),          color: Mycolors.splashback,),
+
+
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                InkWell(
+                  onTap: (){},
+                  child: Column(
+                    children: [
+                      SizedBox(height: 4),
+                      Stack(children: [
+                        
+                        Container(
+                          margin: EdgeInsets.only(left: 30),
+                        height:35 ,
+                        width: 35,
+                        
+                        child: SvgPicture.asset("assets/images/carbon_chat-bot.svg"))],),
+                      SizedBox(height: 3),
+                      Container(
+                        margin: EdgeInsets.only(left: 30),
+                        child: Text("Chatbot",style: TextStyle(color: Mycolors.notpressed,fontWeight: FontWeight.w500))),
+                    ],
+                  ),
+                ),
+                  InkWell(
+                    onTap: (){},
+                    child: Column(
+                    children: [
+                      SizedBox(height: 4),
+                      Stack(children: [Container(
+                        height:35 ,
+                        width: 35,
+                        
+                        child: SvgPicture.asset("assets/images/Vector (1).svg"))],),
+                      SizedBox(height: 3),
+                      Text("Home",style: TextStyle(color: Mycolors.textcolor,fontWeight: FontWeight.w500)),
+                  
+                    ],
+                                  ),
+                  ),InkWell(
+                  onTap: (){},
+                  child: Column(
+                    children: [
+                     SizedBox(height: 4),
+                      Stack(children: [Container(
+                        margin: EdgeInsets.only(right: 30),
+                        height:35 ,
+                        width: 35,
+                        
+                        child: SvgPicture.asset("assets/images/Vector.svg"))],),
+                      SizedBox(height: 3),
+                      Container(
+                        margin: EdgeInsets.only(right: 30),
+                        child: Text("Maps",style: TextStyle(color: Mycolors.notpressed,fontWeight: FontWeight.w500))),
+                    ],
+                  ),
+                )
+              ],
+              
+            ),
           ) ]),),
                   
 
-                  Center(
-                    child: Text("3rd Screen"),
-                  ),
+
           
-                ],
-              ),
-              bottomNavigationBar: Material(
-                color: Mycolors.fillingcolor,
-                child: TabBar(
-                  indicatorColor:Mycolors.textcolor ,
-                          
-                  labelColor: Mycolors.textcolor,
-                    tabs: [
-                  Tab(child: Icon(Icons.chat,size: 30),),
-                  Tab(child: Icon(Icons.home,size: 30),),
-                  Tab(child: Icon(Icons.map,size: 30,),),
-                     
-                ]),
-              ),
-            ),
-          ),
-        );  
+                
+            
+
+            );
+          
+          
   }
 }
 

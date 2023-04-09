@@ -10,6 +10,7 @@ import 'package:gradproject/services/auth_service.dart';
 import 'dart:ui'; //for mobile
 import 'testing/test_notification.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Locale deviceLocale = window.locale;
 String langCode = deviceLocale.languageCode;
@@ -21,7 +22,10 @@ Future<void> main() async {
   // the data will be cashed in the device each time you retrieve data from the database
   // so when the device is offline it will still be able to retrieve the data
   FirebaseDatabase.instance.setPersistenceEnabled(true);
+  // initialize the auth service
   AuthService().initialize();
+  // load dotenv file
+  await dotenv.load(fileName: ".env");
   // disable logging in easy localization package
   EasyLocalization.logger.enableBuildModes = [];
   runApp(EasyLocalization(

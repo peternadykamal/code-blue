@@ -8,21 +8,24 @@ testThis() async {
   Notification notification = Notification(
     title: "title",
     body: "body",
-    targetUserID: "ZidAyWx9HVafLj48IqBLtuMAqTp2",
-    // senderUserID: "oYfqsyYkGeWFcT62U3xkSEDT8xg2",
+    targetUserID: "oYfqsyYkGeWFcT62U3xkSEDT8xg2",
+    // senderUserID: "ZidAyWx9HVafLj48IqBLtuMAqTp2",
   );
-  // // send five messages
+  // // send notification
+  // print(await NotificationRepository().pushNotificationToUser(notification));
+  // send five messages
   // for (int i = 0; i < 5; i++) {
   //   await NotificationRepository().createNotification(notification);
   // }
   // get all notifications
-  final list = await NotificationRepository()
-      .getNotifications("ZidAyWx9HVafLj48IqBLtuMAqTp2");
-  list.forEach((element) {
-    print(element.date);
-  });
+  // final list = await NotificationRepository()
+  //     .getNotifications("ZidAyWx9HVafLj48IqBLtuMAqTp2");
+  // list.forEach((element) {
+  //   print(element.date);
+  // });
   // to get the token
   // User? user = FirebaseAuth.instance.currentUser;
+  // print(user?.uid);
   // String? idToken = await user?.getIdToken();
   // print(idToken);
   // to sign out

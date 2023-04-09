@@ -1,5 +1,9 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:gradproject/utils/has_network.dart';
+import 'dart:convert';
 
 class Notification {
   // id getter
@@ -13,6 +17,11 @@ class Notification {
   bool isSeen;
   User? user = FirebaseAuth.instance.currentUser;
 
+  /// create a new notification
+  /// you don't need to set id, date, senderUserID
+  /// id will be set automatically when geting getting notification of specific user when calling notificationRepository.getNotifications()
+  /// if you didn't set date, it will be set to the current date
+  /// if you didn't set senderUserID, it will be set to the current user id
   Notification({
     required this.title,
     required this.body,
@@ -89,12 +98,13 @@ class NotificationRepository {
   // create a reference to the database
   final databaseReference =
       FirebaseDatabase.instance.ref().child('notifications');
-  // create a new notification
-  Future<void> createNotification(Notification notification) async {
-    // create a new notification
-    await databaseReference.push().set(
-          Notification.fromNotificationToMap(notification),
-        );
+  User? user = FirebaseAuth.instance.currentUser;
+
+  //create a new notification and return the id of the new notification
+  Future<String> createNotification(Notification notification) async {
+    final newNotification = databaseReference.push();
+    await newNotification.set(Notification.fromNotificationToMap(notification));
+    return newNotification.key.toString();
   }
 
   // get all notifications for a specific user
@@ -132,5 +142,30 @@ class NotificationRepository {
     await databaseReference.child(notificationID).remove();
   }
 
-  // TODO: push a notification to specific user
+  /// this function
+  /// 1. create a new entry in notifications table
+  /// 2. send a request to the server to send a notification to the user (works only if the user is online)
+  ///  return true if the server return 200 status code and if the user is online
+  /// return false if the server return a code other than 200 or if the user is offline
+  Future<bool> pushNotificationToUser(Notification notification) async {
+    //  check if there is a internet connection
+    bool isOnline = await hasNetwork();
+    if (!isOnline) return false;
+
+    // check if the user is logged in
+    if (user == null) return false;
+
+    // create a new notification
+    String notificationId = await createNotification(notification);
+
+    // send a request to the server to send a notification to the user
+    final url =
+        Uri.parse('${dotenv.env['FIREBASE_SERVER_URL']!}/push-notification');
+    String idToken = await user!.getIdToken();
+    final headers = {'Content-Type': 'application/json'};
+    final body =
+        jsonEncode({'idToken': idToken, 'notificationId': notificationId});
+    final response = await http.post(url, headers: headers, body: body);
+    return response.statusCode == 200;
+  }
 }

@@ -22,6 +22,7 @@ enum RhBloodType { positive, pegative }
 
 class UserProfile {
   String email;
+  String username;
   DateTime? birthDate;
   int? age;
   Gender? gender;
@@ -37,6 +38,7 @@ class UserProfile {
 
   UserProfile({
     required this.email,
+    required this.username,
     this.birthDate,
     this.age,
     this.gender,
@@ -50,8 +52,10 @@ class UserProfile {
     this.remarks,
   });
 
-  static UserProfile fromDataSnapshotList(Iterable<DataSnapshot> map) {
+  /// convert the user profile to a map
+  static UserProfile fromMapToUserProfile(Iterable<DataSnapshot> map) {
     var email = '';
+    var username = '';
     DateTime? birthDate;
     int? age;
     Gender? gender;
@@ -68,6 +72,9 @@ class UserProfile {
       switch (snapshot.key) {
         case 'email':
           email = snapshot.value.toString();
+          break;
+        case 'username':
+          username = snapshot.value.toString();
           break;
         case 'birthDate':
           birthDate = DateTime.tryParse(snapshot.value.toString());
@@ -114,6 +121,7 @@ class UserProfile {
 
     return UserProfile(
       email: email,
+      username: username,
       birthDate: birthDate,
       age: age,
       gender: gender,
@@ -127,28 +135,13 @@ class UserProfile {
       remarks: remarks,
     );
   }
-}
 
-class UserRepository {
-  final DatabaseReference _usersRef =
-      FirebaseDatabase.instance.ref().child('users');
-  User user = FirebaseAuth.instance.currentUser!;
-
-  /// Example on how to use this method without async/await:
-  /// ```dart
-  /// UserRepository()
-  ///     .updateUserProfile(userProfile)
-  ///     .then((value) => {print("user profile updated")});
-  /// ```
-  /// example on how to use this method with async/await:
-  /// ```dart
-  /// await UserRepository().updateUserProfile(userProfile);
-  /// ```
-  Future<void> updateUserProfile(UserProfile data) async {
+  // convert from user to map
+  static Map<String, dynamic> fromUserProfileToMap(UserProfile data) {
     Map<String, dynamic> updateData = {
       'email': data.email,
+      'username': data.username,
     };
-
     if (data.gender != null) {
       updateData['gender'] = data.gender?.index;
     }
@@ -179,8 +172,31 @@ class UserRepository {
     if (data.birthDate != null) {
       updateData['birthDate'] = data.birthDate.toString();
     }
+    return updateData;
+  }
+}
+
+class UserRepository {
+  final DatabaseReference _usersRef =
+      FirebaseDatabase.instance.ref().child('users');
+  User? user = FirebaseAuth.instance.currentUser;
+
+  /// Example on how to use this method without async/await:
+  /// ```dart
+  /// UserRepository()
+  ///     .updateUserProfile(userProfile)
+  ///     .then((value) => {print("user profile updated")});
+  /// ```
+  /// example on how to use this method with async/await:
+  /// ```dart
+  /// await UserRepository().updateUserProfile(userProfile);
+  /// ```
+  Future<void> updateUserProfile(UserProfile data) async {
+    Map<String, dynamic> updateData = UserProfile.fromUserProfileToMap(data);
     try {
-      await _usersRef.child(user.uid).update(updateData);
+      if (user != null) {
+        await _usersRef.child(user!.uid).update(updateData);
+      }
     } catch (e) {
       throw Exception("Error updating user profile: $e");
     }
@@ -199,12 +215,16 @@ class UserRepository {
   /// ```
   Future<UserProfile> getUserProfile() async {
     try {
-      final snapshot = await _usersRef.child(user.uid).get();
-      if (snapshot.exists) {
-        final data = snapshot.children;
-        return UserProfile.fromDataSnapshotList(data);
+      if (user != null) {
+        final snapshot = await _usersRef.child(user!.uid).get();
+        if (snapshot.exists) {
+          final data = snapshot.children;
+          return UserProfile.fromMapToUserProfile(data);
+        } else {
+          throw Exception('User does not exist');
+        }
       } else {
-        throw Exception('User does not exist');
+        throw Exception('User is not logged in');
       }
     } catch (e) {
       throw Exception("Error getting user profile: $e");
@@ -221,7 +241,9 @@ class UserRepository {
   /// ```
   Future<void> deleteUserAccount() async {
     try {
-      _usersRef.child(user.uid).remove();
+      if (user != null) {
+        _usersRef.child(user!.uid).remove();
+      }
     } catch (e) {
       throw Exception("Error deleting user account: $e");
     }
@@ -248,16 +270,28 @@ class UserRepository {
 
     List<String> userIds = [];
     if (snapshot.value != null) {
-      print(snapshot.value);
       for (final users in snapshot.children) {
         if (getIDsList) {
           userIds.add(users.key.toString());
         } else {
           userIds.add(users.child('email').value.toString());
         }
-        print(users.key);
       }
     }
     return userIds;
+  }
+
+  /// this method is used to update the registration token of the current device it mainly used by fsMessaging service
+  /// example on how to use this method without async/await:
+  Future<void> updateFcmToken(String token) async {
+    try {
+      if (user != null) {
+        await _usersRef.child(user!.uid).update({
+          'deviceToken': token,
+        });
+      }
+    } catch (e) {
+      throw Exception("Error updating user fcmToken: $e");
+    }
   }
 }

@@ -46,6 +46,8 @@ dependencies:
   firebase_messaging: ^14.4.0
   http: ^0.13.5
   flutter_dotenv: ^5.0.2
+  firebase_storage: ^11.1.0
+  flutter_launcher_icons: ^0.13.0
 
 dev_dependencies:
   flutter_test:
@@ -58,6 +60,10 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
 
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "./assets/images/logo icon.png"
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

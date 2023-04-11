@@ -80,7 +80,7 @@ class _sosPageState extends State<sosPage> {
           RawMaterialButton(
             onPressed: () {},
             elevation: 0.0,
-            highlightElevation: 3.0,
+            highlightElevation: 15.0,
             fillColor: Color(0xFFBCDEFA),
             highlightColor: Color(0xFF9AC5F5),
             padding: EdgeInsets.all(15.0),

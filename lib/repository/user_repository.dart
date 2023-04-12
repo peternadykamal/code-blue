@@ -1,5 +1,8 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart';
 
 enum Gender { male, female }
 
@@ -34,7 +37,7 @@ class UserProfile {
   String? medications;
   String? allergies;
   String? remarks;
-  // String profileImageUrl;
+  String? profileImageUrl;
 
   UserProfile({
     required this.email,
@@ -50,6 +53,7 @@ class UserProfile {
     this.medications,
     this.allergies,
     this.remarks,
+    this.profileImageUrl,
   });
 
   /// convert the user profile to a map
@@ -67,6 +71,7 @@ class UserProfile {
     String? medications;
     String? allergies;
     String? remarks;
+    String? profileImageUrl;
 
     for (var snapshot in map) {
       switch (snapshot.key) {
@@ -114,6 +119,10 @@ class UserProfile {
         case 'remarks':
           remarks = snapshot.value.toString();
           break;
+        case 'profileImageurl':
+          profileImageUrl = snapshot.value.toString();
+          break;
+
         default:
           break;
       }
@@ -133,6 +142,7 @@ class UserProfile {
       medications: medications,
       allergies: allergies,
       remarks: remarks,
+      profileImageUrl: profileImageUrl,
     );
   }
 
@@ -171,6 +181,9 @@ class UserProfile {
     }
     if (data.birthDate != null) {
       updateData['birthDate'] = data.birthDate.toString();
+    }
+    if (data.profileImageUrl != null) {
+      updateData['url'] = data.profileImageUrl.toString();
     }
     return updateData;
   }
@@ -292,6 +305,28 @@ class UserRepository {
       }
     } catch (e) {
       throw Exception("Error updating user fcmToken: $e");
+    }
+  }
+
+  Future<void> changeProfile(XFile imageFile) async {
+    try {
+      if (user != null) {
+        File file = File(imageFile.path);
+        String fileName =
+            'profile/${user!.uid}_${DateTime.now().millisecondsSinceEpoch}.jpg';
+        FirebaseStorage storage = FirebaseStorage.instance;
+        Reference ref = storage.ref().child(fileName);
+
+        await ref.putFile(file);
+
+        String downloadURL = await ref.getDownloadURL();
+
+        await _usersRef.child(user!.uid).update({
+          'profileImage': downloadURL,
+        });
+      }
+    } catch (e) {
+      throw Exception("Error changing profile image: $e");
     }
   }
 }

@@ -50,6 +50,8 @@ dependencies:
   flutter_launcher_icons: ^0.13.0
   flutter_local_notifications: ^13.0.0
   permission_handler: ^10.2.0
+  firebase_remote_config: ^4.0.0
+  socket_io_client: ^2.0.1
 
 dev_dependencies:
   flutter_test:

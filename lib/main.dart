@@ -8,9 +8,10 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:gradproject/translations/codegen_loader.g.dart';
 import 'package:gradproject/services/auth_service.dart';
 import 'dart:ui'; //for mobile
-import 'testing/test_storage.dart';
+import 'testing/test_notification.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:gradproject/services/notification_service.dart';
 
 Locale deviceLocale = window.locale;
 String langCode = deviceLocale.languageCode;
@@ -24,6 +25,8 @@ Future<void> main() async {
   FirebaseDatabase.instance.setPersistenceEnabled(true);
   // initialize the auth service
   AuthService().initialize();
+  // initialize the notification service
+  NotificationService.initialize();
   // load dotenv file
   await dotenv.load(fileName: ".env");
   // disable logging in easy localization package
@@ -43,7 +46,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     // this function is used for testing methods and features only
     if (kDebugMode) {
-      // testThis().then((value) => {print("test done")});
+      testThis().then((value) => {print("test done")});
     }
 
     return MaterialApp(

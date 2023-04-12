@@ -316,9 +316,7 @@ class UserRepository {
             'profile/${user!.uid}_${DateTime.now().millisecondsSinceEpoch}.jpg';
         FirebaseStorage storage = FirebaseStorage.instance;
         Reference ref = storage.ref().child(fileName);
-
         await ref.putFile(file);
-
         String downloadURL = await ref.getDownloadURL();
 
         await _usersRef.child(user!.uid).update({

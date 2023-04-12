@@ -4,11 +4,13 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 
+// TODO: edit hannen code
+
 enum Gender { male, female }
 
 enum BloodType { a, b, ab, o }
 
-enum RhBloodType { positive, pegative }
+enum RhBloodType { positive, negative }
 
 // here is an example on how to create a user profile:
 // UserProfile user = UserProfile(

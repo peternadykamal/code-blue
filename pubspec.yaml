@@ -52,6 +52,8 @@ dependencies:
   permission_handler: ^10.2.0
   firebase_remote_config: ^4.0.0
   socket_io_client: ^2.0.1
+  connectivity_plus: ^3.0.4
+  flutter_sms: ^2.3.3
 
 dev_dependencies:
   flutter_test:

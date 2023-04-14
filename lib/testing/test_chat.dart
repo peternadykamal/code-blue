@@ -7,4 +7,5 @@ testThis() async {
     print(message);
   });
   chatInstance.send("i am not feeling good");
+  // chatInstance.disconnect();
 }

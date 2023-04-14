@@ -2,6 +2,8 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:gradproject/repository/user_repository.dart';
 import 'package:gradproject/services/notification_service.dart';
 
+// TODO: handle notification when app is in background and when app is killed
+// https://firebase.google.com/docs/cloud-messaging/flutter/receive
 class FcmService {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 

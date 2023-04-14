@@ -2,9 +2,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import 'package:firebase_storage/firebase_storage.dart';
-
-// TODO: edit hannen code
+import 'package:gradproject/services/storage_service.dart';
 
 enum Gender { male, female }
 
@@ -185,7 +183,7 @@ class UserProfile {
       updateData['birthDate'] = data.birthDate.toString();
     }
     if (data.profileImageUrl != null) {
-      updateData['url'] = data.profileImageUrl.toString();
+      updateData['profileImageurl'] = data.profileImageUrl.toString();
     }
     return updateData;
   }
@@ -210,6 +208,7 @@ class UserRepository {
     Map<String, dynamic> updateData = UserProfile.fromUserProfileToMap(data);
     try {
       if (user != null) {
+        await user!.updateDisplayName(data.username);
         await _usersRef.child(user!.uid).update(updateData);
       }
     } catch (e) {
@@ -313,16 +312,12 @@ class UserRepository {
   Future<void> changeProfile(XFile imageFile) async {
     try {
       if (user != null) {
-        File file = File(imageFile.path);
-        String fileName =
-            'profile/${user!.uid}_${DateTime.now().millisecondsSinceEpoch}.jpg';
-        FirebaseStorage storage = FirebaseStorage.instance;
-        Reference ref = storage.ref().child(fileName);
-        await ref.putFile(file);
-        String downloadURL = await ref.getDownloadURL();
+        String? url = await StorageService()
+            .uploadImageToFirebaseStorage('profileImages', imageFile);
 
+        user!.updatePhotoURL(url);
         await _usersRef.child(user!.uid).update({
-          'profileImage': downloadURL,
+          'profileImageurl': url,
         });
       }
     } catch (e) {

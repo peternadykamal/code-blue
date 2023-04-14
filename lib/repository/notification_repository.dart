@@ -148,10 +148,6 @@ class NotificationRepository {
   ///  return true if the server return 200 status code and if the user is online
   /// return false if the server return a code other than 200 or if the user is offline
   Future<bool> pushNotificationToUser(Notification notification) async {
-    //  check if there is a internet connection
-    bool isOnline = await hasNetwork();
-    if (!isOnline) return false;
-
     // check if the user is logged in
     if (user == null) return false;
 

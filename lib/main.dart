@@ -21,8 +21,9 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
   await Firebase.initializeApp();
-  // the data will be cashed in the device each time you retrieve data from the database
-  // so when the device is offline it will still be able to retrieve the data
+  // the data will be cashed in the device each time you retrieve data from the
+  // database so when the device is offline it will still be able to retrieve
+  // the data
   FirebaseDatabase.instance.setPersistenceEnabled(true);
   // initialize the auth service
   AuthService().initialize();
@@ -50,7 +51,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     // this function is used for testing methods and features only
     if (kDebugMode) {
-      testThis().then((value) => {print("test done")});
+      // testThis().then((value) => {print("test done")});
     }
 
     return MaterialApp(

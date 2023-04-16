@@ -33,5 +33,6 @@ abstract class  LocaleKeys {
   static const username = 'username';
   static const clickbuttonbelow = 'clickbuttonbelow';
   static const duringemerg = 'duringemerg';
+  static const usernameone = 'usernameone';
 
 }

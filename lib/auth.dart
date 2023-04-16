@@ -303,17 +303,7 @@ class _authPageState extends State<authPage> {
                                         Navigator.pushReplacement(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (context) =>
-                                                ContinueWithPhone(
-                                                    email:
-                                                        _emailcontrollersignUp
-                                                            .text,
-                                                    pass: _passcontrollersignUp
-                                                        .text,
-                                                    username:
-                                                        _usernamecontrollersignUp
-                                                            .text),
-                                          ),
+                                              builder: (context) => sosPage()),
                                         );
                                       }
                                     }

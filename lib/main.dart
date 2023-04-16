@@ -1,3 +1,4 @@
+import 'dart:ui'; //for mobile
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -7,7 +8,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:gradproject/translations/codegen_loader.g.dart';
 import 'package:gradproject/services/auth_service.dart';
-import 'dart:ui'; //for mobile
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:gradproject/services/notification_service.dart';

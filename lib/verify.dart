@@ -2,23 +2,32 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:gradproject/button.dart';
 import 'package:gradproject/numericpad.dart';
+import 'package:gradproject/services/auth_service.dart';
 import 'package:gradproject/sos.dart';
 import 'package:gradproject/style.dart';
 import 'package:gradproject/translations/locale_keys.g.dart';
-
+import 'package:gradproject/repository/user_repository.dart';
+import 'package:gradproject/utils/has_network.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class VerifyPhone extends StatefulWidget {
-
   final String phoneNumber;
+  final String email;
+  final String pass;
+  final String username;
+  bool errorSendingCode = false;
 
-  VerifyPhone({required this.phoneNumber});
+  VerifyPhone(
+      {required this.phoneNumber,
+      required this.email,
+      required this.pass,
+      required this.username});
 
   @override
   _VerifyPhoneState createState() => _VerifyPhoneState();
 }
 
 class _VerifyPhoneState extends State<VerifyPhone> {
-
   String code = "";
 
   @override
@@ -49,131 +58,145 @@ class _VerifyPhoneState extends State<VerifyPhone> {
         textTheme: Theme.of(context).textTheme,
       ),
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-
-            Expanded(
-              child: Container(
-                color: Colors.white,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 14),
-                      child: Text(
-                        "Code is sent to " + widget.phoneNumber,
-                        style: TextStyle(
-                          fontSize: 22,
-                          color: Color(0xFF818181),
+          child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Expanded(
+            child: Container(
+              color: Colors.white,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 14),
+                    child: Text(
+                      "Code is sent to " + widget.phoneNumber,
+                      style: TextStyle(
+                        fontSize: 22,
+                        color: Color(0xFF818181),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        buildCodeNumberBox(
+                            code.length > 0 ? code.substring(0, 1) : ""),
+                        buildCodeNumberBox(
+                            code.length > 1 ? code.substring(1, 2) : ""),
+                        buildCodeNumberBox(
+                            code.length > 2 ? code.substring(2, 3) : ""),
+                        buildCodeNumberBox(
+                            code.length > 3 ? code.substring(3, 4) : ""),
+                        buildCodeNumberBox(
+                            code.length > 4 ? code.substring(4, 5) : ""),
+                        buildCodeNumberBox(
+                            code.length > 5 ? code.substring(5, 6) : ""),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 14),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          "Didn't recieve code? ",
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Mycolors.notpressed,
+                          ),
                         ),
-                      ),
-                    ),
-
-                    Expanded(
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-
-                          buildCodeNumberBox(code.length > 0 ? code.substring(0, 1) : ""),
-                          buildCodeNumberBox(code.length > 1 ? code.substring(1, 2) : ""),
-                          buildCodeNumberBox(code.length > 2 ? code.substring(2, 3) : ""),
-                          buildCodeNumberBox(code.length > 3 ? code.substring(3, 4) : ""),
-                          buildCodeNumberBox(code.length > 4 ? code.substring(4, 5) : ""),
-                          buildCodeNumberBox(code.length > 5 ? code.substring(5, 6) : ""),
-
-                        ],
-                      ),
-                    ),
-
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 14),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          
-                          Text(
-                            "Didn't recieve code? ",
+                        SizedBox(
+                          width: 8,
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            print("Resend the code to the user");
+                          },
+                          child: Text(
+                            "Request again",
                             style: TextStyle(
-                              fontSize: 18,
-                              color: Mycolors.notpressed,
-                            ),
+                                fontSize: 18, fontWeight: FontWeight.w700),
                           ),
-                          
-                          SizedBox(
-                            width: 8,
-                          ),
-
-                          GestureDetector(
-                            onTap: () {
-                              print("Resend the code to the user");
-                            },
-                            child: Text(
-                              "Request again",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700
-                              ),
-                            ),
-                          ),
-                          
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-
-            Container(
-              height: MediaQuery.of(context).size.height * 0.13,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.all(
-                  Radius.circular(25),
-                ),
-              ),
-              child: Padding(
-                padding: EdgeInsets.all(16),
-                child: Row(
-                  children: <Widget>[
-
-
-                    Container
-                    (
-                      margin: EdgeInsets.only(right: 20,left: 20),
-                      child: Button(textButton: LocaleKeys.Verifyandcreate.tr(), onTap: (){
-
-                        Navigator.pushReplacement(context, MaterialPageRoute(builder: ((context) => sosPage())));
-                      }))
-
-                  ],
-                ),
+          ),
+          Container(
+            height: MediaQuery.of(context).size.height * 0.13,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.all(
+                Radius.circular(25),
               ),
             ),
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: Row(
+                children: <Widget>[
+                  Container(
+                      margin: EdgeInsets.only(right: 20, left: 20),
+                      child: Button(
+                          textButton: LocaleKeys.Verifyandcreate.tr(),
+                          onTap: () {
+                            // verify the code and create the user
 
-            NumericPad(
-              onNumberSelected: (value) {
-                print(value);
-                setState(() {
-                  if(value != -1){
-                    if(code.length < 6){
-                      code = code + value.toString();
-                    }
+                            AuthService().verifyPhoneNumber(widget.phoneNumber,
+                                onVerificationCompleted: (user) async {
+                              // create the user
+                              UserProfile user = UserProfile(
+                                email: widget.email,
+                                username: widget.username,
+                              );
+                              await withInternetConnection([
+                                () => UserRepository().updateUserProfile(user),
+                                () => AuthService().signUpWithEmail(
+                                      email: widget.email,
+                                      password: widget.pass,
+                                    ),
+                                () => Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: ((context) => sosPage())))
+                              ]);
+                            }, onCodeSent: (String verificationId,
+                                    [int? forceResendingToken]) async {
+                              PhoneAuthCredential phoneAuthCredential =
+                                  PhoneAuthProvider.credential(
+                                      verificationId: verificationId,
+                                      smsCode: code);
+                            }, onVerificationFailed: (authException) {
+                              print("error");
+                            });
+                          }))
+                ],
+              ),
+            ),
+          ),
+          NumericPad(
+            onNumberSelected: (value) {
+              print(value);
+              setState(() {
+                if (value != -1) {
+                  if (code.length < 6) {
+                    code = code + value.toString();
                   }
-                  else{
-                    code = code.substring(0, code.length - 1);
-                  }
-                  print(code);        
-                });
-              },
-            ),
-
-          ],
-        )
-      ),
+                } else {
+                  code = code.substring(0, code.length - 1);
+                }
+                print(code);
+              });
+            },
+          ),
+        ],
+      )),
     );
   }
 
@@ -194,8 +217,7 @@ class _VerifyPhoneState extends State<VerifyPhone> {
                   color: Colors.black26,
                   blurRadius: 25.0,
                   spreadRadius: 1,
-                  offset: Offset(0.0, 0.75)
-              )
+                  offset: Offset(0.0, 0.75))
             ],
           ),
           child: Center(

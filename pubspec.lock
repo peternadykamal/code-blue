@@ -41,6 +41,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.1"
+  bottom_picker:
+    dependency: "direct main"
+    description:
+      name: bottom_picker
+      sha256: beaf34b440d1b95f1ef3bc2614c414c9deac14c76cc13d2d46c748593afa01c6
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.2"
   characters:
     dependency: transitive
     description:
@@ -153,6 +161,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.5"
+  custom_radio_grouped_button:
+    dependency: "direct main"
+    description:
+      name: custom_radio_grouped_button
+      sha256: efed73fc128ee76d19553861a56ab784dcee91910deba1d6c0c124535ab0c4dd
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.0"
   dbus:
     dependency: transitive
     description:
@@ -432,6 +448,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_toggle_tab:
+    dependency: "direct main"
+    description:
+      name: flutter_toggle_tab
+      sha256: a06de7325c7a744122877212baa601ecfdd7c0fb8dfd80346f2ade69b030c054
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.0"
   flutter_web_plugins:
     dependency: transitive
     description: flutter
@@ -485,6 +509,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.1.1"
+  horizontal_picker:
+    dependency: "direct main"
+    description:
+      name: horizontal_picker
+      sha256: "0b7303c353d5b824046fd23f2f87bf9c08cc21725a3bdca2613b95843db836d4"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.0"
   http:
     dependency: "direct main"
     description:
@@ -882,6 +914,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.4.16"
+  time_picker_spinner_pop_up:
+    dependency: "direct main"
+    description:
+      name: time_picker_spinner_pop_up
+      sha256: "97c7fae790eed7551ec0cd92739d3c88835c86266d26a2cfc54e3c36f0f9fc68"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.3"
   timezone:
     dependency: transitive
     description:

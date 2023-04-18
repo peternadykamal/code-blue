@@ -5,13 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:gradproject/auth.dart';
 import 'package:gradproject/button.dart';
 import 'package:gradproject/button2.dart';
 import 'package:gradproject/buttonselevated.dart';
-import 'package:gradproject/profile2.dart';
+import 'package:gradproject/medicalCard.dart';
 import 'package:gradproject/style.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
+import 'package:gradproject/services/auth_service.dart';
 
 class profileone extends StatefulWidget {
   const profileone({super.key});
@@ -64,9 +66,18 @@ class _profileoneState extends State<profileone> {
                           child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Text("Log Out",
-                              style: TextStyle(
-                                  color: Mycolors.buttoncolor, fontSize: 18)),
+                          InkWell(
+                            onTap: () {
+                              AuthService().signOut();
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => authPage()));
+                            },
+                            child: Text("Log Out",
+                                style: TextStyle(
+                                    color: Mycolors.buttoncolor, fontSize: 18)),
+                          ),
                           Padding(
                             padding: const EdgeInsets.all(0),
                             child: Icon(Icons.logout,

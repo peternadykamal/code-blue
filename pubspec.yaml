@@ -56,6 +56,11 @@ dependencies:
   flutter_sms: ^2.3.3
   geolocator: ^9.0.2
   intl_phone_field: ^3.1.0
+  flutter_toggle_tab: ^1.2.0
+  time_picker_spinner_pop_up: ^1.0.3
+  bottom_picker: ^2.0.2
+  horizontal_picker: ^1.2.0
+  custom_radio_grouped_button: ^2.2.0
 
 dev_dependencies:
   flutter_test:

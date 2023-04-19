@@ -10,6 +10,7 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:gradproject/button.dart';
 import 'package:gradproject/continuewithphone.dart';
 import 'package:gradproject/main.dart';
+import 'package:gradproject/onboardscreen.dart';
 import 'package:gradproject/passwordFormField.dart';
 import 'package:gradproject/repository/user_repository.dart';
 import 'package:gradproject/sos.dart';
@@ -303,7 +304,8 @@ class _authPageState extends State<authPage> {
                                         Navigator.pushReplacement(
                                           context,
                                           MaterialPageRoute(
-                                              builder: (context) => sosPage()),
+                                              builder: (context) =>
+                                                  onBoardScreen()),
                                         );
                                       }
                                     }

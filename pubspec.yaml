@@ -61,6 +61,7 @@ dependencies:
   bottom_picker: ^2.0.2
   horizontal_picker: ^1.2.0
   custom_radio_grouped_button: ^2.2.0
+  smooth_page_indicator: ^1.1.0
 
 dev_dependencies:
   flutter_test:

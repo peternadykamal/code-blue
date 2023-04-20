@@ -20,9 +20,10 @@ import 'package:gradproject/emailFormField.dart';
 import 'package:gradproject/translations/locale_keys.g.dart';
 import 'dart:ui';
 import 'package:gradproject/services/auth_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class authPage extends StatefulWidget {
-  const authPage({super.key});
+  const authPage({Key});
 
   @override
   State<authPage> createState() => _authPageState();
@@ -279,6 +280,10 @@ class _authPageState extends State<authPage> {
                                   onTap: () async {
                                     if (_key.currentState!.validate()) {
                                       _saveForm();
+                                      final SharedPreferences Prefs =
+                                          await SharedPreferences.getInstance();
+                                      final showHome =
+                                          Prefs.getBool('showHome') ?? false;
 
                                       String email =
                                           _emailcontrollerlogin.text.trim();
@@ -301,12 +306,12 @@ class _authPageState extends State<authPage> {
                                       }
                                       if (mounted) {
                                         // TODO: navigate to home page
+
                                         Navigator.pushReplacement(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  onBoardScreen()),
-                                        );
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    sosPage()));
                                       }
                                     }
                                   }),
@@ -526,6 +531,10 @@ class _authPageState extends State<authPage> {
                                 textButton: LocaleKeys.Signup.tr(),
                                 onTap: () async {
                                   _saveForm();
+                                  // final SharedPreferences Prefs =
+                                  //     await SharedPreferences.getInstance();
+                                  // final showHome =
+                                  //     Prefs.getBool('showHome') ?? false;
                                   // until you make the text field for user name i
                                   // created _usernamecontrollersignUp in the top
                                   // of _authPageState class you can't sign up

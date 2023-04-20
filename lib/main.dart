@@ -1,8 +1,10 @@
 import 'dart:ui'; //for mobile
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:gradproject/onboardscreen.dart';
 import 'package:gradproject/splashscreen.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -41,11 +43,12 @@ Future<void> main() async {
       supportedLocales: [Locale("ar"), Locale("en")],
       assetLoader: CodegenLoader(),
       fallbackLocale: Locale("en"),
-      child: const MyApp()));
+      child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  User? user = FirebaseAuth.instance.currentUser;
+  MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +65,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: splashScreen(),
+      home: user == null ? onBoardScreen() : splashScreen(),
       debugShowCheckedModeBanner: false,
     );
   }

@@ -280,10 +280,6 @@ class _authPageState extends State<authPage> {
                                   onTap: () async {
                                     if (_key.currentState!.validate()) {
                                       _saveForm();
-                                      final SharedPreferences Prefs =
-                                          await SharedPreferences.getInstance();
-                                      final showHome =
-                                          Prefs.getBool('showHome') ?? false;
 
                                       String email =
                                           _emailcontrollerlogin.text.trim();
@@ -531,17 +527,18 @@ class _authPageState extends State<authPage> {
                                 textButton: LocaleKeys.Signup.tr(),
                                 onTap: () async {
                                   _saveForm();
-                                  // final SharedPreferences Prefs =
-                                  //     await SharedPreferences.getInstance();
-                                  // final showHome =
-                                  //     Prefs.getBool('showHome') ?? false;
-                                  // until you make the text field for user name i
-                                  // created _usernamecontrollersignUp in the top
-                                  // of _authPageState class you can't sign up
-                                  // until user fill all text fields and password
-                                  // and confirm password match TODO : make new
-                                  // text field for user name TODO : make an error
-                                  // text that render error messages to the user
+                                  // final SharedPreferences Prefs = await
+                                  //     SharedPreferences.getInstance(); final
+                                  // showHome = Prefs.getBool('showHome') ??
+                                  //     false; until you make the text field
+                                  // for user name i created
+                                  // _usernamecontrollersignUp in the top of
+                                  // _authPageState class you can't sign up
+                                  // until user fill all text fields and
+                                  // password and confirm password match TODO :
+                                  // make new text field for user name TODO :
+                                  // make an error text that render error
+                                  // messages to the user
 
                                   if (_emailcontrollersignUp.text.isEmpty ||
                                       _passcontrollersignUp.text.isEmpty ||
@@ -562,36 +559,18 @@ class _authPageState extends State<authPage> {
                                     print("password not match");
                                     return;
                                   }
-                                  User? user = await AuthService()
-                                      .signUpWithEmail(
-                                          email: email, password: password);
-                                  UserProfile profile = UserProfile(
-                                      email: _emailcontrollersignUp.text,
-                                      username: _usernamecontrollersignUp.text);
-                                  await UserRepository()
-                                      .updateUserProfile(profile);
-                                  if (user != null) {
-                                    // if user is not null then we can update user
-                                    // profile using UserRepository class
-                                    UserProfile profile = UserProfile(
-                                        email: email, username: username);
-                                    await UserRepository()
-                                        .updateUserProfile(profile);
-                                    // after updating user profile we can navigate
-                                    // to home page
-                                    if (mounted) {
-                                      email = _emailcontrollersignUp.text;
-                                      password = _passcontrollersignUp.text;
-                                      username = _usernamecontrollersignUp.text;
-                                      Navigator.pushReplacement(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  ContinueWithPhone(
-                                                      email: email,
-                                                      pass: password,
-                                                      username: username)));
-                                    }
+                                  if (mounted) {
+                                    email = _emailcontrollersignUp.text;
+                                    password = _passcontrollersignUp.text;
+                                    username = _usernamecontrollersignUp.text;
+                                    Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                ContinueWithPhone(
+                                                    email: email,
+                                                    pass: password,
+                                                    username: username)));
                                   }
                                 })
                           ],

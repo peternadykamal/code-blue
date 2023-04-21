@@ -1,13 +1,20 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gradproject/auth.dart';
 import 'package:gradproject/numericpad.dart';
+import 'package:gradproject/repository/user_repository.dart';
+import 'package:gradproject/repository/user_repository.dart';
+import 'package:gradproject/services/auth_service.dart';
+import 'package:gradproject/sos.dart';
 import 'package:gradproject/style.dart';
 import 'package:gradproject/translations/locale_keys.g.dart';
+import 'package:gradproject/utils/has_network.dart';
 import 'package:gradproject/verify.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:intl_phone_field/phone_number.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class ContinueWithPhone extends StatefulWidget {
   final String email;
@@ -24,6 +31,7 @@ class _ContinueWithPhoneState extends State<ContinueWithPhone> {
   TextEditingController phoneController = TextEditingController();
   String actualphoneNumber = "";
   int maxLength = 10;
+  String _verificationId = "";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -120,21 +128,67 @@ class _ContinueWithPhoneState extends State<ContinueWithPhone> {
                           ),
                           SizedBox(height: 30),
                           GestureDetector(
-                              onTap: () {
+                              onTap: () async {
                                 if (int.parse(phoneController.text) <
                                     maxLength) {
                                   return;
                                 }
-
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => VerifyPhone(
-                                          phoneNumber: actualphoneNumber,
+                                try {
+                                  await FirebaseAuth.instance.verifyPhoneNumber(
+                                    phoneNumber: actualphoneNumber,
+                                    verificationCompleted:
+                                        (PhoneAuthCredential credential) async {
+                                      UserProfile user = UserProfile(
+                                        email: widget.email,
+                                        username: widget.username,
+                                      );
+                                      if (await isNetworkAvailable()) {
+                                        await UserRepository()
+                                            .updateUserProfile(user);
+                                        await AuthService().signUpWithEmail(
                                           email: widget.email,
-                                          pass: widget.pass,
-                                          username: widget.username)),
-                                );
+                                          password: widget.pass,
+                                        );
+                                        await FirebaseAuth.instance.currentUser
+                                            ?.linkWithCredential(credential);
+                                      }
+                                      if (mounted) {
+                                        Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    sosPage()));
+                                      }
+                                    },
+                                    verificationFailed:
+                                        (FirebaseAuthException e) {
+                                      Fluttertoast.showToast(
+                                          msg: e.message.toString());
+                                    },
+                                    codeSent: (String verificationId,
+                                        [int? forceResendingToken]) async {
+                                      setState(() {
+                                        _verificationId = verificationId;
+                                      });
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => VerifyPhone(
+                                                verificationId: verificationId,
+                                                forceResendingToken:
+                                                    forceResendingToken,
+                                                phoneNumber: actualphoneNumber,
+                                                email: widget.email,
+                                                pass: widget.pass,
+                                                username: widget.username)),
+                                      );
+                                    },
+                                    codeAutoRetrievalTimeout:
+                                        (String verificationId) {},
+                                  );
+                                } catch (e) {
+                                  Fluttertoast.showToast(msg: e.toString());
+                                }
                               },
                               child: Container(
                                   height: 40,

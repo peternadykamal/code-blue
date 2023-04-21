@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gradproject/button.dart';
 import 'package:gradproject/numericpad.dart';
 import 'package:gradproject/services/auth_service.dart';
@@ -15,13 +16,17 @@ class VerifyPhone extends StatefulWidget {
   final String email;
   final String pass;
   final String username;
+  final String verificationId;
+  int? forceResendingToken;
   bool errorSendingCode = false;
 
   VerifyPhone(
       {required this.phoneNumber,
       required this.email,
       required this.pass,
-      required this.username});
+      required this.username,
+      required this.verificationId,
+      required this.forceResendingToken});
 
   @override
   _VerifyPhoneState createState() => _VerifyPhoneState();
@@ -29,6 +34,36 @@ class VerifyPhone extends StatefulWidget {
 
 class _VerifyPhoneState extends State<VerifyPhone> {
   String code = "";
+  void _verifyCode() async {
+    try {
+      PhoneAuthCredential credential = PhoneAuthProvider.credential(
+        verificationId: widget.verificationId,
+        smsCode: code,
+      );
+      UserProfile user = UserProfile(
+        email: widget.email,
+        username: widget.username,
+      );
+      if (await isNetworkAvailable()) {
+        if (await isNetworkAvailable()) {
+          await UserRepository().updateUserProfile(user);
+          await AuthService().signUpWithEmail(
+            email: widget.email,
+            password: widget.pass,
+          );
+          await FirebaseAuth.instance.currentUser
+              ?.linkWithCredential(credential);
+        }
+      }
+      if (mounted) {
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => sosPage()));
+      }
+      Fluttertoast.showToast(msg: "Verification successful");
+    } catch (e) {
+      Fluttertoast.showToast(msg: "Invalid verification code");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -145,37 +180,7 @@ class _VerifyPhoneState extends State<VerifyPhone> {
                       margin: EdgeInsets.only(right: 20, left: 20),
                       child: Button(
                           textButton: LocaleKeys.Verifyandcreate.tr(),
-                          onTap: () {
-                            // verify the code and create the user
-
-                            AuthService().verifyPhoneNumber(widget.phoneNumber,
-                                onVerificationCompleted: (user) async {
-                              // create the user
-                              UserProfile user = UserProfile(
-                                email: widget.email,
-                                username: widget.username,
-                              );
-                              await withInternetConnection([
-                                () => UserRepository().updateUserProfile(user),
-                                () => AuthService().signUpWithEmail(
-                                      email: widget.email,
-                                      password: widget.pass,
-                                    ),
-                                () => Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: ((context) => sosPage())))
-                              ]);
-                            }, onCodeSent: (String verificationId,
-                                    [int? forceResendingToken]) async {
-                              PhoneAuthCredential phoneAuthCredential =
-                                  PhoneAuthProvider.credential(
-                                      verificationId: verificationId,
-                                      smsCode: code);
-                            }, onVerificationFailed: (authException) {
-                              print("error");
-                            });
-                          }))
+                          onTap: _verifyCode))
                 ],
               ),
             ),

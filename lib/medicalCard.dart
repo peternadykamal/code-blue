@@ -199,7 +199,7 @@ class _profile2State extends State<profile2> {
               children: [
                 Text("Blood Type",
                     style: TextStyle(color: Mycolors.textcolor, fontSize: 15)),
-                CustomCheckBoxGroup(
+                CustomRadioButton(
                   height: 29,
                   enableShape: true,
                   radius: 20,
@@ -217,8 +217,8 @@ class _profile2State extends State<profile2> {
                     "O",
                     "AB",
                   ],
-                  buttonValuesList: ["A", "B", "O", "AB"],
-                  checkBoxButtonValues: (values) {
+                  buttonValues: ["A", "B", "O", "AB"],
+                  radioButtonValue: (values) {
                     print(values);
                   },
                   selectedBorderColor: Mycolors.xbutton,

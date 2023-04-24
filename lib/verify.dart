@@ -10,6 +10,7 @@ import 'package:gradproject/translations/locale_keys.g.dart';
 import 'package:gradproject/repository/user_repository.dart';
 import 'package:gradproject/utils/has_network.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl_phone_field/phone_number.dart';
 
 class VerifyPhone extends StatefulWidget {
   final String phoneNumber;
@@ -148,8 +149,43 @@ class _VerifyPhoneState extends State<VerifyPhone> {
                           width: 8,
                         ),
                         GestureDetector(
-                          onTap: () {
+                          onTap: () async {
                             print("Resend the code to the user");
+                            await FirebaseAuth.instance.verifyPhoneNumber(
+                              phoneNumber: widget.phoneNumber,
+                              verificationCompleted:
+                                  (PhoneAuthCredential credential) async {
+                                UserProfile user = UserProfile(
+                                  email: widget.email,
+                                  username: widget.username,
+                                );
+                                if (await isNetworkAvailable()) {
+                                  await UserRepository()
+                                      .updateUserProfile(user);
+                                  await AuthService().signUpWithEmail(
+                                    email: widget.email,
+                                    password: widget.pass,
+                                  );
+                                  await FirebaseAuth.instance.currentUser
+                                      ?.linkWithCredential(credential);
+                                }
+                                if (mounted) {
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => sosPage()));
+                                }
+                              },
+                              verificationFailed: (FirebaseAuthException e) {
+                                Fluttertoast.showToast(
+                                    msg: e.message.toString());
+                              },
+                              codeSent: (String verificationId,
+                                  [int? forceResendingToken]) async {},
+                              codeAutoRetrievalTimeout:
+                                  (String verificationId) {},
+                              forceResendingToken: widget.forceResendingToken,
+                            );
                           },
                           child: Text(
                             "Request again",

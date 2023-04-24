@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:gradproject/profile1.dart';
+import 'package:gradproject/repository/user_repository.dart';
 import 'package:gradproject/style.dart';
 import 'package:flutter_toggle_tab/flutter_toggle_tab.dart';
 import 'package:time_picker_spinner_pop_up/time_picker_spinner_pop_up.dart';
@@ -46,11 +48,22 @@ class _profile2State extends State<profile2> {
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Icon(Icons.arrow_back, size: 30, color: Mycolors.textcolor),
+                    GestureDetector(
+                        onTap: () {
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => profileone()));
+                        },
+                        child: Icon(Icons.arrow_back,
+                            size: 30, color: Mycolors.textcolor)),
                     Text("Medical Card",
                         style:
                             TextStyle(color: Mycolors.textcolor, fontSize: 20)),
-                    Icon(Icons.done, size: 30, color: Mycolors.textcolor)
+                    GestureDetector(
+                        onTap: () {},
+                        child: Icon(Icons.done,
+                            size: 30, color: Mycolors.textcolor))
                   ]),
             ),
             SizedBox(height: 10),
@@ -100,6 +113,7 @@ class _profile2State extends State<profile2> {
               width: 300,
               child: TextField(
                 controller: _date,
+                keyboardType: TextInputType.none,
                 decoration: InputDecoration(
                   hintStyle: TextStyle(
                       color: Mycolors.notpressed,
@@ -153,9 +167,10 @@ class _profile2State extends State<profile2> {
                   cursorColor: Mycolors.textcolor,
                   activeItemTextColor: Mycolors.buttoncolor,
                   initialPosition: InitialPosition.center,
-                  minValue: 0,
-                  maxValue: 220,
-                  divisions: 20,
+                  suffix: "cm",
+                  minValue: 120,
+                  maxValue: 210,
+                  divisions: 420,
                   height: 70,
                   onChanged: (value) {
                     setState(() {
@@ -181,9 +196,10 @@ class _profile2State extends State<profile2> {
                   cursorColor: Mycolors.textcolor,
                   activeItemTextColor: Mycolors.buttoncolor,
                   initialPosition: InitialPosition.center,
-                  minValue: 0,
-                  maxValue: 220,
-                  divisions: 20,
+                  minValue: 50,
+                  maxValue: 362,
+                  divisions: 624,
+                  suffix: "kg",
                   height: 70,
                   onChanged: (value) {
                     setState(() {
@@ -199,7 +215,7 @@ class _profile2State extends State<profile2> {
               children: [
                 Text("Blood Type",
                     style: TextStyle(color: Mycolors.textcolor, fontSize: 15)),
-                CustomCheckBoxGroup(
+                CustomRadioButton(
                   height: 29,
                   enableShape: true,
                   radius: 20,
@@ -217,8 +233,8 @@ class _profile2State extends State<profile2> {
                     "O",
                     "AB",
                   ],
-                  buttonValuesList: ["A", "B", "O", "AB"],
-                  checkBoxButtonValues: (values) {
+                  buttonValues: ["A", "B", "O", "AB"],
+                  radioButtonValue: (values) {
                     print(values);
                   },
                   selectedBorderColor: Mycolors.xbutton,
@@ -374,7 +390,8 @@ class _profile2State extends State<profile2> {
                         borderSide: new BorderSide(
                             color: Mycolors.notpressed, width: 3)),
                   )),
-            )
+            ),
+            SizedBox(height: 30)
           ]),
         ),
       ),

@@ -25,7 +25,7 @@ class _splashScreenState extends State<splashScreen> {
   void initState() {
     super.initState();
     Timer(
-        Duration(seconds: 10),
+        Duration(seconds: 3),
         () async => {
               await context.setLocale(Locale(langCode)),
               Navigator.pushReplacement(

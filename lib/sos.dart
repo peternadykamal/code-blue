@@ -98,11 +98,9 @@ class _sosPageState extends State<sosPage> {
             SizedBox(height: 40),
             RawMaterialButton(
               onPressed: () async {
-                // this return an errror
-                // await withInternetConnection([
-                //   () => UserRepository().getUserById('halsdk;fj'),
-                // ]);
-                // to show how deal with an results list
+                // this return an errror await withInternetConnection([ () =>
+                // UserRepository().getUserById('halsdk;fj'), ]); to show how
+                //   deal with an results list
                 final results = await withInternetConnection([
                   () => UserRepository()
                       .getUserById('mOWCpqtfbKenJvEblEXEBTgy1uP2'),
@@ -116,21 +114,13 @@ class _sosPageState extends State<sosPage> {
                     print(object);
                   }
                 }
-                // example on how try catch block works
-                // try {
-                //   await UserRepository().getUserById('halsdk;fj');
-                // } catch (e) {
-                //   print('object');
-                //   // print error in flutter toast
-                //   Fluttertoast.showToast(
-                //       msg: e.toString(),
-                //       toastLength: Toast.LENGTH_SHORT,
-                //       gravity: ToastGravity.BOTTOM,
-                //       timeInSecForIosWeb: 1,
-                //       backgroundColor: Colors.red,
-                //       textColor: Colors.white,
-                //       fontSize: 16.0);
-                // }
+                // example on how try catch block works try { await
+                // UserRepository().getUserById('halsdk;fj'); } catch (e) {
+                //   print('object'); // print error in flutter toast
+                // Fluttertoast.showToast( msg: e.toString(), toastLength:
+                //   Toast.LENGTH_SHORT, gravity: ToastGravity.BOTTOM,
+                //   timeInSecForIosWeb: 1, backgroundColor: Colors.red,
+                //   textColor: Colors.white, fontSize: 16.0); }
               },
               elevation: 0.0,
               highlightElevation: 15.0,

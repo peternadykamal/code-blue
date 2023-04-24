@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gradproject/auth.dart';
 import 'package:gradproject/button.dart';
 import 'package:gradproject/button2.dart';
@@ -15,6 +16,7 @@ import 'package:gradproject/medicalCard.dart';
 import 'package:gradproject/repository/user_repository.dart';
 import 'package:gradproject/sos.dart';
 import 'package:gradproject/style.dart';
+import 'package:gradproject/utils/has_network.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 import 'package:gradproject/services/auth_service.dart';
@@ -167,7 +169,7 @@ class _profileoneState extends State<profileone> {
                               color: Mycolors.textcolor,
                               fontWeight: FontWeight.bold)),
                       Center(
-                        child: Text(user2?.phoneNumber ?? "",
+                        child: Text(firebaseUser?.phoneNumber ?? "",
                             style: TextStyle(
                                 fontSize: 15,
                                 color: Mycolors.notpressed,
@@ -226,6 +228,67 @@ class _profileoneState extends State<profileone> {
               SizedBox(height: 20),
               (() {
                 if (selectMedical) {
+                  print(user!.bloodType);
+                  if (user!.age == null &&
+                      user!.allergies == null &&
+                      user!.medicalCondition == null &&
+                      user!.medications == null &&
+                      user!.remarks == null &&
+                      user!.gender == null &&
+                      user!.birthDate == null &&
+                      user!.bloodType == null &&
+                      user!.rhBloodType == null) {
+                    return Card(
+                      elevation: 100,
+                      shape: CircleBorder(),
+                      borderOnForeground: false,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: Colors.white,
+                        ),
+                        height: 420,
+                        width: 300,
+                        child: Column(
+                          children: [
+                            SizedBox(height: 20),
+                            Button2(
+                                textButton: "Fill Out Your Medical Info",
+                                onTap: () async {
+                                  if (await isNetworkAvailable != true) {
+                                    Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => profile2()));
+                                  } else {
+                                    Fluttertoast.showToast(
+                                        msg: "No Internet connection",
+                                        toastLength: Toast.LENGTH_SHORT,
+                                        gravity: ToastGravity.BOTTOM,
+                                        timeInSecForIosWeb: 1,
+                                        backgroundColor: Mycolors.splashback,
+                                        textColor: Mycolors.textcolor,
+                                        fontSize: 16.0);
+                                  }
+                                },
+                                width: 220,
+                                height: 60),
+                            SizedBox(height: 20),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: Text(
+                                  "In case of an emergency, paramedics will be able to quickly access vital information about your health, allergies, medications, and more, potentially saving your life.",
+                                  style: TextStyle(
+                                      color: Mycolors.notpressed,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600)),
+                            )
+                          ],
+                        ),
+                      ),
+                    );
+                  }
+                } else {
                   return Card(
                     elevation: 100,
                     shape: CircleBorder(),
@@ -237,31 +300,7 @@ class _profileoneState extends State<profileone> {
                       ),
                       height: 420,
                       width: 300,
-                      child: Column(
-                        children: [
-                          SizedBox(height: 20),
-                          Button2(
-                              textButton: "Fill Out Your Medical Info",
-                              onTap: () {
-                                Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => profile2()));
-                              },
-                              width: 220,
-                              height: 60),
-                          SizedBox(height: 20),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 8.0),
-                            child: Text(
-                                "In case of an emergency, paramedics will be able to quickly access vital information about your health, allergies, medications, and more, potentially saving your life.",
-                                style: TextStyle(
-                                    color: Mycolors.notpressed,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600)),
-                          )
-                        ],
-                      ),
+                      child: Column(),
                     ),
                   );
                 }

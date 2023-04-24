@@ -3,8 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gradproject/auth.dart';
-import 'package:gradproject/numericpad.dart';
-import 'package:gradproject/repository/user_repository.dart';
 import 'package:gradproject/repository/user_repository.dart';
 import 'package:gradproject/services/auth_service.dart';
 import 'package:gradproject/sos.dart';
@@ -13,7 +11,6 @@ import 'package:gradproject/translations/locale_keys.g.dart';
 import 'package:gradproject/utils/has_network.dart';
 import 'package:gradproject/verify.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
-import 'package:intl_phone_field/phone_number.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class ContinueWithPhone extends StatefulWidget {

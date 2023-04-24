@@ -5,6 +5,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:gradproject/profile1.dart';
 import 'package:gradproject/repository/user_repository.dart';
+import 'package:gradproject/repository/user_repository.dart';
 import 'package:gradproject/style.dart';
 import 'package:flutter_toggle_tab/flutter_toggle_tab.dart';
 import 'package:time_picker_spinner_pop_up/time_picker_spinner_pop_up.dart';
@@ -20,14 +21,19 @@ class profile2 extends StatefulWidget {
 }
 
 class _profile2State extends State<profile2> {
-  var _listGenderText = ["Male", "Female"];
-  var _listBloodType = ["Positive", "Negative"];
-  var _tabSelectedIndexSelected = 0;
-  var _bloodSelectedIndexSelected = 0;
   TextEditingController _date = TextEditingController();
   TextEditingController medicalCond = TextEditingController();
+  final _medicalCond = TextEditingController();
+  final _medications = TextEditingController();
+  final _allergies = TextEditingController();
+  final _remarks = TextEditingController();
   double height = 0;
-  double width = 0;
+  double weight = 0;
+  Gender g = Gender.male;
+
+  static String enumToString(value) {
+    return value.toString().split('.').last;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,20 +61,28 @@ class _profile2State extends State<profile2> {
                               MaterialPageRoute(
                                   builder: (context) => profileone()));
                         },
-                        child: Icon(Icons.arrow_back,
-                            size: 30, color: Mycolors.textcolor)),
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: Icon(Icons.arrow_back,
+                              size: 30, color: Mycolors.textcolor),
+                        )),
                     Text("Medical Card",
                         style:
                             TextStyle(color: Mycolors.textcolor, fontSize: 20)),
                     GestureDetector(
-                        onTap: () {},
-                        child: Icon(Icons.done,
-                            size: 30, color: Mycolors.textcolor))
+                        onTap: () async {
+                          // UserProfile(gender: Gender.male);
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: Icon(Icons.done,
+                              size: 30, color: Mycolors.textcolor),
+                        ))
                   ]),
             ),
             SizedBox(height: 10),
             Padding(
-              padding: const EdgeInsets.only(right: 260.0),
+              padding: const EdgeInsets.only(right: 280.0),
               child: Text(
                 "Basic info".toUpperCase(),
                 style: TextStyle(color: Mycolors.buttonsos, fontSize: 12),
@@ -79,36 +93,42 @@ class _profile2State extends State<profile2> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(right: 57.0),
+                  padding: const EdgeInsets.only(right: 97.0),
                   child: Text("Gender",
                       style:
                           TextStyle(color: Mycolors.textcolor, fontSize: 15)),
                 ),
-                FlutterToggleTab(
-                  width: 50,
-                  height: 24,
-                  borderRadius: 15,
-                  selectedBackgroundColors: [Mycolors.splashback],
-                  unSelectedBackgroundColors: [Mycolors.buttoncolor],
-                  selectedTextStyle: TextStyle(
-                      color: Mycolors.textcolor,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600),
-                  unSelectedTextStyle: TextStyle(
-                      color: Mycolors.fillingcolor,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400),
-                  labels: _listGenderText,
-                  selectedIndex: _tabSelectedIndexSelected,
-                  selectedLabelIndex: (index) {
-                    setState(() {
-                      _tabSelectedIndexSelected = index;
-                    });
+                CustomRadioButton(
+                  height: 29,
+                  enableShape: true,
+                  radius: 20,
+                  buttonTextStyle: ButtonTextStyle(
+                    selectedColor: Mycolors.textcolor,
+                    unSelectedColor: Mycolors.fillingcolor,
+                    textStyle: TextStyle(
+                      fontSize: 12,
+                    ),
+                  ),
+                  unSelectedColor: Mycolors.buttoncolor,
+                  buttonLables: ["Male", "Female"],
+                  buttonValues: [Gender.male, Gender.female],
+                  radioButtonValue: (values) {
+                    g = values;
+                    print(g);
                   },
-                ),
+                  selectedBorderColor: Mycolors.splashback,
+                  unSelectedBorderColor: Mycolors.buttoncolor,
+                  spacing: 0,
+                  horizontal: false,
+                  enableButtonWrap: false,
+                  width: 75,
+                  absoluteZeroSpacing: false,
+                  selectedColor: Mycolors.splashback,
+                  padding: 10,
+                )
               ],
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 30),
             Container(
               width: 300,
               child: TextField(
@@ -151,12 +171,12 @@ class _profile2State extends State<profile2> {
                 },
               ),
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 30),
             Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(right: 270.0),
+                  padding: const EdgeInsets.only(right: 290.0),
                   child: Text("Height ",
                       style:
                           TextStyle(color: Mycolors.textcolor, fontSize: 15)),
@@ -180,12 +200,12 @@ class _profile2State extends State<profile2> {
                 ),
               ],
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 30),
             Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(right: 270.0),
+                  padding: const EdgeInsets.only(right: 290.0),
                   child: Text("Weight ",
                       style:
                           TextStyle(color: Mycolors.textcolor, fontSize: 15)),
@@ -203,15 +223,15 @@ class _profile2State extends State<profile2> {
                   height: 70,
                   onChanged: (value) {
                     setState(() {
-                      width = value;
+                      weight = value;
                     });
                   },
                 ),
               ],
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 30),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Text("Blood Type",
                     style: TextStyle(color: Mycolors.textcolor, fontSize: 15)),
@@ -249,7 +269,7 @@ class _profile2State extends State<profile2> {
                 )
               ],
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 30),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -259,31 +279,39 @@ class _profile2State extends State<profile2> {
                       style:
                           TextStyle(color: Mycolors.textcolor, fontSize: 15)),
                 ),
-                FlutterToggleTab(
-                  width: 50,
-                  height: 24,
-                  borderRadius: 15,
-                  selectedBackgroundColors: [Mycolors.xbutton],
-                  unSelectedBackgroundColors: [Mycolors.numpad],
-                  selectedTextStyle: TextStyle(
-                      color: Mycolors.fillingcolor,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600),
-                  unSelectedTextStyle: TextStyle(
-                      color: Mycolors.textcolor,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400),
-                  labels: _listBloodType,
-                  selectedIndex: _bloodSelectedIndexSelected,
-                  selectedLabelIndex: (index) {
-                    setState(() {
-                      _bloodSelectedIndexSelected = index;
-                    });
+                CustomRadioButton(
+                  height: 29,
+                  enableShape: true,
+                  radius: 20,
+                  buttonTextStyle: ButtonTextStyle(
+                    selectedColor: Mycolors.fillingcolor,
+                    unSelectedColor: Mycolors.textcolor,
+                    textStyle: TextStyle(
+                      fontSize: 10,
+                    ),
+                  ),
+                  unSelectedColor: Mycolors.numpad,
+                  buttonLables: [
+                    "Positive",
+                    "Negative",
+                  ],
+                  buttonValues: ["Positive", "Negative"],
+                  radioButtonValue: (values) {
+                    print(values);
                   },
-                ),
+                  selectedBorderColor: Mycolors.xbutton,
+                  unSelectedBorderColor: Mycolors.numpad,
+                  spacing: 0,
+                  horizontal: false,
+                  enableButtonWrap: false,
+                  width: 75,
+                  absoluteZeroSpacing: false,
+                  selectedColor: Mycolors.xbutton,
+                  padding: 10,
+                )
               ],
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 30),
             Divider(
               color: Mycolors.numpad,
               height: 25,
@@ -291,17 +319,17 @@ class _profile2State extends State<profile2> {
               indent: 5,
               endIndent: 5,
             ),
-            SizedBox(height: 10),
+            SizedBox(height: 20),
             Padding(
-              padding: const EdgeInsets.only(right: 280.0),
+              padding: const EdgeInsets.only(right: 290.0),
               child: Text(
                 "Health".toUpperCase(),
                 style: TextStyle(color: Mycolors.buttonsos, fontSize: 12),
               ),
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 30),
             Container(
-              width: 300,
+              width: 320,
               child: TextFormField(
                   maxLines: 3,
                   controller: medicalCond,
@@ -322,9 +350,9 @@ class _profile2State extends State<profile2> {
                             color: Mycolors.notpressed, width: 3)),
                   )),
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 30),
             Container(
-              width: 300,
+              width: 320,
               child: TextFormField(
                   maxLines: 3,
                   controller: medicalCond,
@@ -345,9 +373,9 @@ class _profile2State extends State<profile2> {
                             color: Mycolors.notpressed, width: 3)),
                   )),
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 30),
             Container(
-              width: 300,
+              width: 320,
               child: TextFormField(
                   maxLines: 3,
                   controller: medicalCond,
@@ -368,9 +396,9 @@ class _profile2State extends State<profile2> {
                             color: Mycolors.notpressed, width: 3)),
                   )),
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 30),
             Container(
-              width: 300,
+              width: 320,
               child: TextFormField(
                   maxLines: 3,
                   controller: medicalCond,

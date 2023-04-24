@@ -13,6 +13,7 @@ import 'package:gradproject/buttonselevated.dart';
 import 'package:gradproject/loadingcontainer.dart';
 import 'package:gradproject/medicalCard.dart';
 import 'package:gradproject/repository/user_repository.dart';
+import 'package:gradproject/sos.dart';
 import 'package:gradproject/style.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
@@ -70,7 +71,10 @@ class _profileoneState extends State<profileone> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.pushReplacement(context,
+                            MaterialPageRoute(builder: (context) => sosPage()));
+                      },
                       child: Icon(
                         Icons.close,
                         size: 30,
@@ -159,15 +163,12 @@ class _profileoneState extends State<profileone> {
                               fontSize: 20,
                               color: Mycolors.textcolor,
                               fontWeight: FontWeight.bold)),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 25.0),
-                        child: Center(
-                          child: Text(user2?.phoneNumber ?? "",
-                              style: TextStyle(
-                                  fontSize: 15,
-                                  color: Mycolors.notpressed,
-                                  fontWeight: FontWeight.w700)),
-                        ),
+                      Center(
+                        child: Text(user2?.phoneNumber ?? "",
+                            style: TextStyle(
+                                fontSize: 15,
+                                color: Mycolors.notpressed,
+                                fontWeight: FontWeight.w700)),
                       ),
                     ],
                   )

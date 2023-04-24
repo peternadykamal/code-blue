@@ -14,7 +14,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:gradproject/services/notification_service.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
-import 'testing/test_sms.dart';
+import 'testing/test_repositroy.dart';
 
 Locale deviceLocale = window.locale;
 String langCode = deviceLocale.languageCode;
@@ -54,7 +54,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     // this function is used for testing methods and features only
     if (kDebugMode) {
-      // testThis().then((value) => {print("test done")});
+      testThis().then((value) => {print("test done")});
     }
 
     return MaterialApp(

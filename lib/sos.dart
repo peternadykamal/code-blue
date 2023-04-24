@@ -6,6 +6,8 @@ import 'package:gradproject/profile1.dart';
 import 'package:gradproject/repository/user_repository.dart';
 import 'package:gradproject/style.dart';
 import 'package:gradproject/translations/locale_keys.g.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:gradproject/utils/has_network.dart';
 
 class sosPage extends StatefulWidget {
   const sosPage({super.key});
@@ -21,15 +23,11 @@ class _sosPageState extends State<sosPage> {
   @override
   void initState() {
     super.initState();
-
     getuser();
   }
 
   void getuser() async {
-    // fetch user info from server
     final fetchedUser = await UserRepository().getUserProfile();
-
-    // update user variable with fetched user
     setState(() {
       user = fetchedUser;
     });
@@ -99,7 +97,41 @@ class _sosPageState extends State<sosPage> {
                     fontWeight: FontWeight.normal)),
             SizedBox(height: 40),
             RawMaterialButton(
-              onPressed: () {},
+              onPressed: () async {
+                // this return an errror
+                // await withInternetConnection([
+                //   () => UserRepository().getUserById('halsdk;fj'),
+                // ]);
+                // to show how deal with an results list
+                final results = await withInternetConnection([
+                  () => UserRepository()
+                      .getUserById('mOWCpqtfbKenJvEblEXEBTgy1uP2'),
+                  () => UserRepository()
+                      .checkUserExist('mOWCpqtfbKenJvEblEXEBTgy1uP2'),
+                ]);
+                for (dynamic object in results) {
+                  if (object is UserProfile) {
+                    print(object.username);
+                  } else if (object is bool) {
+                    print(object);
+                  }
+                }
+                // example on how try catch block works
+                // try {
+                //   await UserRepository().getUserById('halsdk;fj');
+                // } catch (e) {
+                //   print('object');
+                //   // print error in flutter toast
+                //   Fluttertoast.showToast(
+                //       msg: e.toString(),
+                //       toastLength: Toast.LENGTH_SHORT,
+                //       gravity: ToastGravity.BOTTOM,
+                //       timeInSecForIosWeb: 1,
+                //       backgroundColor: Colors.red,
+                //       textColor: Colors.white,
+                //       fontSize: 16.0);
+                // }
+              },
               elevation: 0.0,
               highlightElevation: 15.0,
               fillColor: Color(0xFFBCDEFA),

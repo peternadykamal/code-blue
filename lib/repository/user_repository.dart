@@ -361,4 +361,18 @@ class UserRepository {
       throw Exception("Error changing profile image: $e");
     }
   }
+
+  /// this function check if user is in the database
+  Future<bool> checkUserExist(String userId) async {
+    try {
+      final snapshot = await _usersRef.child(userId).get();
+      if (snapshot.exists) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      throw Exception("Error checking user exist: $e");
+    }
+  }
 }

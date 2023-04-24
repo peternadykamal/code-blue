@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -12,6 +13,7 @@ import 'package:time_picker_spinner_pop_up/time_picker_spinner_pop_up.dart';
 import 'package:bottom_picker/bottom_picker.dart';
 import 'package:custom_radio_grouped_button/custom_radio_grouped_button.dart';
 import 'package:horizontal_picker/horizontal_picker.dart';
+import 'package:age_calculator/age_calculator.dart';
 
 class profile2 extends StatefulWidget {
   const profile2({super.key});
@@ -21,15 +23,18 @@ class profile2 extends StatefulWidget {
 }
 
 class _profile2State extends State<profile2> {
+  DateTime? date;
   TextEditingController _date = TextEditingController();
-  TextEditingController medicalCond = TextEditingController();
   final _medicalCond = TextEditingController();
   final _medications = TextEditingController();
   final _allergies = TextEditingController();
   final _remarks = TextEditingController();
-  double height = 0;
-  double weight = 0;
-  Gender g = Gender.male;
+  double? height;
+  double? weight;
+  Gender? g;
+  BloodType? B;
+  RhBloodType? RH;
+  int? duration;
 
   static String enumToString(value) {
     return value.toString().split('.').last;
@@ -71,7 +76,32 @@ class _profile2State extends State<profile2> {
                             TextStyle(color: Mycolors.textcolor, fontSize: 20)),
                     GestureDetector(
                         onTap: () async {
-                          // UserProfile(gender: Gender.male);
+                          UserProfile currentUser =
+                              await UserRepository().getUserProfile();
+                          String email = currentUser.email;
+                          String username = currentUser.username;
+
+                          UserRepository().updateUserProfile(
+                            UserProfile(
+                              email: email,
+                              username: username,
+                              gender: g,
+                              bloodType: B,
+                              rhBloodType: RH,
+                              height: height,
+                              weight: weight,
+                              allergies: _allergies.text,
+                              medicalCondition: _medicalCond.text,
+                              medications: _medications.text,
+                              remarks: _remarks.text,
+                              birthDate: date,
+                            ),
+                          );
+
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => profileone()));
                         },
                         child: Padding(
                           padding: const EdgeInsets.only(right: 8.0),
@@ -253,9 +283,14 @@ class _profile2State extends State<profile2> {
                     "O",
                     "AB",
                   ],
-                  buttonValues: ["A", "B", "O", "AB"],
+                  buttonValues: [
+                    BloodType.a,
+                    BloodType.b,
+                    BloodType.o,
+                    BloodType.ab
+                  ],
                   radioButtonValue: (values) {
-                    print(values);
+                    B = values;
                   },
                   selectedBorderColor: Mycolors.xbutton,
                   unSelectedBorderColor: Mycolors.numpad,
@@ -295,9 +330,9 @@ class _profile2State extends State<profile2> {
                     "Positive",
                     "Negative",
                   ],
-                  buttonValues: ["Positive", "Negative"],
+                  buttonValues: [RhBloodType.positive, RhBloodType.negative],
                   radioButtonValue: (values) {
-                    print(values);
+                    RH = values;
                   },
                   selectedBorderColor: Mycolors.xbutton,
                   unSelectedBorderColor: Mycolors.numpad,
@@ -332,7 +367,7 @@ class _profile2State extends State<profile2> {
               width: 320,
               child: TextFormField(
                   maxLines: 3,
-                  controller: medicalCond,
+                  controller: _medicalCond,
                   keyboardType: TextInputType.text,
                   obscureText: false,
                   decoration: InputDecoration(
@@ -355,7 +390,7 @@ class _profile2State extends State<profile2> {
               width: 320,
               child: TextFormField(
                   maxLines: 3,
-                  controller: medicalCond,
+                  controller: _medications,
                   keyboardType: TextInputType.text,
                   obscureText: false,
                   decoration: InputDecoration(
@@ -378,7 +413,7 @@ class _profile2State extends State<profile2> {
               width: 320,
               child: TextFormField(
                   maxLines: 3,
-                  controller: medicalCond,
+                  controller: _allergies,
                   keyboardType: TextInputType.text,
                   obscureText: false,
                   decoration: InputDecoration(
@@ -401,7 +436,7 @@ class _profile2State extends State<profile2> {
               width: 320,
               child: TextFormField(
                   maxLines: 3,
-                  controller: medicalCond,
+                  controller: _remarks,
                   keyboardType: TextInputType.text,
                   obscureText: false,
                   decoration: InputDecoration(

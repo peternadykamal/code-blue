@@ -233,12 +233,49 @@ class UserRepository {
         final snapshot = await _usersRef.child(user!.uid).get();
         if (snapshot.exists) {
           final data = snapshot.children;
-          return UserProfile.fromMapToUserProfile(data);
+          var email = '';
+          var username = '';
+          String? profileImageUrl;
+
+          for (var snapshot in data) {
+            switch (snapshot.key) {
+              case 'email':
+                email = snapshot.value.toString();
+                break;
+              case 'username':
+                username = snapshot.value.toString();
+                break;
+              case 'profileImageurl':
+                profileImageUrl = snapshot.value.toString();
+                break;
+
+              default:
+                break;
+            }
+          }
+          return UserProfile(
+              email: email,
+              username: username,
+              profileImageUrl: profileImageUrl);
         } else {
           throw Exception('User does not exist');
         }
       } else {
         throw Exception('User is not logged in');
+      }
+    } catch (e) {
+      throw Exception("Error getting user profile: $e");
+    }
+  }
+
+  Future<UserProfile> getUserById(String userId) async {
+    try {
+      final snapshot = await _usersRef.child(userId).get();
+      if (snapshot.exists) {
+        final data = snapshot.children;
+        return UserProfile.fromMapToUserProfile(data);
+      } else {
+        throw Exception('User does not exist');
       }
     } catch (e) {
       throw Exception("Error getting user profile: $e");

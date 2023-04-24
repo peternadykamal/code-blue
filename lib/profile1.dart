@@ -33,10 +33,10 @@ class _profileoneState extends State<profileone> {
   File? image;
   final imagePicker = ImagePicker();
   UserProfile? user;
-  User? user2;
+  User? firebaseUser;
 
   uploadImage() async {
-    var pickedImage = await imagePicker.getImage(source: ImageSource.camera);
+    var pickedImage = await imagePicker.pickImage(source: ImageSource.camera);
 
     if (pickedImage != null) {
       setState(() {
@@ -52,9 +52,12 @@ class _profileoneState extends State<profileone> {
   }
 
   void getuser() async {
-    user = await UserRepository().getUserProfile();
-    user2 = FirebaseAuth.instance.currentUser;
-    setState(() {});
+    final fetchedUser = await UserRepository().getUserProfile();
+    final fetchedFirebaseUser = FirebaseAuth.instance.currentUser;
+    setState(() {
+      user = fetchedUser;
+      firebaseUser = fetchedFirebaseUser;
+    });
   }
 
   @override

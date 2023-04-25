@@ -14,7 +14,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:gradproject/services/notification_service.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
-import 'testing/test_repositroy.dart';
+import 'testing/test_repository.dart';
 
 Locale deviceLocale = window.locale;
 String langCode = deviceLocale.languageCode;

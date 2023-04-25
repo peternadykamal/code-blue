@@ -64,180 +64,236 @@ class _profileoneState extends State<profileone> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Mycolors.splashback,
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              Container(
-                margin: EdgeInsets.all(20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        Navigator.pushReplacement(context,
-                            MaterialPageRoute(builder: (context) => sosPage()));
-                      },
-                      child: Icon(
-                        Icons.close,
-                        size: 30,
-                        color: Mycolors.textcolor,
+    if (user == null || firebaseUser == null) {
+      return loadingContainer();
+    } else {
+      return SafeArea(
+        child: Scaffold(
+          backgroundColor: Mycolors.splashback,
+          body: SingleChildScrollView(
+            child: Column(
+              children: [
+                Container(
+                  margin: EdgeInsets.all(20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => sosPage()));
+                        },
+                        child: Icon(
+                          Icons.close,
+                          size: 30,
+                          color: Mycolors.textcolor,
+                        ),
                       ),
-                    ),
-                    PopupMenuButton(
-                      iconSize: 28,
-                      itemBuilder: (context) => [
-                        PopupMenuItem(
-                            child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                AuthService().signOut();
-                                Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => authPage()));
-                              },
-                              child: Text("Log Out",
+                      PopupMenuButton(
+                        iconSize: 28,
+                        itemBuilder: (context) => [
+                          PopupMenuItem(
+                              child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  AuthService().signOut();
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => authPage()));
+                                },
+                                child: Text("Log Out",
+                                    style: TextStyle(
+                                        color: Mycolors.buttoncolor,
+                                        fontSize: 18)),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(0),
+                                child: Icon(Icons.logout,
+                                    color: Mycolors.buttoncolor, size: 20),
+                              )
+                            ],
+                          )),
+                          PopupMenuItem(
+                              child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Text("Settings",
                                   style: TextStyle(
                                       color: Mycolors.buttoncolor,
                                       fontSize: 18)),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(0),
-                              child: Icon(Icons.logout,
-                                  color: Mycolors.buttoncolor, size: 20),
-                            )
-                          ],
-                        )),
-                        PopupMenuItem(
-                            child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Text("Settings",
-                                style: TextStyle(
-                                    color: Mycolors.buttoncolor, fontSize: 18)),
-                            Padding(
-                              padding: const EdgeInsets.all(0),
-                              child: Icon(Icons.settings,
-                                  color: Mycolors.buttoncolor, size: 20),
-                            )
-                          ],
-                        ))
+                              Padding(
+                                padding: const EdgeInsets.all(0),
+                                child: Icon(Icons.settings,
+                                    color: Mycolors.buttoncolor, size: 20),
+                              )
+                            ],
+                          ))
+                        ],
+                        child: Container(
+                            margin: EdgeInsets.only(left: 30),
+                            height: 25,
+                            width: 25,
+                            child: SvgPicture.asset(
+                                "assets/images/Vector (2).svg")),
+                      )
+                    ],
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Stack(
+                      alignment: Alignment.bottomRight,
+                      children: [
+                        image == null
+                            ? Image.asset("assets/images/Ellipse24.png",
+                                scale: 1.0)
+                            : CircleAvatar(
+                                radius: 40, backgroundImage: FileImage(image!)),
+                        GestureDetector(
+                          onTap: uploadImage,
+                          child: CircleAvatar(
+                            radius: 15,
+                            child: Icon(Icons.camera_alt_outlined,
+                                color: Mycolors.textcolor),
+                            backgroundColor: Colors.white,
+                          ),
+                        ),
                       ],
-                      child: Container(
-                          margin: EdgeInsets.only(left: 30),
-                          height: 25,
-                          width: 25,
-                          child:
-                              SvgPicture.asset("assets/images/Vector (2).svg")),
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(user!.email,
+                            style: TextStyle(
+                                fontSize: 20,
+                                color: Mycolors.textcolor,
+                                fontWeight: FontWeight.bold)),
+                        Center(
+                          child: Text(firebaseUser?.phoneNumber ?? "",
+                              style: TextStyle(
+                                  fontSize: 15,
+                                  color: Mycolors.notpressed,
+                                  fontWeight: FontWeight.w700)),
+                        ),
+                      ],
                     )
                   ],
                 ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Stack(
-                    alignment: Alignment.bottomRight,
-                    children: [
-                      image == null
-                          ? Image.asset("assets/images/Ellipse24.png",
-                              scale: 1.0)
-                          : CircleAvatar(
-                              radius: 40, backgroundImage: FileImage(image!)),
-                      GestureDetector(
-                        onTap: uploadImage,
-                        child: CircleAvatar(
-                          radius: 15,
-                          child: Icon(Icons.camera_alt_outlined,
-                              color: Mycolors.textcolor),
-                          backgroundColor: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(user!.email,
-                          style: TextStyle(
-                              fontSize: 20,
-                              color: Mycolors.textcolor,
-                              fontWeight: FontWeight.bold)),
-                      Center(
-                        child: Text(firebaseUser?.phoneNumber ?? "",
-                            style: TextStyle(
-                                fontSize: 15,
-                                color: Mycolors.notpressed,
-                                fontWeight: FontWeight.w700)),
-                      ),
-                    ],
-                  )
-                ],
-              ),
-              SizedBox(height: 20),
-              Container(
-                width: 300,
-                height: 40,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Mycolors.buttoncolor),
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Expanded(
-                        child: InkWell(
-                            onTap: () {
-                              setState(() {
-                                selectMedical = true;
-                                selectCare = false;
-                              });
-                            },
-                            child: elevButtons(
-                                text: "Medical Card",
-                                elevcolor: selectMedical
-                                    ? Colors.white
-                                    : Mycolors.buttoncolor,
-                                bordercolor: selectMedical
-                                    ? Mycolors.textcolor
-                                    : Mycolors.buttoncolor)),
-                      ),
-                      Expanded(
+                SizedBox(height: 20),
+                Container(
+                  width: 300,
+                  height: 40,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Mycolors.buttoncolor),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Expanded(
                           child: InkWell(
-                        onTap: () {
-                          setState(() {
-                            selectMedical = false;
-                            selectCare = true;
-                          });
-                        },
-                        child: elevButtons(
-                            text: "Care Givers",
-                            elevcolor: selectCare
-                                ? Colors.white
-                                : Mycolors.buttoncolor,
-                            bordercolor: selectCare
-                                ? Mycolors.textcolor
-                                : Mycolors.buttoncolor),
-                      )),
-                    ]),
-              ),
-              SizedBox(height: 20),
-              (() {
-                if (selectMedical) {
-                  print(user!.bloodType);
-                  if (user!.age == null &&
-                      user!.allergies == null &&
-                      user!.medicalCondition == null &&
-                      user!.medications == null &&
-                      user!.remarks == null &&
-                      user!.gender == null &&
-                      user!.birthDate == null &&
-                      user!.bloodType == null &&
-                      user!.rhBloodType == null) {
+                              onTap: () {
+                                setState(() {
+                                  selectMedical = true;
+                                  selectCare = false;
+                                });
+                              },
+                              child: elevButtons(
+                                  text: "Medical Card",
+                                  elevcolor: selectMedical
+                                      ? Colors.white
+                                      : Mycolors.buttoncolor,
+                                  bordercolor: selectMedical
+                                      ? Mycolors.textcolor
+                                      : Mycolors.buttoncolor)),
+                        ),
+                        Expanded(
+                            child: InkWell(
+                          onTap: () {
+                            setState(() {
+                              selectMedical = false;
+                              selectCare = true;
+                            });
+                          },
+                          child: elevButtons(
+                              text: "Care Givers",
+                              elevcolor: selectCare
+                                  ? Colors.white
+                                  : Mycolors.buttoncolor,
+                              bordercolor: selectCare
+                                  ? Mycolors.textcolor
+                                  : Mycolors.buttoncolor),
+                        )),
+                      ]),
+                ),
+                SizedBox(height: 20),
+                (() {
+                  if (selectMedical) {
+                    if (user!.age == null &&
+                        user!.allergies == null &&
+                        user!.medicalCondition == null &&
+                        user!.medications == null &&
+                        user!.remarks == null &&
+                        user!.gender == null &&
+                        user!.birthDate == null &&
+                        user!.bloodType == null &&
+                        user!.rhBloodType == null) {
+                      return Card(
+                        elevation: 100,
+                        shape: CircleBorder(),
+                        borderOnForeground: false,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: Colors.white,
+                          ),
+                          height: 401,
+                          width: 320,
+                          child: Column(
+                            children: [
+                              SizedBox(height: 20),
+                              Button2(
+                                  textButton: "Fill Out Your Medical Info",
+                                  onTap: () async {
+                                    if (await isNetworkAvailable != true) {
+                                      Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  profile2()));
+                                    } else {
+                                      Fluttertoast.showToast(
+                                          msg: "No Internet connection",
+                                          toastLength: Toast.LENGTH_SHORT,
+                                          gravity: ToastGravity.BOTTOM,
+                                          timeInSecForIosWeb: 1,
+                                          backgroundColor: Mycolors.splashback,
+                                          textColor: Mycolors.textcolor,
+                                          fontSize: 16.0);
+                                    }
+                                  },
+                                  width: 220,
+                                  height: 60),
+                              SizedBox(height: 20),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 8.0),
+                                child: Text(
+                                    "In case of an emergency, paramedics will be able to quickly access vital information about your health, allergies, medications, and more, potentially saving your life.",
+                                    style: TextStyle(
+                                        color: Mycolors.notpressed,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600)),
+                              )
+                            ],
+                          ),
+                        ),
+                      );
+                    }
                     return Card(
                       elevation: 100,
                       shape: CircleBorder(),
@@ -247,47 +303,13 @@ class _profileoneState extends State<profileone> {
                           borderRadius: BorderRadius.circular(20),
                           color: Colors.white,
                         ),
-                        height: 401,
-                        width: 320,
-                        child: Column(
-                          children: [
-                            SizedBox(height: 20),
-                            Button2(
-                                textButton: "Fill Out Your Medical Info",
-                                onTap: () async {
-                                  if (await isNetworkAvailable != true) {
-                                    Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => profile2()));
-                                  } else {
-                                    Fluttertoast.showToast(
-                                        msg: "No Internet connection",
-                                        toastLength: Toast.LENGTH_SHORT,
-                                        gravity: ToastGravity.BOTTOM,
-                                        timeInSecForIosWeb: 1,
-                                        backgroundColor: Mycolors.splashback,
-                                        textColor: Mycolors.textcolor,
-                                        fontSize: 16.0);
-                                  }
-                                },
-                                width: 220,
-                                height: 60),
-                            SizedBox(height: 20),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 8.0),
-                              child: Text(
-                                  "In case of an emergency, paramedics will be able to quickly access vital information about your health, allergies, medications, and more, potentially saving your life.",
-                                  style: TextStyle(
-                                      color: Mycolors.notpressed,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600)),
-                            )
-                          ],
-                        ),
+                        height: 420,
+                        width: 300,
+                        child: Column(),
                       ),
                     );
                   }
+
                   return Card(
                     elevation: 100,
                     shape: CircleBorder(),
@@ -297,93 +319,78 @@ class _profileoneState extends State<profileone> {
                         borderRadius: BorderRadius.circular(20),
                         color: Colors.white,
                       ),
-                      height: 420,
-                      width: 300,
-                      child: Column(),
-                    ),
-                  );
-                }
-
-                return Card(
-                  elevation: 100,
-                  shape: CircleBorder(),
-                  borderOnForeground: false,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.white,
-                    ),
-                    height: 401,
-                    width: 320,
-                    child: Column(
-                      children: [
-                        SizedBox(height: 20),
-                        Card(
-                          elevation: 10,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Container(
-                            width: 300,
-                            height: 36,
-                            child: TextField(
-                                decoration: InputDecoration(
-                                    hintStyle: TextStyle(
-                                        color: Mycolors.notpressed,
-                                        fontSize: 17,
-                                        fontWeight: FontWeight.normal),
-                                    hintText: "Search".padLeft(17),
-                                    contentPadding: EdgeInsets.only(top: 8),
-                                    filled: true,
-                                    fillColor: Mycolors.fillingcolor,
-                                    isDense: true,
-                                    border: InputBorder.none)),
-                          ),
-                        ),
-                        SizedBox(height: 30),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: Text(
-                              " We understand that emergencies can be overwhelming, which is why it's important to have a support system in place. By adding a loved one or caregiver to be notified in case of an emergency.",
-                              style: TextStyle(
-                                  color: Mycolors.notpressed,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600)),
-                        ),
-                        SizedBox(height: 170),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 11.0),
-                          child: RichText(
-                            text: TextSpan(
-                              text: " Here's how it works:  ",
-                              style: TextStyle(
-                                color: Mycolors.textcolor,
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              children: <TextSpan>[
-                                TextSpan(
-                                  text:
-                                      " if you ever press the SOS button in our application, we'll send an SMS and app notification to your caregivers. This will let them know that you need help and provide them with your location information.",
-                                  style: TextStyle(
-                                    color: Mycolors.notpressed,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
+                      height: 401,
+                      width: 320,
+                      child: Column(
+                        children: [
+                          SizedBox(height: 20),
+                          Card(
+                            elevation: 10,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Container(
+                              width: 300,
+                              height: 36,
+                              child: TextField(
+                                  decoration: InputDecoration(
+                                      hintStyle: TextStyle(
+                                          color: Mycolors.notpressed,
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.normal),
+                                      hintText: "Search".padLeft(17),
+                                      contentPadding: EdgeInsets.only(top: 8),
+                                      filled: true,
+                                      fillColor: Mycolors.fillingcolor,
+                                      isDense: true,
+                                      border: InputBorder.none)),
                             ),
                           ),
-                        )
-                      ],
+                          SizedBox(height: 30),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: Text(
+                                " We understand that emergencies can be overwhelming, which is why it's important to have a support system in place. By adding a loved one or caregiver to be notified in case of an emergency.",
+                                style: TextStyle(
+                                    color: Mycolors.notpressed,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600)),
+                          ),
+                          SizedBox(height: 170),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 11.0),
+                            child: RichText(
+                              text: TextSpan(
+                                text: " Here's how it works:  ",
+                                style: TextStyle(
+                                  color: Mycolors.textcolor,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                children: <TextSpan>[
+                                  TextSpan(
+                                    text:
+                                        " if you ever press the SOS button in our application, we'll send an SMS and app notification to your caregivers. This will let them know that you need help and provide them with your location information.",
+                                    style: TextStyle(
+                                      color: Mycolors.notpressed,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              }())
-            ],
+                  );
+                }())
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
+    }
   }
 }

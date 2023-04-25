@@ -85,8 +85,6 @@ class RelationRepository {
           .orderByChild('userId2')
           .equalTo(currentUser.uid)
           .get();
-      final reversedRelationsMap = reversedRelationsSnapshot.value ?? {};
-      print(reversedRelationsSnapshot.value);
       final List<Relation> relations = [];
       relationsSnapshot.children.forEach((element) {
         final relation = Relation(

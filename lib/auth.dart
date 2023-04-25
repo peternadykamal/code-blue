@@ -301,8 +301,6 @@ class _authPageState extends State<authPage> {
                                         return;
                                       }
                                       if (mounted) {
-                                        // TODO: navigate to home page
-
                                         Navigator.pushReplacement(
                                             context,
                                             MaterialPageRoute(

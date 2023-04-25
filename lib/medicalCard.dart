@@ -84,6 +84,7 @@ class _profile2State extends State<profile2> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => profileone()));
+
                           UserRepository().updateUserProfile(
                             UserProfile(
                               email: email,

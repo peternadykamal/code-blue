@@ -46,7 +46,6 @@ class _VerifyPhoneState extends State<VerifyPhone> {
           phoneNumber: widget.phoneNumber);
       if (await isNetworkAvailable()) {
         if (await isNetworkAvailable()) {
-          await UserRepository().updateUserProfile(user);
           await AuthService().signUpWithEmail(
             email: widget.email,
             password: widget.pass,
@@ -55,6 +54,7 @@ class _VerifyPhoneState extends State<VerifyPhone> {
               ?.linkWithCredential(credential);
           await FirebaseAuth.instance.currentUser
               ?.updateDisplayName(widget.username);
+          await UserRepository().updateUserProfile(user);
         }
       }
       if (mounted) {
@@ -162,8 +162,6 @@ class _VerifyPhoneState extends State<VerifyPhone> {
                                   phoneNumber: widget.phoneNumber,
                                 );
                                 if (await isNetworkAvailable()) {
-                                  await UserRepository()
-                                      .updateUserProfile(user);
                                   await AuthService().signUpWithEmail(
                                     email: widget.email,
                                     password: widget.pass,
@@ -172,6 +170,8 @@ class _VerifyPhoneState extends State<VerifyPhone> {
                                       ?.linkWithCredential(credential);
                                   await FirebaseAuth.instance.currentUser
                                       ?.updateDisplayName(widget.username);
+                                  await UserRepository()
+                                      .updateUserProfile(user);
                                 }
                                 if (mounted) {
                                   Navigator.pushReplacement(

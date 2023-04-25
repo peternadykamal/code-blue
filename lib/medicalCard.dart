@@ -80,6 +80,10 @@ class _profile2State extends State<profile2> {
                               await UserRepository().getUserProfile();
                           String email = currentUser.email;
                           String username = currentUser.username;
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => profileone()));
 
                           UserRepository().updateUserProfile(
                             UserProfile(
@@ -97,11 +101,6 @@ class _profile2State extends State<profile2> {
                               birthDate: date,
                             ),
                           );
-
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => profileone()));
                         },
                         child: Padding(
                           padding: const EdgeInsets.only(right: 8.0),

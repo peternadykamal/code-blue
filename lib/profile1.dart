@@ -247,8 +247,8 @@ class _profileoneState extends State<profileone> {
                           borderRadius: BorderRadius.circular(20),
                           color: Colors.white,
                         ),
-                        height: 420,
-                        width: 300,
+                        height: 401,
+                        width: 320,
                         child: Column(
                           children: [
                             SizedBox(height: 20),
@@ -288,7 +288,6 @@ class _profileoneState extends State<profileone> {
                       ),
                     );
                   }
-                } else {
                   return Card(
                     elevation: 100,
                     shape: CircleBorder(),
@@ -304,6 +303,7 @@ class _profileoneState extends State<profileone> {
                     ),
                   );
                 }
+
                 return Card(
                   elevation: 100,
                   shape: CircleBorder(),
@@ -313,8 +313,70 @@ class _profileoneState extends State<profileone> {
                       borderRadius: BorderRadius.circular(20),
                       color: Colors.white,
                     ),
-                    height: 420,
-                    width: 300,
+                    height: 401,
+                    width: 320,
+                    child: Column(
+                      children: [
+                        SizedBox(height: 20),
+                        Card(
+                          elevation: 10,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Container(
+                            width: 300,
+                            height: 36,
+                            child: TextField(
+                                decoration: InputDecoration(
+                                    hintStyle: TextStyle(
+                                        color: Mycolors.notpressed,
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.normal),
+                                    hintText: "Search".padLeft(17),
+                                    contentPadding: EdgeInsets.only(top: 8),
+                                    filled: true,
+                                    fillColor: Mycolors.fillingcolor,
+                                    isDense: true,
+                                    border: InputBorder.none)),
+                          ),
+                        ),
+                        SizedBox(height: 30),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: Text(
+                              " We understand that emergencies can be overwhelming, which is why it's important to have a support system in place. By adding a loved one or caregiver to be notified in case of an emergency.",
+                              style: TextStyle(
+                                  color: Mycolors.notpressed,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600)),
+                        ),
+                        SizedBox(height: 170),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 11.0),
+                          child: RichText(
+                            text: TextSpan(
+                              text: " Here's how it works:  ",
+                              style: TextStyle(
+                                color: Mycolors.textcolor,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              children: <TextSpan>[
+                                TextSpan(
+                                  text:
+                                      " if you ever press the SOS button in our application, we'll send an SMS and app notification to your caregivers. This will let them know that you need help and provide them with your location information.",
+                                  style: TextStyle(
+                                    color: Mycolors.notpressed,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 );
               }())

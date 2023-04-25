@@ -88,6 +88,8 @@ class _profile2State extends State<profile2> {
                             UserProfile(
                               email: email,
                               username: username,
+                              phoneNumber: FirebaseAuth
+                                  .instance.currentUser!.phoneNumber!,
                               gender: g,
                               bloodType: B,
                               rhBloodType: RH,

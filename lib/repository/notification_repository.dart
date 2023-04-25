@@ -147,9 +147,17 @@ class NotificationRepository {
   /// 2. send a request to the server to send a notification to the user (works only if the user is online)
   ///  return true if the server return 200 status code and if the user is online
   /// return false if the server return a code other than 200 or if the user is offline
-  Future<bool> pushNotificationToUser(Notification notification) async {
+  /// ```dart
+  /// final result = await pushNotificationToUser(notification);
+  /// if (result['success']) {
+  ///     final notificationId = result['notificationId'];
+  ///     // do something with the notificationId
+  /// }
+  /// ```
+  Future<Map<String, dynamic>> pushNotificationToUser(
+      Notification notification) async {
     // check if the user is logged in
-    if (user == null) return false;
+    if (user == null) return {'success': false};
 
     // create a new notification
     String notificationId = await createNotification(notification);
@@ -162,6 +170,16 @@ class NotificationRepository {
     final body =
         jsonEncode({'idToken': idToken, 'notificationId': notificationId});
     final response = await http.post(url, headers: headers, body: body);
-    return response.statusCode == 200;
+
+    if (response.statusCode != 200) {
+      // delete the notification if the server return a code other than 200
+      await deleteNotification(notificationId);
+      notificationId = '';
+    }
+
+    return {
+      'success': response.statusCode == 200,
+      'notificationId': notificationId
+    };
   }
 }

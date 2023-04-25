@@ -1,5 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:gradproject/repository/user_repository.dart';
 
 class Relation {
   String userId1; //patient
@@ -56,19 +57,16 @@ class RelationRepository {
   final _auth = FirebaseAuth.instance;
   Future<void> addRelation(String userId) async {
     // check if userId is in the database where user id is the key
-    final userSnapshot = await _database
-        .ref()
-        .child('users')
-        .orderByKey()
-        .equalTo(userId)
-        .once();
-    if (userSnapshot.snapshot.value == null) return;
+    bool isUserExist = await UserRepository().checkUserExist(userId);
+    if (!isUserExist) throw Exception('User is not exist');
 
     final currentUser = _auth.currentUser;
     if (currentUser != null) {
       final relation = Relation(userId1: currentUser.uid, userId2: userId);
       final relationMap = Relation.fromRelationsToMap(relation);
       await _database.ref().child('relations').push().set(relationMap);
+    } else {
+      throw Exception('User is not logged in');
     }
   }
 
@@ -109,7 +107,7 @@ class RelationRepository {
     return [];
   }
 
-  Future<void> deleteRelation(String relationId) {
-    return _database.ref().child('relations').child(relationId).remove();
+  Future<void> deleteRelation(String relationId) async {
+    await _database.ref().child('relations').child(relationId).remove();
   }
 }

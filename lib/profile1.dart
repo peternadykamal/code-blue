@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gradproject/auth.dart';
 import 'package:gradproject/button.dart';
 import 'package:gradproject/button2.dart';
@@ -13,7 +14,9 @@ import 'package:gradproject/buttonselevated.dart';
 import 'package:gradproject/loadingcontainer.dart';
 import 'package:gradproject/medicalCard.dart';
 import 'package:gradproject/repository/user_repository.dart';
+import 'package:gradproject/sos.dart';
 import 'package:gradproject/style.dart';
+import 'package:gradproject/utils/has_network.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 import 'package:gradproject/services/auth_service.dart';
@@ -32,10 +35,10 @@ class _profileoneState extends State<profileone> {
   File? image;
   final imagePicker = ImagePicker();
   UserProfile? user;
-  User? user2;
+  User? firebaseUser;
 
   uploadImage() async {
-    var pickedImage = await imagePicker.getImage(source: ImageSource.camera);
+    var pickedImage = await imagePicker.pickImage(source: ImageSource.camera);
 
     if (pickedImage != null) {
       setState(() {
@@ -51,9 +54,12 @@ class _profileoneState extends State<profileone> {
   }
 
   void getuser() async {
-    user = await UserRepository().getUserProfile();
-    user2 = FirebaseAuth.instance.currentUser;
-    setState(() {});
+    final fetchedUser = await UserRepository().getUserProfile();
+    final fetchedFirebaseUser = FirebaseAuth.instance.currentUser;
+    setState(() {
+      user = fetchedUser;
+      firebaseUser = fetchedFirebaseUser;
+    });
   }
 
   @override
@@ -70,7 +76,10 @@ class _profileoneState extends State<profileone> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.pushReplacement(context,
+                            MaterialPageRoute(builder: (context) => sosPage()));
+                      },
                       child: Icon(
                         Icons.close,
                         size: 30,
@@ -159,15 +168,12 @@ class _profileoneState extends State<profileone> {
                               fontSize: 20,
                               color: Mycolors.textcolor,
                               fontWeight: FontWeight.bold)),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 25.0),
-                        child: Center(
-                          child: Text(user2?.phoneNumber ?? "",
-                              style: TextStyle(
-                                  fontSize: 15,
-                                  color: Mycolors.notpressed,
-                                  fontWeight: FontWeight.w700)),
-                        ),
+                      Center(
+                        child: Text(firebaseUser?.phoneNumber ?? "",
+                            style: TextStyle(
+                                fontSize: 15,
+                                color: Mycolors.notpressed,
+                                fontWeight: FontWeight.w700)),
                       ),
                     ],
                   )
@@ -222,6 +228,66 @@ class _profileoneState extends State<profileone> {
               SizedBox(height: 20),
               (() {
                 if (selectMedical) {
+                  print(user!.bloodType);
+                  if (user!.age == null &&
+                      user!.allergies == null &&
+                      user!.medicalCondition == null &&
+                      user!.medications == null &&
+                      user!.remarks == null &&
+                      user!.gender == null &&
+                      user!.birthDate == null &&
+                      user!.bloodType == null &&
+                      user!.rhBloodType == null) {
+                    return Card(
+                      elevation: 100,
+                      shape: CircleBorder(),
+                      borderOnForeground: false,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: Colors.white,
+                        ),
+                        height: 401,
+                        width: 320,
+                        child: Column(
+                          children: [
+                            SizedBox(height: 20),
+                            Button2(
+                                textButton: "Fill Out Your Medical Info",
+                                onTap: () async {
+                                  if (await isNetworkAvailable != true) {
+                                    Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => profile2()));
+                                  } else {
+                                    Fluttertoast.showToast(
+                                        msg: "No Internet connection",
+                                        toastLength: Toast.LENGTH_SHORT,
+                                        gravity: ToastGravity.BOTTOM,
+                                        timeInSecForIosWeb: 1,
+                                        backgroundColor: Mycolors.splashback,
+                                        textColor: Mycolors.textcolor,
+                                        fontSize: 16.0);
+                                  }
+                                },
+                                width: 220,
+                                height: 60),
+                            SizedBox(height: 20),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: Text(
+                                  "In case of an emergency, paramedics will be able to quickly access vital information about your health, allergies, medications, and more, potentially saving your life.",
+                                  style: TextStyle(
+                                      color: Mycolors.notpressed,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600)),
+                            )
+                          ],
+                        ),
+                      ),
+                    );
+                  }
                   return Card(
                     elevation: 100,
                     shape: CircleBorder(),
@@ -233,34 +299,11 @@ class _profileoneState extends State<profileone> {
                       ),
                       height: 420,
                       width: 300,
-                      child: Column(
-                        children: [
-                          SizedBox(height: 20),
-                          Button2(
-                              textButton: "Fill Out Your Medical Info",
-                              onTap: () {
-                                Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => profile2()));
-                              },
-                              width: 220,
-                              height: 60),
-                          SizedBox(height: 20),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 8.0),
-                            child: Text(
-                                "In case of an emergency, paramedics will be able to quickly access vital information about your health, allergies, medications, and more, potentially saving your life.",
-                                style: TextStyle(
-                                    color: Mycolors.notpressed,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600)),
-                          )
-                        ],
-                      ),
+                      child: Column(),
                     ),
                   );
                 }
+
                 return Card(
                   elevation: 100,
                   shape: CircleBorder(),
@@ -270,8 +313,70 @@ class _profileoneState extends State<profileone> {
                       borderRadius: BorderRadius.circular(20),
                       color: Colors.white,
                     ),
-                    height: 420,
-                    width: 300,
+                    height: 401,
+                    width: 320,
+                    child: Column(
+                      children: [
+                        SizedBox(height: 20),
+                        Card(
+                          elevation: 10,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Container(
+                            width: 300,
+                            height: 36,
+                            child: TextField(
+                                decoration: InputDecoration(
+                                    hintStyle: TextStyle(
+                                        color: Mycolors.notpressed,
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.normal),
+                                    hintText: "Search".padLeft(17),
+                                    contentPadding: EdgeInsets.only(top: 8),
+                                    filled: true,
+                                    fillColor: Mycolors.fillingcolor,
+                                    isDense: true,
+                                    border: InputBorder.none)),
+                          ),
+                        ),
+                        SizedBox(height: 30),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: Text(
+                              " We understand that emergencies can be overwhelming, which is why it's important to have a support system in place. By adding a loved one or caregiver to be notified in case of an emergency.",
+                              style: TextStyle(
+                                  color: Mycolors.notpressed,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600)),
+                        ),
+                        SizedBox(height: 170),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 11.0),
+                          child: RichText(
+                            text: TextSpan(
+                              text: " Here's how it works:  ",
+                              style: TextStyle(
+                                color: Mycolors.textcolor,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              children: <TextSpan>[
+                                TextSpan(
+                                  text:
+                                      " if you ever press the SOS button in our application, we'll send an SMS and app notification to your caregivers. This will let them know that you need help and provide them with your location information.",
+                                  style: TextStyle(
+                                    color: Mycolors.notpressed,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 );
               }())

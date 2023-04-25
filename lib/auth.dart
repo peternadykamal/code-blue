@@ -326,7 +326,6 @@ class _authPageState extends State<authPage> {
                   }
                 }
 
-                ;
                 Future<void> _saveForm() async {
                   //returns true lw kol el returns mel validator is null
                   final is_valid = _form.currentState?.validate();
@@ -340,12 +339,6 @@ class _authPageState extends State<authPage> {
                   String username = _usernamecontrollersignUp.text.trim();
                   String confirmpassword =
                       _confirmpasscontrollersignUp.text.trim();
-                  User? user = await AuthService()
-                      .signUpWithEmail(email: email, password: password);
-                  UserProfile profile = UserProfile(
-                      email: _emailcontrollersignUp.text,
-                      username: _usernamecontrollersignUp.text);
-                  await UserRepository().updateUserProfile(profile);
                 }
 
                 ;

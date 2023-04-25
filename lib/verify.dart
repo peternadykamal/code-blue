@@ -41,18 +41,20 @@ class _VerifyPhoneState extends State<VerifyPhone> {
         smsCode: code,
       );
       UserProfile user = UserProfile(
-        email: widget.email,
-        username: widget.username,
-      );
+          email: widget.email,
+          username: widget.username,
+          phoneNumber: widget.phoneNumber);
       if (await isNetworkAvailable()) {
         if (await isNetworkAvailable()) {
-          await UserRepository().updateUserProfile(user);
           await AuthService().signUpWithEmail(
             email: widget.email,
             password: widget.pass,
           );
           await FirebaseAuth.instance.currentUser
               ?.linkWithCredential(credential);
+          await FirebaseAuth.instance.currentUser
+              ?.updateDisplayName(widget.username);
+          await UserRepository().updateUserProfile(user);
         }
       }
       if (mounted) {
@@ -157,16 +159,19 @@ class _VerifyPhoneState extends State<VerifyPhone> {
                                 UserProfile user = UserProfile(
                                   email: widget.email,
                                   username: widget.username,
+                                  phoneNumber: widget.phoneNumber,
                                 );
                                 if (await isNetworkAvailable()) {
-                                  await UserRepository()
-                                      .updateUserProfile(user);
                                   await AuthService().signUpWithEmail(
                                     email: widget.email,
                                     password: widget.pass,
                                   );
                                   await FirebaseAuth.instance.currentUser
                                       ?.linkWithCredential(credential);
+                                  await FirebaseAuth.instance.currentUser
+                                      ?.updateDisplayName(widget.username);
+                                  await UserRepository()
+                                      .updateUserProfile(user);
                                 }
                                 if (mounted) {
                                   Navigator.pushReplacement(

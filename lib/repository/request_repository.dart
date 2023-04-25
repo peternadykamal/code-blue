@@ -1,8 +1,9 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:gradproject/repository/user_repository.dart';
-import 'package:gradproject/repository/relations_repository.dart';
+import 'package:gradproject/repository/relation_repository.dart';
 import 'package:gradproject/repository/notification_repository.dart';
+import '../services/sms_service.dart';
 
 class Request {
   String? requestID;
@@ -68,13 +69,17 @@ class Requests_Repository {
   requestConfirmation() async {
     //send notification to caregivers of the logged-in user
     List<Relation> y = await RelationRepository().getRelationsForCurrentUser();
-    y.forEach((element) {
+    List<String> phoneNums = [];
+    y.forEach((element) async {
       Notification x = Notification(
           title: "Request Confirmation",
           body: "Successfully received request!",
           targetUserID: element.userId2);
       NotificationRepository().pushNotificationToUser(x);
+      UserProfile m = await UserRepository().getUserById(element.userId2);
+      phoneNums.add(m.phoneNumber);
     });
+    smsConfirmation(phoneNums);
   }
 
   Future<String> pushRequest(Request request) async {
@@ -88,9 +93,9 @@ class Requests_Repository {
     await requestsRef.child(requestID).remove();
   }
 
-  smsConfirmation() async {
-    // send SMSs to caregivers // SMSService.sendSmsMessage( recipients:
-    //['+201222906083'], message: "message")
+  smsConfirmation(List<String> recipients) async {
+    //  SMSService.sendSmsMessage(
+    //     recipients: recipients, message: "Request Received");
   }
 
   smsNoInternet() async {

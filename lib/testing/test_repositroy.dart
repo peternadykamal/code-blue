@@ -40,9 +40,9 @@ Future<void> testThis() async {
   //     await RelationRepository().getRelationsForCurrentUser();
   // print(list1.length);
 
-  // UserProfile user =
-  //     await UserRepository().getUserById(list[2].userId2.toString());
-  // print(user.username);
+  UserProfile user = await UserRepository().getUserProfile();
+  print(user.username);
   // print(user.email);
   // print(user.profileImageUrl);
+  // print(user.medicalCondition);
 }

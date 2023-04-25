@@ -98,22 +98,24 @@ class _sosPageState extends State<sosPage> {
             SizedBox(height: 40),
             RawMaterialButton(
               onPressed: () async {
-                // this return an errror await withInternetConnection([ () =>
-                // UserRepository().getUserById('halsdk;fj'), ]); to show how
-                //   deal with an results list
-                final results = await withInternetConnection([
-                  () => UserRepository()
-                      .getUserById('mOWCpqtfbKenJvEblEXEBTgy1uP2'),
-                  () => UserRepository()
-                      .checkUserExist('mOWCpqtfbKenJvEblEXEBTgy1uP2'),
+                // this return an errror
+                await withInternetConnection([
+                  () => UserRepository().getUserById('halsdk;fj'),
                 ]);
-                for (dynamic object in results) {
-                  if (object is UserProfile) {
-                    print(object.username);
-                  } else if (object is bool) {
-                    print(object);
-                  }
-                }
+                // to show how deal with an results list
+                // final results = await withInternetConnection([
+                //   () => UserRepository()
+                //       .getUserById('mOWCpqtfbKenJvEblEXEBTgy1uP2'),
+                //   () => UserRepository()
+                //       .checkUserExist('mOWCpqtfbKenJvEblEXEBTgy1uP2'),
+                // ]);
+                // for (dynamic object in results) {
+                //   if (object is UserProfile) {
+                //     print(object.username);
+                //   } else if (object is bool) {
+                //     print(object);
+                //   }
+                // }
                 // example on how try catch block works try { await
                 // UserRepository().getUserById('halsdk;fj'); } catch (e) {
                 //   print('object'); // print error in flutter toast

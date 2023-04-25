@@ -84,7 +84,6 @@ class _profile2State extends State<profile2> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => profileone()));
-
                           UserRepository().updateUserProfile(
                             UserProfile(
                               email: email,
@@ -94,10 +93,17 @@ class _profile2State extends State<profile2> {
                               rhBloodType: RH,
                               height: height,
                               weight: weight,
-                              allergies: _allergies.text,
-                              medicalCondition: _medicalCond.text,
-                              medications: _medications.text,
-                              remarks: _remarks.text,
+                              allergies: _allergies.text == ""
+                                  ? null
+                                  : _allergies.text,
+                              medicalCondition: _medicalCond.text == ""
+                                  ? null
+                                  : _medicalCond.text,
+                              medications: _medications.text == ""
+                                  ? null
+                                  : _medications.text,
+                              remarks:
+                                  _remarks.text == "" ? null : _remarks.text,
                               birthDate: date,
                             ),
                           );
@@ -143,7 +149,6 @@ class _profile2State extends State<profile2> {
                   buttonValues: [Gender.male, Gender.female],
                   radioButtonValue: (values) {
                     g = values;
-                    print(g);
                   },
                   selectedBorderColor: Mycolors.splashback,
                   unSelectedBorderColor: Mycolors.buttoncolor,
@@ -186,15 +191,15 @@ class _profile2State extends State<profile2> {
                           new BorderSide(color: Mycolors.notpressed, width: 3)),
                 ),
                 onTap: () async {
-                  DateTime? pickeddate = await showDatePicker(
+                  date = await showDatePicker(
                     context: context,
                     initialDate: DateTime.now(),
                     firstDate: DateTime(1930),
                     lastDate: DateTime.now(),
                   );
-                  if (pickeddate != null) {
+                  if (date != null) {
                     setState(() {
-                      _date.text = DateFormat('dd-MM-yyyy').format(pickeddate);
+                      _date.text = DateFormat('dd-MM-yyyy').format(date!);
                     });
                   }
                 },

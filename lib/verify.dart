@@ -222,7 +222,6 @@ class _VerifyPhoneState extends State<VerifyPhone> {
           ),
           NumericPad(
             onNumberSelected: (value) {
-              print(value);
               setState(() {
                 if (value != -1) {
                   if (code.length < 6) {
@@ -231,7 +230,6 @@ class _VerifyPhoneState extends State<VerifyPhone> {
                 } else {
                   code = code.substring(0, code.length - 1);
                 }
-                print(code);
               });
             },
           ),

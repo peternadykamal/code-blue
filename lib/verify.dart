@@ -10,7 +10,6 @@ import 'package:gradproject/translations/locale_keys.g.dart';
 import 'package:gradproject/repository/user_repository.dart';
 import 'package:gradproject/utils/has_network.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:intl_phone_field/phone_number.dart';
 
 class VerifyPhone extends StatefulWidget {
   final String phoneNumber;

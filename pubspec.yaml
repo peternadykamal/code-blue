@@ -64,6 +64,7 @@ dependencies:
   smooth_page_indicator: ^1.1.0
   shared_preferences: ^2.1.0
   fluttertoast: ^8.2.1
+  age_calculator: ^1.0.0
 
 dev_dependencies:
   flutter_test:

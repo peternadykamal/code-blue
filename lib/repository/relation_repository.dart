@@ -3,8 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:gradproject/repository/user_repository.dart';
 
 class Relation {
-  String userId1;
-  String userId2;
+  String userId1; //patient
+  String userId2; //caregiver
   String? id;
 
   Relation({required this.userId1, required this.userId2, this.id});

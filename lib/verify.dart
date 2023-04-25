@@ -41,9 +41,9 @@ class _VerifyPhoneState extends State<VerifyPhone> {
         smsCode: code,
       );
       UserProfile user = UserProfile(
-        email: widget.email,
-        username: widget.username,
-      );
+          email: widget.email,
+          username: widget.username,
+          phoneNumber: widget.phoneNumber);
       if (await isNetworkAvailable()) {
         if (await isNetworkAvailable()) {
           await UserRepository().updateUserProfile(user);
@@ -53,6 +53,8 @@ class _VerifyPhoneState extends State<VerifyPhone> {
           );
           await FirebaseAuth.instance.currentUser
               ?.linkWithCredential(credential);
+          await FirebaseAuth.instance.currentUser
+              ?.updateDisplayName(widget.username);
         }
       }
       if (mounted) {
@@ -157,6 +159,7 @@ class _VerifyPhoneState extends State<VerifyPhone> {
                                 UserProfile user = UserProfile(
                                   email: widget.email,
                                   username: widget.username,
+                                  phoneNumber: widget.phoneNumber,
                                 );
                                 if (await isNetworkAvailable()) {
                                   await UserRepository()
@@ -167,6 +170,8 @@ class _VerifyPhoneState extends State<VerifyPhone> {
                                   );
                                   await FirebaseAuth.instance.currentUser
                                       ?.linkWithCredential(credential);
+                                  await FirebaseAuth.instance.currentUser
+                                      ?.updateDisplayName(widget.username);
                                 }
                                 if (mounted) {
                                   Navigator.pushReplacement(

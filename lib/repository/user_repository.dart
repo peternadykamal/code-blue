@@ -26,6 +26,7 @@ enum RhBloodType { positive, negative }
 class UserProfile {
   String email;
   String username;
+  String phoneNumber;
   DateTime? birthDate;
   int? age;
   Gender? gender;
@@ -42,6 +43,7 @@ class UserProfile {
   UserProfile({
     required this.email,
     required this.username,
+    required this.phoneNumber,
     this.birthDate,
     this.age,
     this.gender,
@@ -60,6 +62,7 @@ class UserProfile {
   static UserProfile fromMapToUserProfile(Iterable<DataSnapshot> map) {
     var email = '';
     var username = '';
+    var phoneNumber = '';
     DateTime? birthDate;
     int? age;
     Gender? gender;
@@ -80,6 +83,9 @@ class UserProfile {
           break;
         case 'username':
           username = snapshot.value.toString();
+          break;
+        case 'phoneNumber':
+          phoneNumber = snapshot.value.toString();
           break;
         case 'birthDate':
           birthDate = DateTime.tryParse(snapshot.value.toString());
@@ -122,7 +128,6 @@ class UserProfile {
         case 'profileImageurl':
           profileImageUrl = snapshot.value.toString();
           break;
-
         default:
           break;
       }
@@ -131,6 +136,7 @@ class UserProfile {
     return UserProfile(
       email: email,
       username: username,
+      phoneNumber: phoneNumber,
       birthDate: birthDate,
       age: age,
       gender: gender,
@@ -151,6 +157,7 @@ class UserProfile {
     Map<String, dynamic> updateData = {
       'email': data.email,
       'username': data.username,
+      'phoneNumber': data.phoneNumber,
     };
     if (data.gender != null) {
       updateData['gender'] = data.gender?.index;
@@ -252,6 +259,7 @@ class UserRepository {
         final data = snapshot.children;
         var email = '';
         var username = '';
+        var phoneNumber = '';
         String? profileImageUrl;
 
         for (var snapshot in data) {
@@ -262,6 +270,9 @@ class UserRepository {
             case 'username':
               username = snapshot.value.toString();
               break;
+            case 'phoneNumber':
+              phoneNumber = snapshot.value.toString();
+              break;
             case 'profileImageurl':
               profileImageUrl = snapshot.value.toString();
               break;
@@ -271,7 +282,10 @@ class UserRepository {
           }
         }
         return UserProfile(
-            email: email, username: username, profileImageUrl: profileImageUrl);
+            email: email,
+            username: username,
+            phoneNumber: phoneNumber,
+            profileImageUrl: profileImageUrl);
       } else {
         throw Exception('User does not exist');
       }

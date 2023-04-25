@@ -1,7 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:gradproject/repository/user_repository.dart';
-import 'package:gradproject/repository/relations_repository.dart';
+import 'package:gradproject/repository/relation_repository.dart';
 import 'package:gradproject/repository/notification_repository.dart';
 
 class Request {

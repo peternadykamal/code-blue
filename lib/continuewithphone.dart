@@ -138,6 +138,7 @@ class _ContinueWithPhoneState extends State<ContinueWithPhone> {
                                       UserProfile user = UserProfile(
                                         email: widget.email,
                                         username: widget.username,
+                                        phoneNumber: actualphoneNumber,
                                       );
                                       if (await isNetworkAvailable()) {
                                         await UserRepository()
@@ -148,6 +149,9 @@ class _ContinueWithPhoneState extends State<ContinueWithPhone> {
                                         );
                                         await FirebaseAuth.instance.currentUser
                                             ?.linkWithCredential(credential);
+                                        await FirebaseAuth.instance.currentUser
+                                            ?.updateDisplayName(
+                                                widget.username);
                                       }
                                       if (mounted) {
                                         Navigator.pushReplacement(

@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:gradproject/onboardscreen.dart';
+import 'package:gradproject/services/remoteConfig_service.dart';
 import 'package:gradproject/splashscreen.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -13,8 +14,7 @@ import 'package:gradproject/services/auth_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:gradproject/services/notification_service.dart';
-import 'package:firebase_remote_config/firebase_remote_config.dart';
-import 'testing/test_repository.dart';
+import 'testing/test_chat.dart';
 
 Locale deviceLocale = window.locale;
 String langCode = deviceLocale.languageCode;
@@ -32,8 +32,7 @@ Future<void> main() async {
   // initialize the notification service
   NotificationService.initialize();
   // initialize the remote config
-  FirebaseRemoteConfig remoteConfig = FirebaseRemoteConfig.instance;
-  await remoteConfig.fetchAndActivate();
+  RemoteConfig().initialize();
   // load dotenv file
   await dotenv.load(fileName: ".env");
   // disable logging in easy localization package
@@ -54,7 +53,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     // this function is used for testing methods and features only
     if (kDebugMode) {
-      testThis().then((value) => {print("test done")});
+      // testThis().then((value) => {print("test done")});
     }
 
     return MaterialApp(

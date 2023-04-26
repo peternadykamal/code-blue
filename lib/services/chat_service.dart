@@ -20,6 +20,9 @@ class ChatService {
 
   Future<String> _getUrl() async {
     final FirebaseRemoteConfig remoteConfig = FirebaseRemoteConfig.instance;
+    await remoteConfig.fetch();
+    await remoteConfig.activate();
+    print(remoteConfig.getString(dotenv.env['CHATBOT_CONFIG_NAME']!));
     return remoteConfig.getString(dotenv.env['CHATBOT_CONFIG_NAME']!);
   }
 

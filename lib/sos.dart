@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:gradproject/chatbot.dart';
 import 'package:gradproject/loadingcontainer.dart';
 import 'package:gradproject/profile1.dart';
 import 'package:gradproject/repository/user_repository.dart';
@@ -102,27 +103,21 @@ class _sosPageState extends State<sosPage> {
                 await withInternetConnection([
                   () => UserRepository().getUserById('halsdk;fj'),
                 ]);
-                // to show how deal with an results list
-                // final results = await withInternetConnection([
-                //   () => UserRepository()
-                //       .getUserById('mOWCpqtfbKenJvEblEXEBTgy1uP2'),
-                //   () => UserRepository()
-                //       .checkUserExist('mOWCpqtfbKenJvEblEXEBTgy1uP2'),
-                // ]);
-                // for (dynamic object in results) {
-                //   if (object is UserProfile) {
-                //     print(object.username);
-                //   } else if (object is bool) {
-                //     print(object);
-                //   }
-                // }
-                // example on how try catch block works try { await
-                // UserRepository().getUserById('halsdk;fj'); } catch (e) {
+                // to show how deal with an results list final results = await
+                // withInternetConnection([ () => UserRepository()
+                //   .getUserById('mOWCpqtfbKenJvEblEXEBTgy1uP2'), () =>
+                //       UserRepository()
+                //   .checkUserExist('mOWCpqtfbKenJvEblEXEBTgy1uP2'), ]); for
+                //       (dynamic object in results) { if (object is
+                // UserProfile) { print(object.username); } else if (object is
+                // bool) { print(object); } } example on how try catch block
+                //   works try { await
+                //     UserRepository().getUserById('halsdk;fj'); } catch (e) {
                 //   print('object'); // print error in flutter toast
-                // Fluttertoast.showToast( msg: e.toString(), toastLength:
+                //     Fluttertoast.showToast( msg: e.toString(), toastLength:
                 //   Toast.LENGTH_SHORT, gravity: ToastGravity.BOTTOM,
-                //   timeInSecForIosWeb: 1, backgroundColor: Colors.red,
-                //   textColor: Colors.white, fontSize: 16.0); }
+                // timeInSecForIosWeb: 1, backgroundColor: Colors.red,
+                // textColor: Colors.white, fontSize: 16.0); }
               },
               elevation: 0.0,
               highlightElevation: 15.0,
@@ -167,7 +162,12 @@ class _sosPageState extends State<sosPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => chatbotPage()));
+                    },
                     child: Column(
                       children: [
                         SizedBox(height: 4),

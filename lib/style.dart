@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class Mycolors{
+class Mycolors {
   static Color splashback = Color(0xffB7E0FF);
   static Color textcolor = Color(0xff06283D);
   static Color notpressed = Color(0xff4F6878);
@@ -9,7 +9,5 @@ class Mycolors{
   static Color numpad = Color(0xffE6E6E6);
   static Color xbutton = Color(0xffFF3E62);
   static Color buttonsos = Color(0xff1264E2);
-
-
-
+  static Color chatInput = Color(0xffD9D9D9);
 }

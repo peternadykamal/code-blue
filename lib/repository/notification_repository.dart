@@ -2,7 +2,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:gradproject/utils/has_network.dart';
 import 'dart:convert';
 
 class Notification {
@@ -11,6 +10,8 @@ class Notification {
   String title;
   String body;
   String targetUserID;
+  String notificationType;
+  String notificationTypeId;
   String? senderUserID;
   // set date to the current date
   DateTime? date;
@@ -26,6 +27,8 @@ class Notification {
     required this.title,
     required this.body,
     required this.targetUserID,
+    required this.notificationType,
+    required this.notificationTypeId,
     this.senderUserID,
     this.date,
     this.isSeen = false,
@@ -46,6 +49,8 @@ class Notification {
     var body = '';
     var targetUserID = '';
     var senderUserID = '';
+    var notificationType = '';
+    var notificationTypeId = '';
     DateTime? date;
     bool isSeen = false;
     for (var snapshot in map) {
@@ -62,6 +67,12 @@ class Notification {
         case 'senderUserID':
           senderUserID = snapshot.value.toString();
           break;
+        case 'notificationType':
+          notificationType = snapshot.value.toString();
+          break;
+        case 'notificationTypeId':
+          notificationTypeId = snapshot.value.toString();
+          break;
         case 'date':
           date = DateTime.parse(snapshot.value.toString());
           break;
@@ -76,6 +87,8 @@ class Notification {
       body: body,
       targetUserID: targetUserID,
       senderUserID: senderUserID,
+      notificationType: notificationType,
+      notificationTypeId: notificationTypeId,
       date: date,
       isSeen: isSeen,
     );
@@ -88,6 +101,8 @@ class Notification {
       'body': data.body,
       'targetUserID': data.targetUserID,
       'senderUserID': data.senderUserID,
+      'notificationType': data.notificationType,
+      'notificationTypeId': data.notificationTypeId,
       'date': data.date.toString(),
       'isSeen': data.isSeen,
     };

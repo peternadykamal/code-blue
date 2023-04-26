@@ -1,9 +1,11 @@
+import 'package:geolocator/geolocator.dart';
 import 'package:gradproject/repository//user_repository.dart';
 import 'package:gradproject/services/auth_service.dart';
 import 'package:gradproject/utils/has_network.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:gradproject/repository/relation_repository.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:gradproject/utils/user_geolocation.dart';
 
 Future<void> testThis() async {
   // UserProfile user = UserProfile(email: "hell@gmail.com", username: "hello");
@@ -40,8 +42,8 @@ Future<void> testThis() async {
   //     await RelationRepository().getRelationsForCurrentUser();
   // print(list1.length);
 
-  UserProfile user = await UserRepository().getUserProfile();
-  print(user.username);
+  // UserProfile user = await UserRepository().getUserProfile();
+  // print(user.username);
   // print(user.email);
   // print(user.profileImageUrl);
   // print(user.medicalCondition);

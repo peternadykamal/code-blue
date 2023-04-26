@@ -37,6 +37,7 @@ class NotificationService {
     }
   }
 
+// TODO: if the notification type is navigation open google maps with the location instead of opening the app
   static Future<void> showNotification(String title, String body) async {
     if (await requestPermission()) {
       // make channel id depends on time unicode
@@ -53,3 +54,55 @@ class NotificationService {
     }
   }
 }
+
+// static Future<void> showNotification(String title, String body, {double latitude, double longitude}) async {
+//   if (await requestPermission()) {
+//     int id = Random().nextInt(pow(2, 31).toInt());
+
+//     AndroidNotificationDetails androidPlatformChannelSpecifics;
+
+//     if (latitude != null && longitude != null) {
+//       // Intent to open Google Maps with the specified latitude and longitude
+//       final String intentData = 'geo:$latitude,$longitude?q=$latitude,$longitude';
+//       final AndroidIntent intent = AndroidIntent(
+//         action: 'action_view',
+//         data: Uri.parse(intentData),
+//         package: 'com.google.android.apps.maps',
+//       );
+
+//       // Notification channel with the Google Maps intent
+//       androidPlatformChannelSpecifics = AndroidNotificationDetails(
+//         'maps_channel',
+//         'Google Maps',
+//         'Notifications that open Google Maps when clicked',
+//         importance: Importance.max,
+//         priority: Priority.high,
+//         ticker: 'ticker',
+//         category: 'navigation',
+//         fullScreenIntent: true,
+//         playSound: true,
+//         sound: RawResourceAndroidNotificationSound('notification'),
+//         channelShowBadge: true,
+//         channelAction: AndroidNotificationChannelAction.createAction(
+//           intent: intent,
+//           label: 'Open in Google Maps',
+//         ),
+//       );
+//     } else {
+//       // Notification channel without the Google Maps intent
+//       androidPlatformChannelSpecifics = AndroidNotificationDetails(
+//         'default_channel',
+//         'Default Channel',
+//         'Notifications without Google Maps intent',
+//         importance: Importance.max,
+//         priority: Priority.high,
+//         ticker: 'ticker',
+//       );
+//     }
+
+//     NotificationDetails platformChannelSpecifics =
+//         NotificationDetails(android: androidPlatformChannelSpecifics);
+//     await flutterLocalNotificationsPlugin.show(
+//         id, title, body, platformChannelSpecifics);
+//   }
+// }

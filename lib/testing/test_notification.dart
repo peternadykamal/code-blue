@@ -6,12 +6,12 @@ import 'package:gradproject/services/notification_service.dart';
 
 testThis() async {
   // // create new notification
-  Notification notification = Notification(
-    title: "title",
-    body: "body",
-    targetUserID: "9qaGc8zaFHPDxPCwHlX4dqUr5oj1",
-    // senderUserID: "ZidAyWx9HVafLj48IqBLtuMAqTp2",
-  );
+  // Notification notification = Notification(
+  //   title: "title",
+  //   body: "body",
+  //   targetUserID: "9qaGc8zaFHPDxPCwHlX4dqUr5oj1",
+  //   // senderUserID: "ZidAyWx9HVafLj48IqBLtuMAqTp2",
+  // );
   // NotificationService.showNotification("title", 'body', 3);
   // // send notification
   // print(await NotificationRepository().pushNotificationToUser(notification));

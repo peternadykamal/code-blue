@@ -1,12 +1,27 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:gradproject/services/fcm_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  void _onAuthStateChanged(User? user) {
+  void _onAuthStateChanged(User? user) async {
     if (user != null) {
-      // print('User signed in: ${user.uid}');
+      print('User signed in: ${user.uid}');
+      // TODO: when there is an internet connection retrive the friends list from realtime database and save it in shared preferences
+      // final SharedPreferences prefs = await SharedPreferences.getInstance();
+      // final String? userId = user.uid;
+      // prefs.setString('userId', userId!);
+
+      // final DataSnapshot snapshot =
+      //     await _databaseReference.child('users/$userId/friends').once();
+      // final List<dynamic> friendsList =
+      //     snapshot.value != null ? snapshot.value : [];
+
+      // final String friendsJson = json.encode(friendsList);
+      // prefs.setString('friends', friendsJson);
+
+      // print('User signed in: $userId');
       FcmService().initialize();
     } else {
       print('User signed out.');

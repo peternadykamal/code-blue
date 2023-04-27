@@ -5,7 +5,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:gradproject/onboardscreen.dart';
-import 'package:gradproject/services/remoteConfig_service.dart';
 import 'package:gradproject/splashscreen.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -31,8 +30,6 @@ Future<void> main() async {
   AuthService().initialize();
   // initialize the notification service
   NotificationService.initialize();
-  // initialize the remote config
-  RemoteConfig().initialize();
   // load dotenv file
   await dotenv.load(fileName: ".env");
   // disable logging in easy localization package

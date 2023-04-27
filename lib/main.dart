@@ -13,7 +13,7 @@ import 'package:gradproject/services/auth_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:gradproject/services/notification_service.dart';
-import 'testing/test_chat.dart';
+import 'testing/test_invites.dart';
 
 Locale deviceLocale = window.locale;
 String langCode = deviceLocale.languageCode;
@@ -26,6 +26,9 @@ Future<void> main() async {
   // database so when the device is offline it will still be able to retrieve
   // the data
   FirebaseDatabase.instance.setPersistenceEnabled(true);
+  FirebaseDatabase.instance.setPersistenceCacheSizeBytes(10000000);
+  DatabaseReference reference = FirebaseDatabase.instance.ref();
+  reference.keepSynced(true);
   // initialize the auth service
   AuthService().initialize();
   // initialize the notification service
@@ -50,7 +53,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     // this function is used for testing methods and features only
     if (kDebugMode) {
-      // testThis().then((value) => {print("test done")});
+      testThis().then((value) => {print("test done")});
     }
 
     return MaterialApp(

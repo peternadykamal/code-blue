@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gradproject/main.dart';
 import 'package:gradproject/sos.dart';
 import 'package:gradproject/style.dart';
@@ -46,8 +47,10 @@ class _splashScreenState extends State<splashScreen> {
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Center(child: Image.asset("assets/images/codeblueslogo1.png")),
-            SizedBox(height: 180),
+            Center(
+                child:
+                    SvgPicture.asset("assets/images/logo-updated-only 1.svg")),
+            SizedBox(height: 130),
             LoadingAnimationWidget.threeArchedCircle(
                 color: Colors.white, size: 40),
           ],

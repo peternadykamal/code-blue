@@ -1,6 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:gradproject/services/fcm_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:gradproject/utils/has_network.dart';
+import 'package:gradproject/repository/user_repository.dart';
+import 'package:gradproject/repository/relation_repository.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -8,20 +11,26 @@ class AuthService {
   void _onAuthStateChanged(User? user) async {
     if (user != null) {
       print('User signed in: ${user.uid}');
-      // TODO: when there is an internet connection retrive the friends list from realtime database and save it in shared preferences
+
+      // save phone numbers of caregivers in shared preferences
+      if (await isNetworkAvailable()) {
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        List<Relation> list =
+            await RelationRepository().getRelationsForCurrentUser();
+        List<String> phoneNumbers = [];
+        for (Relation relation in list) {
+          UserProfile user =
+              await UserRepository().getUserById(relation.userId2);
+          phoneNumbers.add(user.phoneNumber);
+        }
+        prefs.setStringList('caregiversPhoneNumbers', phoneNumbers);
+      }
+
       // final SharedPreferences prefs = await SharedPreferences.getInstance();
-      // final String? userId = user.uid;
-      // prefs.setString('userId', userId!);
+      // List<String> phoneNumbers =
+      //     prefs.getStringList('caregiversPhoneNumbers') ?? [];
+      // print(phoneNumbers);
 
-      // final DataSnapshot snapshot =
-      //     await _databaseReference.child('users/$userId/friends').once();
-      // final List<dynamic> friendsList =
-      //     snapshot.value != null ? snapshot.value : [];
-
-      // final String friendsJson = json.encode(friendsList);
-      // prefs.setString('friends', friendsJson);
-
-      // print('User signed in: $userId');
       FcmService().initialize();
     } else {
       print('User signed out.');

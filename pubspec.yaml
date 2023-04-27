@@ -66,6 +66,7 @@ dependencies:
   fluttertoast: ^8.2.1
   age_calculator: ^1.0.0
   flutter_chat_ui: ^1.6.6
+  speech_to_text: ^6.1.1
 
 dev_dependencies:
   flutter_test:

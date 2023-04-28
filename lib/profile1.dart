@@ -152,9 +152,15 @@ class _profileoneState extends State<profileone> {
                     Stack(
                       alignment: Alignment.bottomRight,
                       children: [
-                        CircleAvatar(
-                          radius: 40,
-                          backgroundImage: userProfileImage!.image,
+                        Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 4),
+                          ),
+                          child: CircleAvatar(
+                            radius: 40,
+                            backgroundImage: userProfileImage!.image,
+                          ),
                         ),
                         GestureDetector(
                           onTap: () async {

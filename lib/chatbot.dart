@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gradproject/services/chat_service.dart';
 import 'package:gradproject/sos.dart';
@@ -28,7 +29,10 @@ class chatbotPage extends StatefulWidget {
 class _chatbotPageState extends State<chatbotPage> {
   final List<types.Message> _messages = [];
   final _user = const types.User(id: '82091008-a484-4a89-ae75-a22bf8d6f3ac');
+  final TextEditingController _textController = TextEditingController();
   late ChatService _chatInstance;
+  late stt.SpeechToText _speech = stt.SpeechToText();
+  bool _isRecording = false;
 
   @override
   void initState() {
@@ -39,15 +43,20 @@ class _chatbotPageState extends State<chatbotPage> {
   void startChatBot() async {
     _chatInstance = ChatService();
     await _chatInstance.connect();
-    _chatInstance.listen((message) {
-      final botMessage = types.TextMessage(
-        author: const types.User(id: 'bot'),
-        createdAt: DateTime.now().millisecondsSinceEpoch,
-        id: randomString(),
-        text: message,
-      );
-      _addMessage(botMessage);
-    });
+    _chatInstance.listen(
+      (message) {
+        final botMessage = types.TextMessage(
+          author: const types.User(id: 'bot'),
+          createdAt: DateTime.now().millisecondsSinceEpoch,
+          id: randomString(),
+          text: message,
+        );
+        _addMessage(botMessage);
+      },
+      onError: (error) {
+        print(error);
+      },
+    );
   }
 
   @override
@@ -89,12 +98,20 @@ class _chatbotPageState extends State<chatbotPage> {
               bottomLeft: Radius.circular(15),
               bottomRight: Radius.circular(15)),
           inputBackgroundColor: Mycolors.chatInput,
+          attachmentButtonIcon: _isRecording
+              ? Icon(Icons.hearing, color: Mycolors.textcolor)
+              : Icon(Icons.mic, color: Mycolors.textcolor),
+          inputTextColor: Mycolors.textcolor,
         ),
         messages: _messages,
         onSendPressed: _handleSendPressed,
         user: _user,
         showUserAvatars: true,
         avatarBuilder: (String id) => imageUrl("assets/images/chatbotpic.svg"),
+        onAttachmentPressed: _handleAttachmentPressed,
+        inputOptions: InputOptions(
+          textEditingController: _textController,
+        ),
       ),
     );
   }
@@ -108,7 +125,7 @@ class _chatbotPageState extends State<chatbotPage> {
   void _handleSendPressed(types.PartialText message) async {
     // Send user's message to chatbot
     _chatInstance.send(message.text);
-
+    _isRecording = false;
     // Add chatbot's response as a new message
     final botMessage = types.TextMessage(
       author: _user,
@@ -118,6 +135,38 @@ class _chatbotPageState extends State<chatbotPage> {
     );
 
     _addMessage(botMessage);
+  }
+
+  void _handleAttachmentPressed() async {
+    if (_isRecording) {
+      _speech.stop();
+      setState(() {
+        _isRecording = false;
+      });
+    } else {
+      if (await _speech.initialize()) {
+        await _speech.listen(onResult: (result) {
+          final text = result.recognizedWords;
+          _textController.text = text;
+        });
+        setState(() {
+          _isRecording = true;
+        });
+      } else {
+        // show flutter toast
+        Fluttertoast.showToast(
+            msg: "Speech recognition unavailable or permission denied",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+        // throw PlatformException(
+        //     code: 'speech_to_text_error',
+        //     message: 'Speech to text not available on this device.');
+      }
+    }
   }
 }
 

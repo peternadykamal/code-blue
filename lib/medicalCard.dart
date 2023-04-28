@@ -141,41 +141,43 @@ class _profile2State extends State<profile2> {
                   enableShape: true,
                   radius: 20,
                   buttonTextStyle: ButtonTextStyle(
-                    selectedColor: Mycolors.textcolor,
-                    unSelectedColor: Mycolors.fillingcolor,
+                    selectedColor: Mycolors.fillingcolor,
+                    unSelectedColor: Mycolors.textcolor,
                     textStyle: TextStyle(
                       fontSize: 12,
                     ),
                   ),
-                  unSelectedColor: Mycolors.buttoncolor,
+                  unSelectedColor: Mycolors.numpad,
                   buttonLables: ["Male", "Female"],
                   buttonValues: [Gender.male, Gender.female],
                   radioButtonValue: (values) {
                     g = values;
                   },
-                  selectedBorderColor: Mycolors.splashback,
-                  unSelectedBorderColor: Mycolors.buttoncolor,
+                  selectedBorderColor: Mycolors.buttoncolor,
+                  unSelectedBorderColor: Mycolors.numpad,
                   spacing: 0,
                   horizontal: false,
                   enableButtonWrap: false,
                   width: 75,
                   absoluteZeroSpacing: false,
-                  selectedColor: Mycolors.splashback,
+                  selectedColor: Mycolors.buttoncolor,
                   padding: 10,
                 )
               ],
             ),
             SizedBox(height: 30),
             Container(
-              width: 300,
+              width: 280,
+              height: 33,
               child: TextField(
                 controller: _date,
                 keyboardType: TextInputType.none,
                 decoration: InputDecoration(
                   hintStyle: TextStyle(
                       color: Mycolors.notpressed,
-                      fontSize: 17,
+                      fontSize: 16,
                       fontWeight: FontWeight.w600),
+                  contentPadding: EdgeInsets.only(top: 7),
                   hintText: 'dd/mm/yyyy',
                   filled: true,
                   fillColor: Mycolors.fillingcolor,
@@ -219,21 +221,24 @@ class _profile2State extends State<profile2> {
                           TextStyle(color: Mycolors.textcolor, fontSize: 15)),
                 ),
                 SizedBox(height: 3),
-                HorizontalPicker(
-                  backgroundColor: Mycolors.fillingcolor,
-                  cursorColor: Mycolors.textcolor,
-                  activeItemTextColor: Mycolors.buttoncolor,
-                  initialPosition: InitialPosition.center,
-                  suffix: "cm",
-                  minValue: 120,
-                  maxValue: 210,
-                  divisions: 420,
-                  height: 70,
-                  onChanged: (value) {
-                    setState(() {
-                      height = value;
-                    });
-                  },
+                Container(
+                  width: 280,
+                  child: HorizontalPicker(
+                    backgroundColor: Mycolors.fillingcolor,
+                    cursorColor: Mycolors.textcolor,
+                    activeItemTextColor: Mycolors.buttoncolor,
+                    initialPosition: InitialPosition.center,
+                    suffix: "cm",
+                    minValue: 120,
+                    maxValue: 210,
+                    divisions: 420,
+                    height: 70,
+                    onChanged: (value) {
+                      setState(() {
+                        height = value;
+                      });
+                    },
+                  ),
                 ),
               ],
             ),
@@ -248,21 +253,24 @@ class _profile2State extends State<profile2> {
                           TextStyle(color: Mycolors.textcolor, fontSize: 15)),
                 ),
                 SizedBox(height: 3),
-                HorizontalPicker(
-                  backgroundColor: Mycolors.fillingcolor,
-                  cursorColor: Mycolors.textcolor,
-                  activeItemTextColor: Mycolors.buttoncolor,
-                  initialPosition: InitialPosition.center,
-                  minValue: 50,
-                  maxValue: 362,
-                  divisions: 624,
-                  suffix: "kg",
-                  height: 70,
-                  onChanged: (value) {
-                    setState(() {
-                      weight = value;
-                    });
-                  },
+                Container(
+                  width: 280,
+                  child: HorizontalPicker(
+                    backgroundColor: Mycolors.fillingcolor,
+                    cursorColor: Mycolors.textcolor,
+                    activeItemTextColor: Mycolors.buttoncolor,
+                    initialPosition: InitialPosition.center,
+                    minValue: 50,
+                    maxValue: 362,
+                    divisions: 624,
+                    suffix: "kg",
+                    height: 70,
+                    onChanged: (value) {
+                      setState(() {
+                        weight = value;
+                      });
+                    },
+                  ),
                 ),
               ],
             ),

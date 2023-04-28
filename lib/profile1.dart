@@ -64,7 +64,7 @@ class _profileoneState extends State<profileone> {
             child: Column(
               children: [
                 Container(
-                  margin: EdgeInsets.all(20),
+                  margin: EdgeInsets.only(top: 20, left: 20, right: 20),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -83,24 +83,17 @@ class _profileoneState extends State<profileone> {
                       ),
                       PopupMenuButton(
                         iconSize: 28,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
                         itemBuilder: (context) => [
                           PopupMenuItem(
                               child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              InkWell(
-                                onTap: () {
-                                  AuthService().signOut();
-                                  Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => authPage()));
-                                },
-                                child: Text("Log Out",
-                                    style: TextStyle(
-                                        color: Mycolors.buttoncolor,
-                                        fontSize: 18)),
-                              ),
+                              Text("Log Out",
+                                  style: TextStyle(
+                                      color: Mycolors.buttoncolor,
+                                      fontSize: 18)),
                               Padding(
                                 padding: const EdgeInsets.all(0),
                                 child: Icon(Icons.logout,
@@ -186,7 +179,8 @@ class _profileoneState extends State<profileone> {
                                 fontSize: 20,
                                 color: Mycolors.textcolor,
                                 fontWeight: FontWeight.bold)),
-                        Center(
+                        Padding(
+                          padding: const EdgeInsets.only(right: 50),
                           child: Text(firebaseUser?.phoneNumber ?? "",
                               style: TextStyle(
                                   fontSize: 15,

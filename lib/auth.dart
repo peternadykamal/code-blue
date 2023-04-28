@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'package:gradproject/services/auth_service.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -245,22 +245,22 @@ class _authPageState extends State<authPage> {
                               Padding(
                                 padding: const EdgeInsets.only(left: 170.0),
                                 child: InkWell(
-                                    onTap: () {
-                                      // TODO: implement forget password
-                                      Navigator.pushReplacement(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (BuildContext context) =>
-                                                  ContinueWithPhone(
-                                                      email:
-                                                          _emailcontrollersignUp
-                                                              .text,
-                                                      pass:
-                                                          _passcontrollersignUp
-                                                              .text,
-                                                      username:
-                                                          _usernamecontrollersignUp
-                                                              .text)));
+                                    onTap: () async {
+                                      await () => AuthService().resetPassword();
+                                      // Navigator.pushReplacement(
+                                      //     context,
+                                      //     MaterialPageRoute(
+                                      //         builder: (BuildContext context) =>
+                                      //             ContinueWithPhone(
+                                      //                 email:
+                                      //                     _emailcontrollersignUp
+                                      //                         .text,
+                                      //                 pass:
+                                      //                     _passcontrollersignUp
+                                      //                         .text,
+                                      //                 username:
+                                      //                     _usernamecontrollersignUp
+                                      //                         .text)));
                                     },
                                     child: Text(LocaleKeys.forgetpass.tr(),
                                         style: TextStyle(

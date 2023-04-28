@@ -1,12 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:gradproject/repository/notification_repository.dart';
-import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:gradproject/utils/has_network.dart';
-import 'dart:convert';
+import 'package:gradproject/repository/relation_repository.dart';
 import 'package:gradproject/repository/user_repository.dart';
 
 enum InviteStatus { pending, accepted, rejected }
@@ -22,18 +17,14 @@ class Invites {
     required this.inviteReceiverID,
     this.inviteStatus = InviteStatus.pending,
   });
-  static Invites fromMapToInvites(String? id, Iterable<DataSnapshot> map) {
+  static Invites fromMapToInvites(Iterable<DataSnapshot> map) {
     var inviteStatus = InviteStatus.pending;
     var inviteSenderID = '';
     var inviteReceiverID = '';
     for (var snapshot in map) {
       switch (snapshot.key) {
         case 'inviteStatus':
-          inviteStatus = snapshot.value.toString() == 'pending'
-              ? InviteStatus.pending
-              : snapshot.value.toString() == 'accepted'
-                  ? InviteStatus.accepted
-                  : InviteStatus.rejected;
+          inviteStatus = InviteStatus.values[snapshot.value as int];
           break;
         case 'inviteSenderID':
           inviteSenderID = snapshot.value.toString();
@@ -52,7 +43,7 @@ class Invites {
 
   static Map<String, dynamic> fromInvitesToMap(Invites data) {
     Map<String, dynamic> updateData = {
-      'inviteStatus': data.inviteStatus?.toString(),
+      'inviteStatus': data.inviteStatus?.index,
       'inviteSenderID': data.inviteSenderID,
       'inviteReceiverID': data.inviteReceiverID,
     };
@@ -64,13 +55,35 @@ class InvitesRepository {
   final _invitesRef = FirebaseDatabase.instance.ref().child('invites');
   User? user = FirebaseAuth.instance.currentUser;
 
-  // create invite function, first create an push a notification using pushNotificationToUser function, then create an invite with the notificationID
+  // create invite function
   Future<void> createInvitation(String receiverId) async {
     // first let's make sure that the user is logged in and the receiverId is in users table, thorw an error if not
     if (user == null) throw Exception('User is not logged in');
     if (!await UserRepository().checkUserExist(receiverId)) {
       throw Exception('User does not exist');
     }
+
+    // check if there is a relation between the two users, if there is one, throw an error
+    if (await RelationRepository().checkRelationExist(receiverId)) {
+      throw Exception('they already become your caregiver');
+    }
+
+    // check if there is an invite with the same user and receiver, if there is one and with status pending or accepted, throw an error
+    final invites = await _invitesRef
+        .orderByChild('inviteSenderID')
+        .equalTo(user!.uid)
+        .get();
+    if (invites.value != null) {
+      for (var invite in invites.children) {
+        // convert it to an invite object
+        final inviteObj = Invites.fromMapToInvites(invite.children);
+        if (inviteObj.inviteReceiverID == receiverId &&
+            inviteObj.inviteStatus == InviteStatus.pending) {
+          throw Exception('Invite already exists and is pending');
+        }
+      }
+    }
+
     UserProfile userInfo = await UserRepository().getUserProfile();
     // second let's create the invitation
     final invite = Invites(
@@ -96,5 +109,62 @@ class InvitesRepository {
     }
   }
 
-  //
+  // accept invite function, first update the invite status to accepted, then add a relation between the two users in the relations table
+  Future<void> acceptInvitation(String inviteId) async {
+    // first let's make sure that the user is logged in and the inviteId is in invites table, throw an error if not
+    if (user == null) throw Exception('User is not logged in');
+    if (!await checkInviteExist(inviteId)) {
+      throw Exception('Invite does not exist');
+    }
+
+    // second check if invite status is pending, if not throw an error
+    Invites invite = await getInviteById(inviteId);
+    if (invite.inviteStatus != InviteStatus.pending) {
+      throw Exception('Invite is not pending');
+    }
+
+    // third let's update the invite status
+    await _invitesRef.child(inviteId).update({
+      'inviteStatus': InviteStatus.accepted.index,
+    });
+
+    // forth let's add a relation between the two users
+    await RelationRepository().addRelation(invite.inviteSenderID);
+  }
+
+  // reject invite function, first update the invite status to rejected
+  Future<void> rejectInvitation(String inviteId) async {
+    // first let's make sure that the user is logged in and the inviteId is in invites table, throw an error if not
+    if (user == null) throw Exception('User is not logged in');
+    if (!await checkInviteExist(inviteId)) {
+      throw Exception('Invite does not exist');
+    }
+
+    // second check if invite status is pending, if not throw an error
+    Invites invite = await getInviteById(inviteId);
+    if (invite.inviteStatus != InviteStatus.pending) {
+      throw Exception('Invite is not pending');
+    }
+
+    // third let's update the invite status
+    await _invitesRef.child(inviteId).update({
+      'inviteStatus': InviteStatus.rejected.index,
+    });
+  }
+
+  Future<bool> checkInviteExist(String inviteId) async {
+    final snapshot = await _invitesRef.child(inviteId).get();
+    return snapshot.value != null;
+  }
+
+  Future<Invites> getInviteById(String inviteId) async {
+    final snapshot = await _invitesRef.child(inviteId).get();
+    return Invites.fromMapToInvites(snapshot.children);
+  }
+
+  Future<void> updateInviteStatus(String inviteId, InviteStatus status) async {
+    await _invitesRef.child(inviteId).update({
+      'inviteStatus': status.index,
+    });
+  }
 }

@@ -108,4 +108,42 @@ class RelationRepository {
   Future<void> deleteRelation(String relationId) async {
     await _database.ref().child('relations').child(relationId).remove();
   }
+
+  Future<bool> checkRelationExist(String userId) async {
+    final currentUser = _auth.currentUser;
+    if (currentUser != null) {
+      final relationsSnapshot = await _database
+          .ref()
+          .child('relations')
+          .orderByChild('userId1')
+          .equalTo(currentUser.uid)
+          .get();
+      final reversedRelationsSnapshot = await _database
+          .ref()
+          .child('relations')
+          .orderByChild('userId2')
+          .equalTo(currentUser.uid)
+          .get();
+      final List<Relation> relations = [];
+      relationsSnapshot.children.forEach((element) {
+        final relation = Relation(
+            userId1: element.child('userId1').value.toString(),
+            userId2: element.child('userId2').value.toString(),
+            id: element.key.toString());
+        relations.add(relation);
+      });
+      reversedRelationsSnapshot.children.forEach((element) {
+        final relation = Relation(
+            userId1: element.child('userId2').value.toString(),
+            userId2: element.child('userId1').value.toString(),
+            id: element.key.toString());
+        relations.add(relation);
+      });
+      for (var relation in relations) {
+        if (relation.userId2 == userId) return true;
+      }
+      return false;
+    }
+    return false;
+  }
 }

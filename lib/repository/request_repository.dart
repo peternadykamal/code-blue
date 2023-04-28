@@ -7,8 +7,11 @@ import 'package:gradproject/repository/relation_repository.dart';
 import 'package:gradproject/repository/notification_repository.dart';
 import 'package:gradproject/utils/has_network.dart';
 import 'package:gradproject/utils/user_geolocation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../services/sms_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+enum RequestStatus { pending, accepted, rejected }
 
 class Request {
   String userID;
@@ -16,6 +19,7 @@ class Request {
   String? latitude;
   String? longitude;
   DateTime? dateTime;
+
   Request(
       {required this.userID,
       required this.patient,
@@ -40,7 +44,7 @@ class Request {
     return updateData;
   }
 
-  static Request fromMapToRequest(String? id, Iterable<DataSnapshot> map) {
+  static Request fromMapToRequest(Iterable<DataSnapshot> map) {
     var userID = '';
     var patient = '';
     DateTime? dateTime;
@@ -134,22 +138,26 @@ class Requests_Repository {
           await RelationRepository().getRelationsForCurrentUser();
       List<String> phoneNums = [];
       careGivers.forEach((element) async {
-        Notification x = Notification(
+        Notification notification = Notification(
             title: "${user?.displayName} needs your help!",
             body: "press to see the user location",
             notificationType: "request",
             notificationTypeId: requestID,
             targetUserID: element.userId2);
-        NotificationRepository().pushNotificationToUser(x);
-        UserProfile m = await UserRepository().getUserById(element.userId2);
-        phoneNums.add(m.phoneNumber);
+        NotificationRepository().pushNotificationToUser(notification);
+        UserProfile userProf =
+            await UserRepository().getUserById(element.userId2);
+        phoneNums.add(userProf.phoneNumber);
       });
       // TODO: check user settings and send sms if enabled
       sendSMSToCaregivers(phoneNums);
     }
     //send SMS in case no internet
     else {
-      // TODO: retrive data from shared preferences and send SMS
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      List<String> phoneNums =
+          prefs.getStringList('caregiversPhoneNumbers') ?? [];
+      if (phoneNums.isNotEmpty) sendSMSToCaregivers(phoneNums);
     }
   }
 
@@ -164,9 +172,21 @@ class Requests_Repository {
     await requestsRef.child(requestID).remove();
   }
 
+  // get request by id
+  Future<Request> getRequestById(String requestID) async {
+    final snapshot = await requestsRef.child(requestID).get();
+    if (snapshot.exists) {
+      return Request.fromMapToRequest(snapshot.children);
+    } else {
+      throw Exception("request not found");
+    }
+  }
+
   Future<void> sendSMSToCaregivers(List<String> recipients) async {
     SMSService.sendSmsMessage(
-        recipients: recipients, message: "Request Received");
+        recipients: recipients,
+        message:
+            "${user!.displayName} needs your help!, please try to contact them as soon as possible");
   }
 
   Future<void> sendSMSToServer(Request request) async {

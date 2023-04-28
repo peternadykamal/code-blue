@@ -10,8 +10,8 @@ Future<void> testThis() async {
   // test to download image from firebase storage
   final loadedImage =
       await StorageService().downloadImageFromFirebaseStorage(url!);
-  print(loadedImage?.path);
-  print(loadedImage?.length());
-  print(loadedImage?.name);
+  // print(loadedImage?.path);
+  // print(loadedImage?.length());
+  // print(loadedImage?.name);
   print(loadedImage?.runtimeType);
 }

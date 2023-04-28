@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:gradproject/chatbot.dart';
 import 'package:gradproject/loadingcontainer.dart';
 import 'package:gradproject/profile1.dart';
+import 'package:gradproject/repository/request_repository.dart';
 import 'package:gradproject/repository/user_repository.dart';
 import 'package:gradproject/style.dart';
 import 'package:gradproject/translations/locale_keys.g.dart';
@@ -20,6 +21,7 @@ class sosPage extends StatefulWidget {
 class _sosPageState extends State<sosPage> {
   bool notification = true;
   UserProfile? user;
+  Image? userProfileImage;
 
   @override
   void initState() {
@@ -29,8 +31,40 @@ class _sosPageState extends State<sosPage> {
 
   void getuser() async {
     final fetchedUser = await UserRepository().getUserProfile();
+    final fetchedUserProfileImage = await UserRepository().getProfileImage();
     setState(() {
       user = fetchedUser;
+      userProfileImage = fetchedUserProfileImage;
+    });
+  }
+
+  Future<Null> returnDialoge() {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Send SMS messages to caregivers?'),
+          content: Text('Do you want to send SMS messages to caregivers?'),
+          actions: [
+            ElevatedButton(
+              child: Text('No'),
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+            ),
+            ElevatedButton(
+              child: Text('Yes'),
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+            ),
+          ],
+        );
+      },
+    ).then((value) async {
+      await withInternetConnection([
+        () => RequestRepository().createRequestAndNotifyCaregivers(value),
+      ]);
     });
   }
 
@@ -70,15 +104,15 @@ class _sosPageState extends State<sosPage> {
                     SizedBox(width: 10),
                     CircleAvatar(
                       radius: 25,
+                      backgroundImage: userProfileImage!.image,
                       child: InkWell(
-                          onTap: () {
-                            Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: ((context) => profileone())));
-                          },
-                          child: SvgPicture.asset(
-                              "assets/images/default profile picture.svg")),
+                        onTap: () {
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: ((context) => profileone())));
+                        },
+                      ),
                     ),
                   ],
                 ),
@@ -100,9 +134,9 @@ class _sosPageState extends State<sosPage> {
             RawMaterialButton(
               onPressed: () async {
                 // this return an errror
-                await withInternetConnection([
-                  () => UserRepository().getUserById('halsdk;fj'),
-                ]);
+                // await withInternetConnection([
+                //   () => UserRepository().getUserById('halsdk;fj'),
+                // ]);
                 // to show how deal with an results list final results = await
                 // withInternetConnection([ () => UserRepository()
                 //   .getUserById('mOWCpqtfbKenJvEblEXEBTgy1uP2'), () =>
@@ -118,6 +152,7 @@ class _sosPageState extends State<sosPage> {
                 //   Toast.LENGTH_SHORT, gravity: ToastGravity.BOTTOM,
                 // timeInSecForIosWeb: 1, backgroundColor: Colors.red,
                 // textColor: Colors.white, fontSize: 16.0); }
+                returnDialoge();
               },
               elevation: 0.0,
               highlightElevation: 15.0,

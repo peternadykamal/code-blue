@@ -15,8 +15,8 @@ class AuthService {
       // save phone numbers of caregivers in shared preferences
       if (await isNetworkAvailable()) {
         final SharedPreferences prefs = await SharedPreferences.getInstance();
-        List<Relation> list =
-            await RelationRepository().getRelationsForCurrentUser();
+        List<Relation> list = (await RelationRepository()
+            .getRelationsForCurrentUser())['relations'];
         List<String> phoneNumbers = [];
         for (Relation relation in list) {
           UserProfile user =
@@ -31,7 +31,7 @@ class AuthService {
       //     prefs.getStringList('caregiversPhoneNumbers') ?? [];
       // print(phoneNumbers);
 
-      FcmService().initialize();
+      await FcmService().initialize();
     } else {
       print('User signed out.');
     }

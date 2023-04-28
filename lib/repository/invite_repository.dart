@@ -6,18 +6,18 @@ import 'package:gradproject/repository/user_repository.dart';
 
 enum InviteStatus { pending, accepted, rejected }
 
-class Invites {
+class Invite {
   // invites have some properties, 1-notificationID, 2-inviteStatus, 3-inviteSenderID, 4-inviteReceiverID
   InviteStatus? inviteStatus;
   String inviteSenderID;
   String inviteReceiverID;
 
-  Invites({
+  Invite({
     required this.inviteSenderID,
     required this.inviteReceiverID,
     this.inviteStatus = InviteStatus.pending,
   });
-  static Invites fromMapToInvites(Iterable<DataSnapshot> map) {
+  static Invite fromMapToInvites(Iterable<DataSnapshot> map) {
     var inviteStatus = InviteStatus.pending;
     var inviteSenderID = '';
     var inviteReceiverID = '';
@@ -34,14 +34,14 @@ class Invites {
           break;
       }
     }
-    return Invites(
+    return Invite(
       inviteStatus: inviteStatus,
       inviteSenderID: inviteSenderID,
       inviteReceiverID: inviteReceiverID,
     );
   }
 
-  static Map<String, dynamic> fromInvitesToMap(Invites data) {
+  static Map<String, dynamic> fromInvitesToMap(Invite data) {
     Map<String, dynamic> updateData = {
       'inviteStatus': data.inviteStatus?.index,
       'inviteSenderID': data.inviteSenderID,
@@ -51,7 +51,7 @@ class Invites {
   }
 }
 
-class InvitesRepository {
+class InviteRepository {
   final _invitesRef = FirebaseDatabase.instance.ref().child('invites');
   User? user = FirebaseAuth.instance.currentUser;
 
@@ -76,7 +76,7 @@ class InvitesRepository {
     if (invites.value != null) {
       for (var invite in invites.children) {
         // convert it to an invite object
-        final inviteObj = Invites.fromMapToInvites(invite.children);
+        final inviteObj = Invite.fromMapToInvites(invite.children);
         if (inviteObj.inviteReceiverID == receiverId &&
             inviteObj.inviteStatus == InviteStatus.pending) {
           throw Exception('Invite already exists and is pending');
@@ -86,12 +86,12 @@ class InvitesRepository {
 
     UserProfile userInfo = await UserRepository().getUserProfile();
     // second let's create the invitation
-    final invite = Invites(
+    final invite = Invite(
       inviteSenderID: user!.uid,
       inviteReceiverID: receiverId,
     );
     final newInvitation = _invitesRef.push();
-    await newInvitation.set(Invites.fromInvitesToMap(invite));
+    await newInvitation.set(Invite.fromInvitesToMap(invite));
     String id = newInvitation.key!;
 
     // third let's create the notification
@@ -118,7 +118,7 @@ class InvitesRepository {
     }
 
     // second check if invite status is pending, if not throw an error
-    Invites invite = await getInviteById(inviteId);
+    Invite invite = await getInviteById(inviteId);
     if (invite.inviteStatus != InviteStatus.pending) {
       throw Exception('Invite is not pending');
     }
@@ -141,7 +141,7 @@ class InvitesRepository {
     }
 
     // second check if invite status is pending, if not throw an error
-    Invites invite = await getInviteById(inviteId);
+    Invite invite = await getInviteById(inviteId);
     if (invite.inviteStatus != InviteStatus.pending) {
       throw Exception('Invite is not pending');
     }
@@ -157,9 +157,9 @@ class InvitesRepository {
     return snapshot.value != null;
   }
 
-  Future<Invites> getInviteById(String inviteId) async {
+  Future<Invite> getInviteById(String inviteId) async {
     final snapshot = await _invitesRef.child(inviteId).get();
-    return Invites.fromMapToInvites(snapshot.children);
+    return Invite.fromMapToInvites(snapshot.children);
   }
 
   Future<void> updateInviteStatus(String inviteId, InviteStatus status) async {

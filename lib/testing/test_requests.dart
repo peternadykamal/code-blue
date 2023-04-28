@@ -9,7 +9,11 @@ import 'package:gradproject/repository/relation_repository.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 Future<void> testThis() async {
-  Requests_Repository()
-      .sendSMSToServer(Request(patient: 'patient', userID: 'userid'));
+  // RequestRepository()
+  //     .sendSMSToServer(Request(patient: 'patient', userID: 'userid'));
   // SMSService.sendSmsMessage(recipients: ['+201204290582'], message: "message");
+
+  final requestRepository = RequestRepository();
+  // first we send a request
+  // await requestRepository.createRequestAndNotifyCaregivers();
 }

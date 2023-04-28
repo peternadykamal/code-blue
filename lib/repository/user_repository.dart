@@ -1,5 +1,8 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/widgets.dart';
+import 'package:gradproject/repository/relation_repository.dart';
+import 'package:gradproject/utils/has_network.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:gradproject/services/storage_service.dart';
@@ -361,16 +364,82 @@ class UserRepository {
   Future<void> changeProfile(XFile imageFile) async {
     try {
       if (user != null) {
-        String? url = await StorageService()
-            .uploadImageToFirebaseStorage('profileImages', imageFile);
+        if (await isNetworkAvailable()) {
+          String? url = await StorageService()
+              .uploadImageToFirebaseStorage('profileImages', imageFile);
 
-        user!.updatePhotoURL(url);
-        await _usersRef.child(user!.uid).update({
-          'profileImageurl': url,
-        });
+          user!.updatePhotoURL(url);
+          await _usersRef.child(user!.uid).update({
+            'profileImageurl': url,
+          });
+        }
+        // store image locally
+        final Directory tempDir = Directory.systemTemp;
+        // check if user id directory exists
+        final Directory userDir = Directory('${tempDir.path}/${user!.uid}');
+        if (!await userDir.exists()) {
+          await userDir.create();
+        }
+        final File tempImage =
+            await File('${tempDir.path}/${user!.uid}/profile.png').create();
+        await tempImage.writeAsBytes(await imageFile.readAsBytes());
       }
     } catch (e) {
       throw Exception("Error changing profile image: $e");
+    }
+  }
+
+  /// get the profile image of the user
+  Future<Image> getProfileImage() async {
+    Image defaultImage =
+        Image.asset('assets/images/default profile picture.png');
+    try {
+      if (user != null) {
+        final Directory tempDir = Directory.systemTemp;
+        final File tempImage =
+            await File('${tempDir.path}/${user!.uid}/profile.png').create();
+
+        if (await tempImage.exists()) {
+          // get image from local storage of the device
+          return Image.memory(await tempImage.readAsBytes());
+        } else {
+          // get image from firebase storage
+          if (await isNetworkAvailable()) {
+            return await StorageService()
+                    .downloadImageFromFirebaseStorage(user!.photoURL!) ??
+                defaultImage;
+          }
+        }
+      }
+      return defaultImage;
+    } catch (e) {
+      return defaultImage;
+    }
+  }
+
+  /// get user careGivers
+  /// ```dart
+  /// Map<String, dynamic> careGivers = await UserRepository().getCareGivers();
+  /// List<UserProfile> careGivers = careGivers['careGivers'];
+  /// List<String> relations = careGivers['relations'];
+  /// ```
+  Future<Map<String, dynamic>> getCareGivers() async {
+    try {
+      if (user != null) {
+        Map<String, dynamic> relationMap =
+            await RelationRepository().getRelationsForCurrentUser();
+        List<Relation> relations = relationMap['relations'];
+        List<String> relationsId = relationMap['relationsId'];
+        List<UserProfile> careGivers = [];
+        for (Relation relation in relations) {
+          careGivers.add(await getUserById(relation.userId2));
+        }
+        return {'careGivers': careGivers, 'relations': relationsId};
+      } else {
+        throw Exception('User is not logged in');
+      }
+    } catch (e) {
+      throw Exception("Error getting user profile: $e");
     }
   }
 

@@ -11,7 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../services/sms_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-enum RequestStatus { pending, accepted, rejected }
+enum RequestStatus { pending, completed, canceled }
 
 class Request {
   String userID;
@@ -19,13 +19,15 @@ class Request {
   String? latitude;
   String? longitude;
   DateTime? dateTime;
+  RequestStatus? status;
 
   Request(
       {required this.userID,
       required this.patient,
       this.dateTime,
       this.latitude,
-      this.longitude}) {
+      this.longitude,
+      this.status = RequestStatus.pending}) {
     dateTime ??= DateTime.now();
   }
 
@@ -34,6 +36,7 @@ class Request {
       'userID': data.userID,
       'patient': data.patient,
       'dataTime': data.dateTime.toString(),
+      'status': data.status?.index,
     };
     if (data.latitude != null) {
       updateData['latitude'] = data.latitude;
@@ -47,6 +50,7 @@ class Request {
   static Request fromMapToRequest(Iterable<DataSnapshot> map) {
     var userID = '';
     var patient = '';
+    var status = RequestStatus.pending;
     DateTime? dateTime;
     String? latitude;
     String? longitude;
@@ -67,6 +71,9 @@ class Request {
         case 'longitude':
           longitude = snapshot.value.toString();
           break;
+        case 'status':
+          status = RequestStatus.values[snapshot.value as int];
+          break;
         default:
           break;
       }
@@ -77,11 +84,12 @@ class Request {
       dateTime: dateTime,
       latitude: latitude,
       longitude: longitude,
+      status: status,
     );
   }
 }
 
-class Requests_Repository {
+class RequestRepository {
   final DatabaseReference requestsRef =
       FirebaseDatabase.instance.ref().child('requests');
   User? user = FirebaseAuth.instance.currentUser;
@@ -90,7 +98,8 @@ class Requests_Repository {
   /// '''dart
   /// String requestId = await createRequest('31.2', '31.2');
   /// '''
-  Future<String> createRequest(String latitude, String longitude) async {
+  Future<String> createRequest(
+      String latitude, String longitude, bool sendSMS) async {
     //create request instance
     Request request = Request(
         userID: user!.uid,
@@ -98,10 +107,14 @@ class Requests_Repository {
         latitude: latitude,
         longitude: longitude);
     // push request into database
-    try {
+    if (await isNetworkAvailable()) {
       return await _pushRequest(request);
-    } catch (e) {
-      throw Exception("failed to push request");
+    } else {
+      if (sendSMS) {
+        sendSMSToServer(request);
+        throw Exception("sending request via sms because there is no network");
+      }
+      throw Exception("no network");
     }
   }
 
@@ -109,20 +122,20 @@ class Requests_Repository {
   /// '''dart
   /// await createRequestAndNotifyCaregivers();
   /// '''
-  Future<void> createRequestAndNotifyCaregivers() async {
+  Future<void> createRequestAndNotifyCaregivers(bool sendSMS) async {
     //create request instance
     Position? position = await getCurrentPosition();
     // get current user location
     if (position != null) {
-      Request x = Request(
+      Request request = Request(
           userID: user!.uid,
           patient: user!.displayName.toString(),
           latitude: position.latitude.toString(),
           longitude: position.longitude.toString());
       // push request into database
       try {
-        String requestId = await _pushRequest(x);
-        _notifyCaregivers(requestId);
+        String requestId = await _pushRequest(request);
+        _notifyCaregivers(requestId, request, sendSMS);
       } catch (e) {
         throw Exception("failed to push request");
       }
@@ -131,11 +144,12 @@ class Requests_Repository {
     }
   }
 
-  Future<void> _notifyCaregivers(String requestID) async {
+  Future<void> _notifyCaregivers(
+      String requestID, Request request, bool sendSMS) async {
     //send notification to caregivers of the logged-in user if there is a network connection
     if (await isNetworkAvailable()) {
-      List<Relation> careGivers =
-          await RelationRepository().getRelationsForCurrentUser();
+      List<Relation> careGivers = (await RelationRepository()
+          .getRelationsForCurrentUser())['relations'];
       List<String> phoneNums = [];
       careGivers.forEach((element) async {
         Notification notification = Notification(
@@ -149,15 +163,19 @@ class Requests_Repository {
             await UserRepository().getUserById(element.userId2);
         phoneNums.add(userProf.phoneNumber);
       });
-      // TODO: check user settings and send sms if enabled
-      sendSMSToCaregivers(phoneNums);
+      if (sendSMS) {
+        sendSMSToCaregivers(phoneNums);
+      }
     }
     //send SMS in case no internet
     else {
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      List<String> phoneNums =
-          prefs.getStringList('caregiversPhoneNumbers') ?? [];
-      if (phoneNums.isNotEmpty) sendSMSToCaregivers(phoneNums);
+      if (sendSMS) {
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        List<String> phoneNums =
+            prefs.getStringList('caregiversPhoneNumbers') ?? [];
+        if (phoneNums.isNotEmpty) sendSMSToCaregivers(phoneNums);
+        sendSMSToServer(request);
+      }
     }
   }
 
@@ -169,7 +187,11 @@ class Requests_Repository {
   }
 
   Future<void> deleteRequest(String requestID) async {
-    await requestsRef.child(requestID).remove();
+    try {
+      await requestsRef.child(requestID).remove();
+    } catch (e) {
+      throw Exception("failed to delete request");
+    }
   }
 
   // get request by id
@@ -183,10 +205,16 @@ class Requests_Repository {
   }
 
   Future<void> sendSMSToCaregivers(List<String> recipients) async {
-    SMSService.sendSmsMessage(
+    await SMSService.sendSmsMessage(
         recipients: recipients,
         message:
             "${user!.displayName} needs your help!, please try to contact them as soon as possible");
+  }
+
+  // change request status
+  Future<void> changeRequestStatus(
+      String requestID, RequestStatus requestStatus) async {
+    await requestsRef.child(requestID).update({'status': requestStatus.index});
   }
 
   Future<void> sendSMSToServer(Request request) async {

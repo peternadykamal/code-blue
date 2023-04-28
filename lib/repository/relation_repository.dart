@@ -70,43 +70,48 @@ class RelationRepository {
     }
   }
 
-  Future<List<Relation>> getRelationsForCurrentUser() async {
-    final currentUser = _auth.currentUser;
-    if (currentUser != null) {
-      final relationsSnapshot = await _database
-          .ref()
-          .child('relations')
-          .orderByChild('userId1')
-          .equalTo(currentUser.uid)
-          .get();
-      final reversedRelationsSnapshot = await _database
-          .ref()
-          .child('relations')
-          .orderByChild('userId2')
-          .equalTo(currentUser.uid)
-          .get();
-      final List<Relation> relations = [];
-      relationsSnapshot.children.forEach((element) {
-        final relation = Relation(
-            userId1: element.child('userId1').value.toString(),
-            userId2: element.child('userId2').value.toString(),
-            id: element.key.toString());
-        relations.add(relation);
-      });
-      reversedRelationsSnapshot.children.forEach((element) {
-        final relation = Relation(
-            userId1: element.child('userId2').value.toString(),
-            userId2: element.child('userId1').value.toString(),
-            id: element.key.toString());
-        relations.add(relation);
-      });
-      return relations;
+  Future<Map<String, dynamic>> getRelationsForCurrentUser() async {
+    try {
+      final currentUser = _auth.currentUser;
+      if (currentUser != null) {
+        final relationsSnapshot = await _database
+            .ref()
+            .child('relations')
+            .orderByChild('userId1')
+            .equalTo(currentUser.uid)
+            .get();
+        final reversedRelationsSnapshot = await _database
+            .ref()
+            .child('relations')
+            .orderByChild('userId2')
+            .equalTo(currentUser.uid)
+            .get();
+        final List<Relation> relations = [];
+        final List<String> relationsId = [];
+        relationsSnapshot.children.forEach((element) {
+          String id = element.key.toString();
+          final relation = Relation(
+              userId1: element.child('userId1').value.toString(),
+              userId2: element.child('userId2').value.toString(),
+              id: element.key.toString());
+          relations.add(relation);
+          relationsId.add(id);
+        });
+        reversedRelationsSnapshot.children.forEach((element) {
+          String id = element.key.toString();
+          final relation = Relation(
+              userId1: element.child('userId2').value.toString(),
+              userId2: element.child('userId1').value.toString(),
+              id: element.key.toString());
+          relations.add(relation);
+          relationsId.add(id);
+        });
+        return {'relations': relations, 'relationsId': relationsId};
+      }
+      return {'relations': [], 'relationsId': []};
+    } catch (e) {
+      throw Exception('Error while getting relations');
     }
-    return [];
-  }
-
-  Future<void> deleteRelation(String relationId) async {
-    await _database.ref().child('relations').child(relationId).remove();
   }
 
   Future<bool> checkRelationExist(String userId) async {
@@ -145,5 +150,13 @@ class RelationRepository {
       return false;
     }
     return false;
+  }
+
+  Future<void> deleteRelation(String relationId) async {
+    try {
+      await _database.ref().child('relations').child(relationId).remove();
+    } catch (e) {
+      throw Exception('Error while deleting relation');
+    }
   }
 }

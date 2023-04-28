@@ -13,7 +13,7 @@ import 'package:gradproject/services/auth_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:gradproject/services/notification_service.dart';
-import 'testing/test_invites.dart';
+import 'testing/test_requests.dart';
 
 Locale deviceLocale = window.locale;
 String langCode = deviceLocale.languageCode;

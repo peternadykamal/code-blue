@@ -31,21 +31,9 @@ class profileone extends StatefulWidget {
 class _profileoneState extends State<profileone> {
   bool selectMedical = true;
   bool selectCare = false;
-  // ignore: unused_field
-  File? image;
-  final imagePicker = ImagePicker();
   UserProfile? user;
   User? firebaseUser;
-
-  uploadImage() async {
-    var pickedImage = await imagePicker.pickImage(source: ImageSource.camera);
-
-    if (pickedImage != null) {
-      setState(() {
-        image = File(pickedImage.path);
-      });
-    } else {}
-  }
+  Image? userProfileImage;
 
   @override
   void initState() {
@@ -56,15 +44,17 @@ class _profileoneState extends State<profileone> {
   void getuser() async {
     final fetchedUser = await UserRepository().getUserProfile();
     final fetchedFirebaseUser = FirebaseAuth.instance.currentUser;
+    final fetchedUserProfileImage = await UserRepository().getProfileImage();
     setState(() {
       user = fetchedUser;
       firebaseUser = fetchedFirebaseUser;
+      userProfileImage = fetchedUserProfileImage;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    if (user == null || firebaseUser == null) {
+    if (user == null || firebaseUser == null || userProfileImage == null) {
       return loadingContainer();
     } else {
       return SafeArea(
@@ -169,13 +159,16 @@ class _profileoneState extends State<profileone> {
                     Stack(
                       alignment: Alignment.bottomRight,
                       children: [
-                        image == null
-                            ? Image.asset("assets/images/Ellipse24.png",
-                                scale: 1.0)
-                            : CircleAvatar(
-                                radius: 40, backgroundImage: FileImage(image!)),
+                        CircleAvatar(
+                          radius: 40,
+                          backgroundImage: userProfileImage!.image,
+                        ),
                         GestureDetector(
-                          onTap: uploadImage,
+                          onTap: () async {
+                            XFile? image = await ImagePicker()
+                                .pickImage(source: ImageSource.gallery);
+                            UserRepository().changeProfile(image!);
+                          },
                           child: CircleAvatar(
                             radius: 15,
                             child: Icon(Icons.camera_alt_outlined,

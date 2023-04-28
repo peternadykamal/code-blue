@@ -19,8 +19,8 @@ testThis() async {
   //   }
   // }
 
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
-  List<String> phoneNumbers =
-      prefs.getStringList('caregiversPhoneNumbers') ?? [];
-  print(phoneNumbers);
+  // final SharedPreferences prefs = await SharedPreferences.getInstance();
+  // List<String> phoneNumbers =
+  //     prefs.getStringList('caregiversPhoneNumbers') ?? [];
+  // print(phoneNumbers);
 }

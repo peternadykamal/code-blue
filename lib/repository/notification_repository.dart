@@ -1,5 +1,8 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:gradproject/repository/invite_repository.dart';
+import 'package:gradproject/repository/request_repository.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:convert';
@@ -122,22 +125,75 @@ class NotificationRepository {
     return newNotification.key.toString();
   }
 
+  // get a notification by id
+  Future<Notification?> getNotificationById(String notificationID) async {
+    final snapshot = await databaseReference.child(notificationID).get();
+    if (snapshot.value != null) {
+      return Notification.fromMapToNotification(
+          snapshot.key, snapshot.children);
+    }
+  }
+
   // get all notifications for a specific user
-  Future<List<Notification>> getNotifications(String targetUserID) async {
+  Future<Map<String, dynamic>> _getNotifications(String targetUserID) async {
     final query =
         databaseReference.orderByChild('targetUserID').equalTo(targetUserID);
     // Get the data snapshot for the query result
     final snapshot = await query.get();
     // Convert the snapshot data into a list of maps
     final List<Notification> notifications = [];
-
+    final List<String> notificationsIds = [];
     if (snapshot.value != null) {
       for (var value in snapshot.children) {
+        notificationsIds.add(value.key.toString());
         notifications
             .add(Notification.fromMapToNotification(value.key, value.children));
       }
     }
-    return notifications;
+    return {
+      'notifications': notifications,
+      'notificationsIds': notificationsIds
+    };
+  }
+
+  /// get all notifications for the current user in form of a list of objects as invites and requests are notifications
+  /// ```dart
+  /// final notificationsMap = await notificationRepository.getNotifications();
+  /// List<dynamic> notifications = notificationsMap['notifications'];
+  /// List<String> notifcationsId = notificationsMap['notificationsIds'];
+  /// for (var notification in notifications) {
+  ///   if(notification is Invite){
+  ///     print(notification.inviteSenderID);
+  ///     print(notification.inviteReceiverID);
+  ///   }
+  ///   else if(notification is Request){
+  ///     print(notification.latitude);
+  ///     print(notification.longitude);
+  ///   }
+  /// }
+  /// ```
+  Future<Map<String, dynamic>> getNotifications() async {
+    Map<String, dynamic> notificationsMap = await _getNotifications(user!.uid);
+    List<Notification> notifications = notificationsMap['notifications'];
+    final List<dynamic> notificationsObjects = [];
+    // sort notifications by date the newest first
+    notifications.sort((a, b) => b.date!.compareTo(a.date!));
+    for (var notification in notifications) {
+      switch (notification.notificationType) {
+        case 'invite':
+          notificationsObjects.add(await InviteRepository()
+              .getInviteById(notification.notificationTypeId));
+          break;
+        case 'request':
+          notificationsObjects.add(await RequestRepository()
+              .getRequestById(notification.notificationTypeId));
+          break;
+      }
+    }
+    return {
+      'notifications': notificationsObjects,
+      'notificationsIds': notificationsMap['notificationsIds']
+    };
   }
 
   /// update the seen status of a notification

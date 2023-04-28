@@ -1,10 +1,12 @@
 import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 
 class StorageService {
   final FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
-
+  final User? user = FirebaseAuth.instance.currentUser;
   Future<String?> uploadImageToFirebaseStorage(
       String folderName, XFile imageFile) async {
     try {
@@ -12,10 +14,8 @@ class StorageService {
       if (!file.existsSync()) {
         throw Exception('File does not exist.');
       }
-      final Reference reference = _firebaseStorage
-          .ref()
-          .child(folderName)
-          .child(DateTime.now().toString());
+      final Reference reference =
+          _firebaseStorage.ref().child(folderName).child(user!.uid);
       final UploadTask uploadTask = reference.putFile(file);
       final TaskSnapshot downloadUrl = (await uploadTask);
       final String url = await downloadUrl.ref.getDownloadURL();
@@ -26,12 +26,13 @@ class StorageService {
     }
   }
 
-  Future<XFile?> downloadImageFromFirebaseStorage(String imageUrl) async {
+  Future<Image?> downloadImageFromFirebaseStorage(String imageUrl) async {
     try {
       final Reference reference = _firebaseStorage.refFromURL(imageUrl);
       final File imageFile =
           File((await reference.getDownloadURL()).toString());
-      return XFile(imageFile.path);
+      // return XFile(imageFile.path);
+      return Image.file(imageFile);
     } on FirebaseException catch (error) {
       print('Error downloading image from Firebase Storage: $error');
       return null;

@@ -84,64 +84,75 @@ class _profileoneState extends State<profileone> {
                       PopupMenuButton(
                         iconSize: 28,
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                         itemBuilder: (context) => [
                           PopupMenuItem(
-                              child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Text("Log Out",
+                            value: "logout",
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Text(
+                                  "Log Out",
                                   style: TextStyle(
-                                      color: Mycolors.buttoncolor,
-                                      fontSize: 18)),
-                              Padding(
-                                padding: const EdgeInsets.all(0),
-                                child: Icon(Icons.logout,
-                                    color: Mycolors.buttoncolor, size: 20),
-                              )
-                            ],
-                          )),
+                                    color: Mycolors.buttoncolor,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                                Icon(
+                                  Icons.logout,
+                                  color: Mycolors.buttoncolor,
+                                  size: 20,
+                                ),
+                              ],
+                            ),
+                          ),
                           PopupMenuItem(
-                              child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              GestureDetector(
-                                  onTap: () async {
-                                    if (await isNetworkAvailable != true) {
-                                      Navigator.pushReplacement(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  profile2()));
-                                    } else {
-                                      Fluttertoast.showToast(
-                                          msg: "No Internet connection",
-                                          toastLength: Toast.LENGTH_SHORT,
-                                          gravity: ToastGravity.BOTTOM,
-                                          timeInSecForIosWeb: 1,
-                                          backgroundColor: Mycolors.splashback,
-                                          textColor: Mycolors.textcolor,
-                                          fontSize: 16.0);
-                                    }
-                                  },
-                                  child: Text("Settings",
-                                      style: TextStyle(
-                                          color: Mycolors.buttoncolor,
-                                          fontSize: 18))),
-                              Padding(
-                                padding: const EdgeInsets.all(0),
-                                child: Icon(Icons.settings,
-                                    color: Mycolors.buttoncolor, size: 20),
-                              )
-                            ],
-                          ))
+                            value: "settings",
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Text(
+                                  "Settings",
+                                  style: TextStyle(
+                                    color: Mycolors.buttoncolor,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                                Icon(
+                                  Icons.settings,
+                                  color: Mycolors.buttoncolor,
+                                  size: 20,
+                                ),
+                              ],
+                            ),
+                          ),
                         ],
+                        onSelected: (value) async {
+                          if (value == "logout") {
+                            await AuthService().signOut();
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => authPage(),
+                              ),
+                            );
+                          } else if (value == "settings") {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => profile2(),
+                              ),
+                            );
+                          }
+                        },
                         child: Container(
-                            margin: EdgeInsets.only(left: 30),
-                            height: 25,
-                            width: 25,
-                            child: SvgPicture.asset(
-                                "assets/images/Vector (2).svg")),
+                          margin: EdgeInsets.only(left: 30),
+                          height: 25,
+                          width: 25,
+                          child:
+                              SvgPicture.asset("assets/images/Vector (2).svg"),
+                        ),
                       )
                     ],
                   ),

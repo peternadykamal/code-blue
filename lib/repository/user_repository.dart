@@ -13,18 +13,11 @@ enum BloodType { a, b, ab, o }
 
 enum RhBloodType { positive, negative }
 
-// here is an example on how to create a user profile:
-// UserProfile user = UserProfile(
-//   email: 'nady.peter@gmail.com',
-//   weight: 70.0,
-//   height: 170.0,
-//   bloodType: BloodType.a,
-//   rhBloodType: RhBloodType.positive,
-//   medicalCondition: 'Diabetes',
-//   medications: 'Insulin',
-//   allergies: 'Pollen',
-//   remarks: 'None',
-// );
+// here is an example on how to create a user profile: UserProfile user =
+// UserProfile( email: 'nady.peter@gmail.com', weight: 70.0, height: 170.0,
+//   bloodType: BloodType.a, rhBloodType: RhBloodType.positive,
+//   medicalCondition: 'Diabetes', medications: 'Insulin', allergies: 'Pollen',
+//   remarks: 'None', );
 
 class UserProfile {
   String email;
@@ -42,24 +35,25 @@ class UserProfile {
   String? allergies;
   String? remarks;
   String? profileImageUrl;
+  Image? profileImage;
 
-  UserProfile({
-    required this.email,
-    required this.username,
-    required this.phoneNumber,
-    this.birthDate,
-    this.age,
-    this.gender,
-    this.weight,
-    this.height,
-    this.bloodType,
-    this.rhBloodType,
-    this.medicalCondition,
-    this.medications,
-    this.allergies,
-    this.remarks,
-    this.profileImageUrl,
-  });
+  UserProfile(
+      {required this.email,
+      required this.username,
+      required this.phoneNumber,
+      this.birthDate,
+      this.age,
+      this.gender,
+      this.weight,
+      this.height,
+      this.bloodType,
+      this.rhBloodType,
+      this.medicalCondition,
+      this.medications,
+      this.allergies,
+      this.remarks,
+      this.profileImageUrl,
+      this.profileImage});
 
   /// convert the user profile to a map
   static UserProfile fromMapToUserProfile(Iterable<DataSnapshot> map) {
@@ -243,7 +237,9 @@ class UserRepository {
         final snapshot = await _usersRef.child(user!.uid).get();
         if (snapshot.exists) {
           final data = snapshot.children;
-          return UserProfile.fromMapToUserProfile(data);
+          UserProfile user = UserProfile.fromMapToUserProfile(data);
+          user.profileImage = await getProfileImage();
+          return user;
         } else {
           throw Exception('User does not exist');
         }
@@ -284,11 +280,23 @@ class UserRepository {
               break;
           }
         }
+        Image defualtImage =
+            Image.asset('assets/images/default profile picture.png');
+        late Image profileImage;
+        if (profileImageUrl != null) {
+          profileImage = await StorageService()
+                  .downloadImageFromFirebaseStorage(profileImageUrl) ??
+              defualtImage;
+        } else {
+          profileImage =
+              Image.asset('assets/images/default profile picture.png');
+        }
         return UserProfile(
             email: email,
             username: username,
             phoneNumber: phoneNumber,
-            profileImageUrl: profileImageUrl);
+            profileImageUrl: profileImageUrl,
+            profileImage: profileImage);
       } else {
         throw Exception('User does not exist');
       }
@@ -325,7 +333,8 @@ class UserRepository {
   /// ```dart
   /// List<String> userIds = await UserRepository().fuzzyUserEmailSearch("emailQuery");
   /// ```
-  /// [getIDsList] is a boolean that determines if the method will return a list of user IDs or a list of user emails
+  /// [getIDsList] is a boolean that determines if the method will return a list
+  /// of user IDs or a list of user emails
   Future<List<String>> fuzzyUserEmailSearch(String emailQuery,
       {bool getIDsList = false}) async {
     Query query = _usersRef
@@ -347,8 +356,9 @@ class UserRepository {
     return userIds;
   }
 
-  /// this method is used to update the registration token of the current device it mainly used by fsMessaging service
-  /// example on how to use this method without async/await:
+  /// this method is used to update the registration token of the current device
+  /// it mainly used by fsMessaging service example on how to use this method
+  /// without async/await:
   Future<void> updateFcmToken(String token) async {
     try {
       if (user != null) {
@@ -454,6 +464,22 @@ class UserRepository {
       }
     } catch (e) {
       throw Exception("Error checking user exist: $e");
+    }
+  }
+
+  /// get user id by email
+  Future<String> getUserIdByEmail(String email) async {
+    try {
+      final snapshot =
+          (await _usersRef.orderByChild('email').equalTo(email).once())
+              .snapshot;
+      if (snapshot.key != null) {
+        return snapshot.children.first.key.toString();
+      } else {
+        throw Exception('User does not exist');
+      }
+    } catch (e) {
+      throw Exception("Error getting user id by email: $e");
     }
   }
 }

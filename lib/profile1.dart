@@ -14,12 +14,15 @@ import 'package:gradproject/buttonselevated.dart';
 import 'package:gradproject/loadingcontainer.dart';
 import 'package:gradproject/medicalCard.dart';
 import 'package:gradproject/repository/user_repository.dart';
+import 'package:gradproject/searchpage.dart';
 import 'package:gradproject/sos.dart';
 import 'package:gradproject/style.dart';
 import 'package:gradproject/utils/has_network.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:paginated_search_bar/paginated_search_bar_state_property.dart';
 import 'package:path/path.dart';
 import 'package:gradproject/services/auth_service.dart';
+import 'package:paginated_search_bar/paginated_search_bar.dart';
 
 class profileone extends StatefulWidget {
   const profileone({super.key});
@@ -562,29 +565,44 @@ class _profileoneState extends State<profileone> {
                       width: 320,
                       child: Column(
                         children: [
-                          SizedBox(height: 20),
+                          SizedBox(height: 10),
                           Card(
-                            elevation: 10,
+                            elevation: 3,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            child: Container(
-                              width: 300,
-                              height: 36,
-                              child: TextField(
-                                  decoration: InputDecoration(
-                                      hintStyle: TextStyle(
-                                          color: Mycolors.notpressed,
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.normal),
-                                      hintText: "Search".padLeft(17),
-                                      contentPadding: EdgeInsets.only(top: 8),
-                                      filled: true,
-                                      fillColor: Mycolors.fillingcolor,
-                                      isDense: true,
-                                      border: InputBorder.none)),
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => searchPage()));
+                              },
+                              child: Container(
+                                  width: 300,
+                                  height: 33,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 8.0),
+                                        child: Icon(Icons.search),
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(right: 140.0),
+                                        child: Text("Search for a caregiver",
+                                            style: TextStyle(
+                                                color: Mycolors.notpressed,
+                                                fontSize: 12)),
+                                      ),
+                                    ],
+                                  )),
                             ),
                           ),
+                          SizedBox(height: 20),
                           SizedBox(height: 30),
                           Padding(
                             padding: const EdgeInsets.only(left: 8.0),

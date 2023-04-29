@@ -90,10 +90,19 @@ class _profileoneState extends State<profileone> {
                               child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              Text("Log Out",
-                                  style: TextStyle(
-                                      color: Mycolors.buttoncolor,
-                                      fontSize: 18)),
+                              InkWell(
+                                onTap: () async {
+                                  await AuthService().signOut();
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: ((context) => authPage())));
+                                },
+                                child: Text("Log Out",
+                                    style: TextStyle(
+                                        color: Mycolors.buttoncolor,
+                                        fontSize: 18)),
+                              ),
                               Padding(
                                 padding: const EdgeInsets.all(0),
                                 child: Icon(Icons.logout,

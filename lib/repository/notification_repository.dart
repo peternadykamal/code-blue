@@ -201,11 +201,11 @@ class NotificationRepository {
   /// ```dart
   /// await notificationRepository.markAllNotificationsAsSeen();
   /// ```
-  Future<void> markAllNotificationsAsSeen() async {
-    Map<String, dynamic> notificationsMap = await _getNotifications(user!.uid);
-    List<String> notificationsIds = notificationsMap['notificationsIds'];
-    for (var notificationId in notificationsIds) {
-      await updateNotificationSeenStatus(notificationId, true);
+  Future<void> markAllNotificationsAsSeen(
+      List<Notification> notifications, List<String> notificationsIds) async {
+    for (int i = 0; i < notifications.length; i++) {
+      if (notifications[i].isSeen)
+        await updateNotificationSeenStatus(notificationsIds[i], true);
     }
   }
 

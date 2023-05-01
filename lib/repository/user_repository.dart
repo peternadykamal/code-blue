@@ -197,6 +197,7 @@ class UserRepository {
   final DatabaseReference _usersRef =
       FirebaseDatabase.instance.ref().child('users');
   User? user = FirebaseAuth.instance.currentUser;
+  Image defaultImage = Image.asset('assets/images/default profile picture.png');
 
   /// Example on how to use this method without async/await:
   /// ```dart
@@ -280,16 +281,14 @@ class UserRepository {
               break;
           }
         }
-        Image defualtImage =
-            Image.asset('assets/images/default profile picture.png');
+
         late Image profileImage;
         if (profileImageUrl != null) {
           profileImage = await StorageService()
                   .downloadImageFromFirebaseStorage(profileImageUrl) ??
-              defualtImage;
+              defaultImage;
         } else {
-          profileImage =
-              Image.asset('assets/images/default profile picture.png');
+          profileImage = defaultImage;
         }
         return UserProfile(
             email: email,
@@ -401,26 +400,28 @@ class UserRepository {
 
   /// get the profile image of the user
   Future<Image> getProfileImage() async {
-    Image defaultImage =
-        Image.asset('assets/images/default profile picture.png');
     try {
-      if (await isNetworkAvailable()) {
-        return await StorageService()
-                .downloadImageFromFirebaseStorage(user!.photoURL!) ??
-            defaultImage;
-      }
-      if (user != null) {
+      if (user != null && user!.photoURL != null) {
         final Directory tempDir = Directory.systemTemp;
-        final File tempImage =
-            await File('${tempDir.path}/${user!.uid}/profile.png').create();
-
+        final Directory userDir = Directory('${tempDir.path}/${user!.uid}');
+        if (!await userDir.exists()) {
+          await userDir.create();
+        }
+        final File tempImage = File('${tempDir.path}/${user!.uid}/profile.png');
         if (await tempImage.exists()) {
           // get image from local storage of the device
           return Image.memory(await tempImage.readAsBytes());
         }
+
+        if (await isNetworkAvailable()) {
+          return await StorageService()
+                  .downloadImageFromFirebaseStorage(user!.photoURL!) ??
+              defaultImage;
+        }
       }
       return defaultImage;
     } catch (e) {
+      // return defaultImage;
       return defaultImage;
     }
   }

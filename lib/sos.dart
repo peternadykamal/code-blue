@@ -107,18 +107,18 @@ class _sosPageState extends State<sosPage> {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        // Navigator.pushReplacement(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) => NotificationPage(),
-                        //   ),
-                        // );
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => CareGiversList(),
+                            builder: (context) => NotificationPage(),
                           ),
                         );
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //     builder: (context) => CareGiversList(),
+                        //   ),
+                        // );
                       },
                       child: SvgPicture.asset(
                         hasNewNotification == true

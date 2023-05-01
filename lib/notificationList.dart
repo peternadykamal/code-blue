@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gradproject/repository/notification_repository.dart'
@@ -33,7 +34,6 @@ class _NotificationPageState extends State<NotificationPage> {
     setState(() {
       _notificationsObjects = notifications['notificationsObjects'];
       _notifications = notifications['notifications'];
-      notifyRepo.NotificationRepository().markAllNotificationsAsSeen();
     });
   }
 
@@ -41,94 +41,206 @@ class _NotificationPageState extends State<NotificationPage> {
       BuildContext context, notifyRepo.Notification notification) {
     final index = _notifications.indexOf(notification);
     final notificationObject = _notificationsObjects[index];
+    final isUnseen = !notification.isSeen;
+    final dateFromNow = DateTime.now().difference(notification.date!);
+// format date from now if less than 24 hours else in days
+    String date = dateFromNow.abs().inDays >= 1
+        ? '${dateFromNow.abs().inDays}d'
+        : dateFromNow.abs().inHours >= 1
+            ? '${dateFromNow.abs().inHours}h'
+            : '${dateFromNow.abs().inMinutes}m';
 
     if (notification.notificationType == 'invite') {
       final invite = notificationObject as Invite;
       if (invite.inviteStatus == InviteStatus.pending) {
-        return ListTile(
-          leading: Icon(Icons.people),
-          title: Text(_notifications[index].title),
-          subtitle: Text(_notifications[index].body),
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              IconButton(
-                icon: Icon(Icons.check),
-                onPressed: () {
-                  try {
-                    InviteRepository().acceptInvitation(
-                      _notifications[index].notificationTypeId,
-                    );
-                    setState(() {
-                      invite.inviteStatus = InviteStatus.accepted;
-                    });
-                  } catch (e) {
-                    Fluttertoast.showToast(
-                      msg: e.toString(),
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.TOP,
-                      timeInSecForIosWeb: 1,
-                      backgroundColor: Mycolors.buttoncolor,
-                      textColor: Colors.white,
-                      fontSize: 16.0,
-                    );
-                  }
-                },
-              ),
-              IconButton(
-                icon: Icon(Icons.close),
-                onPressed: () {
-                  try {
-                    InviteRepository().rejectInvitation(
-                      _notifications[index].notificationTypeId,
-                    );
-                    setState(() {
-                      invite.inviteStatus = InviteStatus.rejected;
-                    });
-                  } catch (e) {
-                    Fluttertoast.showToast(
-                      msg: e.toString(),
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.TOP,
-                      timeInSecForIosWeb: 1,
-                      backgroundColor: Mycolors.buttoncolor,
-                      textColor: Colors.white,
-                      fontSize: 16.0,
-                    );
-                  }
-                },
-              ),
-            ],
+        return Card(
+          margin: EdgeInsets.only(right: 10, left: 10, bottom: 5, top: 5),
+          color: Mycolors.numpad,
+          elevation: 4,
+          child: ListTile(
+            leading: Stack(
+              children: [
+                Icon(Icons.notifications, color: Mycolors.textcolor),
+                if (!notification.isSeen)
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: Container(
+                      width: 10,
+                      height: 10,
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            title: Text(
+              _notifications[index].title,
+              style: TextStyle(
+                  color: Mycolors.textcolor, fontWeight: FontWeight.bold),
+            ),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(_notifications[index].body),
+                Text(
+                  '${date}',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
+            ),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.check, color: Mycolors.textcolor),
+                  onPressed: () {
+                    try {
+                      InviteRepository().acceptInvitation(
+                        _notifications[index].notificationTypeId,
+                      );
+                      setState(() {
+                        invite.inviteStatus = InviteStatus.accepted;
+                      });
+                    } catch (e) {
+                      Fluttertoast.showToast(
+                        msg: e.toString(),
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.TOP,
+                        timeInSecForIosWeb: 1,
+                        backgroundColor: Mycolors.buttoncolor,
+                        textColor: Colors.white,
+                        fontSize: 16.0,
+                      );
+                    }
+                  },
+                ),
+                IconButton(
+                  icon: Icon(Icons.close, color: Mycolors.textcolor),
+                  onPressed: () {
+                    try {
+                      InviteRepository().rejectInvitation(
+                        _notifications[index].notificationTypeId,
+                      );
+                      setState(() {
+                        invite.inviteStatus = InviteStatus.rejected;
+                      });
+                    } catch (e) {
+                      Fluttertoast.showToast(
+                        msg: e.toString(),
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.TOP,
+                        timeInSecForIosWeb: 1,
+                        backgroundColor: Mycolors.buttoncolor,
+                        textColor: Colors.white,
+                        fontSize: 16.0,
+                      );
+                    }
+                  },
+                ),
+              ],
+            ),
           ),
         );
       } else {
-        return ListTile(
-          leading: Icon(Icons.people),
-          title: Text(_notifications[index].title),
-          subtitle: Text(_notifications[index].body),
-          trailing: invite.inviteStatus == InviteStatus.accepted
-              ? Icon(Icons.check)
-              : Icon(Icons.close),
+        return Card(
+          margin: EdgeInsets.only(right: 10, left: 10, bottom: 5, top: 5),
+          color: Mycolors.numpad,
+          elevation: 4,
+          child: ListTile(
+            leading: Icon(Icons.people, color: Mycolors.textcolor),
+            title: Text(
+              _notifications[index].title,
+              style: TextStyle(
+                  color: Mycolors.textcolor, fontWeight: FontWeight.bold),
+            ),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(_notifications[index].body),
+                Text(
+                  '${date}',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
+            ),
+            trailing: invite.inviteStatus == InviteStatus.accepted
+                ? Icon(Icons.check, color: Mycolors.textcolor)
+                : Icon(Icons.close, color: Mycolors.textcolor),
+          ),
         );
       }
     } else if (notification.notificationType == 'request') {
       final request = notificationObject as Request;
-      return ListTile(
-        leading: Icon(Icons.local_hospital),
-        title: Text(request.patient),
-        subtitle: Text('Requested your help'),
-        onTap: () {
-          final url =
-              'https://www.google.com/maps/search/?api=1&query=${request.latitude},${request.longitude}';
-          // convert url to a uri to be able to launch it
-          final uri = Uri.parse(url);
-          launchUrl(uri);
-        },
+      return Card(
+        margin: EdgeInsets.only(right: 10, left: 10, bottom: 5, top: 5),
+        color: Mycolors.numpad,
+        elevation: 4,
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: ListTile(
+            leading: Stack(
+              children: [
+                Icon(Icons.local_hospital, color: Mycolors.textcolor),
+                if (isUnseen)
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: Container(
+                      width: 10,
+                      height: 10,
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            title: Text(
+              request.patient,
+              style: TextStyle(
+                  color: Mycolors.textcolor, fontWeight: FontWeight.bold),
+            ),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Requested your help'),
+                Text(
+                  '${date}',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
+            ),
+            onTap: () {
+              final url =
+                  'https://www.google.com/maps/search/?api=1&query=${request.latitude},${request.longitude}';
+              // convert url to a uri to be able to launch it
+              final uri = Uri.parse(url);
+              launchUrl(uri);
+            },
+          ),
+        ),
       );
     } else {
       return ListTile(
         leading: Icon(Icons.notifications),
-        title: Text(notification.title),
+        title: Text(
+          notification.title,
+          style:
+              TextStyle(color: Mycolors.textcolor, fontWeight: FontWeight.bold),
+        ),
         subtitle: Text(notification.body),
       );
     }
@@ -138,14 +250,30 @@ class _NotificationPageState extends State<NotificationPage> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        // Do something here
+        notifyRepo.NotificationRepository().markAllNotificationsAsSeen();
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => sosPage()));
         return false;
       },
       child: Scaffold(
+        backgroundColor: Mycolors.fillingcolor,
         appBar: AppBar(
-          title: Text('Notifications'),
+          centerTitle: true,
+          backgroundColor: Mycolors.splashback,
+          bottomOpacity: 0.0,
+          elevation: 0.0,
+          leading: InkWell(
+              onTap: () {
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => sosPage()));
+              },
+              child: Icon(Icons.arrow_back, color: Mycolors.textcolor)),
+          title:
+              Text("Notification", style: TextStyle(color: Mycolors.textcolor)),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(15),
+          )),
         ),
         body: ListView.builder(
           itemCount: _notifications.length,

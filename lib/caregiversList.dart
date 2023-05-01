@@ -11,6 +11,7 @@ class CareGiversList extends StatefulWidget {
 class _CareGiversListState extends State<CareGiversList> {
   List<UserProfile> _careGivers = [];
   List<String> _relations = [];
+  bool hasCareGivers = false;
 
   @override
   void initState() {
@@ -25,6 +26,7 @@ class _CareGiversListState extends State<CareGiversList> {
       setState(() {
         _careGivers = result['careGivers'];
         _relations = result['relations'];
+        hasCareGivers = _relations.isNotEmpty;
       });
     } catch (e) {
       // Handle error

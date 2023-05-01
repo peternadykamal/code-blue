@@ -13,6 +13,7 @@ import 'package:gradproject/button2.dart';
 import 'package:gradproject/buttonselevated.dart';
 import 'package:gradproject/loadingcontainer.dart';
 import 'package:gradproject/medicalCard.dart';
+import 'package:gradproject/repository/relation_repository.dart';
 import 'package:gradproject/repository/user_repository.dart';
 import 'package:gradproject/searchpage.dart';
 import 'package:gradproject/sos.dart';
@@ -37,11 +38,41 @@ class _ProfileoneState extends State<Profileone> {
   UserProfile? user;
   User? firebaseUser;
   Image? userProfileImage;
+  List<UserProfile> _careGivers = [];
+  List<String> _relations = [];
+  bool hasCareGivers = false;
 
   @override
   void initState() {
     super.initState();
     getuser();
+  }
+
+  Future<void> _getCareGivers() async {
+    try {
+      final Map<String, dynamic> result =
+          await UserRepository().getCareGivers();
+      setState(() {
+        _careGivers = result['careGivers'];
+        _relations = result['relations'];
+        hasCareGivers = _relations.isNotEmpty;
+      });
+    } catch (e) {
+      // Handle error
+    }
+  }
+
+  Future<void> _deleteRelation(int index) async {
+    try {
+      final relationId = _relations[index];
+      await RelationRepository().deleteRelation(relationId);
+      setState(() {
+        _careGivers.removeAt(index);
+        _relations.removeAt(index);
+      });
+    } catch (e) {
+      // Handle error
+    }
   }
 
   void getuser() async {

@@ -64,7 +64,7 @@ class _profile2State extends State<profile2> {
                           Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => profileone()));
+                                  builder: (context) => Profileone()));
                         },
                         child: Padding(
                           padding: const EdgeInsets.only(left: 8.0),
@@ -83,9 +83,9 @@ class _profile2State extends State<profile2> {
                           Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => profileone()));
+                                  builder: (context) => Profileone()));
 
-                          UserRepository().updateUserProfile(
+                          await UserRepository().updateUserProfile(
                             UserProfile(
                               email: email,
                               username: username,

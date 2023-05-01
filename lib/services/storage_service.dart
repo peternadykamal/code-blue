@@ -29,10 +29,11 @@ class StorageService {
   Future<Image?> downloadImageFromFirebaseStorage(String imageUrl) async {
     try {
       final Reference reference = _firebaseStorage.refFromURL(imageUrl);
-      final File imageFile =
-          File((await reference.getDownloadURL()).toString());
-      // return XFile(imageFile.path);
-      return Image.file(imageFile);
+      final data = await reference.getData();
+      if (data == null) {
+        return null;
+      }
+      return Image.memory(data);
     } on FirebaseException catch (error) {
       print('Error downloading image from Firebase Storage: $error');
       return null;

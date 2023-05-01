@@ -99,7 +99,7 @@ class _searchPageState extends State<searchPage> {
                               Fluttertoast.showToast(
                                 msg: 'Invitation Sent',
                                 toastLength: Toast.LENGTH_SHORT,
-                                gravity: ToastGravity.BOTTOM,
+                                gravity: ToastGravity.TOP,
                                 timeInSecForIosWeb: 1,
                                 backgroundColor: Mycolors.buttoncolor,
                                 textColor: Colors.white,
@@ -109,7 +109,7 @@ class _searchPageState extends State<searchPage> {
                               Fluttertoast.showToast(
                                 msg: e.toString(),
                                 toastLength: Toast.LENGTH_SHORT,
-                                gravity: ToastGravity.BOTTOM,
+                                gravity: ToastGravity.TOP,
                                 timeInSecForIosWeb: 1,
                                 backgroundColor: Mycolors.buttoncolor,
                                 textColor: Colors.white,

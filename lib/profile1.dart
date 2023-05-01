@@ -330,333 +330,346 @@ class _ProfileoneState extends State<Profileone> {
                           ),
                         );
                       }
-                      return Card(
-                        elevation: 100,
-                        shape: CircleBorder(),
-                        borderOnForeground: false,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: Colors.white,
-                          ),
-                          height: 420,
-                          width: 300,
-                          child: SingleChildScrollView(
-                            child: Column(children: [
-                              SizedBox(height: 20),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 110.0),
-                                    child: Center(
-                                      child: Text(
-                                          user!.gender == null
-                                              ? ""
-                                              : user!.gender?.name == "male"
-                                                  ? "M( " +
-                                                      user!.age.toString() +
-                                                      " y/o)"
-                                                  : "F(" +
-                                                      user!.age.toString() +
-                                                      " y/o)",
-                                          style: TextStyle(
-                                              color: Mycolors.textcolor,
-                                              fontSize: 20)),
-                                    ),
-                                  ),
-                                  Stack(
-                                    children: [
-                                      SvgPicture.asset(
-                                          "assets/images/Group 26.svg")
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    Column(
-                                      children: [
-                                        Row(
-                                          children: [
-                                            SvgPicture.asset(
-                                                "assets/images/Vector (5).svg"),
-                                            Text("Height",
-                                                style: TextStyle(
-                                                    color: Mycolors.textcolor,
-                                                    fontSize: 15))
-                                          ],
-                                        ),
-                                        Text(
-                                            user!.height == null
-                                                ? ""
-                                                : user!.height.toString() +
-                                                    " Cm",
-                                            style: TextStyle(
-                                                color: Mycolors.textcolor,
-                                                fontSize: 24))
-                                      ],
-                                    ),
-                                    Column(
-                                      children: [
-                                        Row(
-                                          children: [
-                                            SvgPicture.asset(
-                                                "assets/images/Vector (3).svg"),
-                                            Text("weight",
-                                                style: TextStyle(
-                                                    color: Mycolors.textcolor,
-                                                    fontSize: 15))
-                                          ],
-                                        ),
-                                        Text(
-                                            user!.weight == null
-                                                ? ""
-                                                : user!.weight.toString() +
-                                                    " Kg",
-                                            style: TextStyle(
-                                                color: Mycolors.textcolor,
-                                                fontSize: 24))
-                                      ],
-                                    ),
-                                  ]),
-                              SizedBox(height: 10),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    right: 70.0, left: 40),
-                                child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          SvgPicture.asset(
-                                              "assets/images/Vector (4).svg"),
-                                          Text("Blood Type",
-                                              style: TextStyle(
-                                                  color: Mycolors.textcolor,
-                                                  fontSize: 20))
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          Text(
-                                              user!.bloodType == null
-                                                  ? ""
-                                                  : user!.bloodType!.name,
-                                              style: TextStyle(
-                                                  fontSize: 24,
-                                                  color: Mycolors.textcolor)),
-                                          Text(
-                                              user!.rhBloodType == null
-                                                  ? ""
-                                                  : user!.rhBloodType!.name ==
-                                                          "positive"
-                                                      ? "+"
-                                                      : "-",
-                                              style: TextStyle(
-                                                  fontSize: 24,
-                                                  color: Mycolors.textcolor)),
-                                        ],
-                                      ),
-                                    ]),
-                              ),
-                              SizedBox(height: 10),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16.0),
-                                child: Divider(
-                                  color: Mycolors.numpad,
-                                  thickness: 1.0,
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(right: 210.0),
-                                child: Text("Health".toUpperCase(),
-                                    style: TextStyle(
-                                        color: Mycolors.notpressed,
-                                        fontSize: 11)),
-                              ),
-                              SizedBox(height: 10),
-                              Padding(
-                                padding: const EdgeInsets.only(right: 125.0),
-                                child: Text("MEDICAL CONDITIONS",
-                                    style: TextStyle(
-                                        color: Mycolors.buttonsos,
-                                        fontSize: 12)),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 23.0),
-                                child: Text(
-                                    textAlign: TextAlign.start,
-                                    user!.medicalCondition == null
-                                        ? ""
-                                        : user!.medicalCondition.toString(),
-                                    style: TextStyle(
-                                        fontSize: 11,
-                                        color: Mycolors.textcolor,
-                                        fontWeight: FontWeight.bold)),
-                              ),
-                              SizedBox(height: 10),
-                              Padding(
-                                padding: const EdgeInsets.only(right: 175.0),
-                                child: Text("MEDICATIONS",
-                                    style: TextStyle(
-                                        color: Mycolors.buttonsos,
-                                        fontSize: 12)),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 23.0),
-                                child: Text(
-                                    textAlign: TextAlign.start,
-                                    user!.medications == null
-                                        ? ""
-                                        : user!.medications.toString(),
-                                    style: TextStyle(
-                                        fontSize: 11,
-                                        color: Mycolors.textcolor,
-                                        fontWeight: FontWeight.bold)),
-                              ),
-                              SizedBox(height: 10),
-                              Padding(
-                                padding: const EdgeInsets.only(right: 190.0),
-                                child: Text("ALLERGIES",
-                                    style: TextStyle(
-                                        color: Mycolors.buttonsos,
-                                        fontSize: 12)),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 23.0),
-                                child: Text(
-                                    textAlign: TextAlign.start,
-                                    user!.allergies == null
-                                        ? ""
-                                        : user!.allergies.toString(),
-                                    style: TextStyle(
-                                        fontSize: 11,
-                                        color: Mycolors.textcolor,
-                                        fontWeight: FontWeight.bold)),
-                              ),
-                              SizedBox(height: 10),
-                              Padding(
-                                padding: const EdgeInsets.only(right: 197.0),
-                                child: Text("REMARKS",
-                                    style: TextStyle(
-                                        color: Mycolors.buttonsos,
-                                        fontSize: 12)),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 23.0),
-                                child: Text(
-                                    textAlign: TextAlign.start,
-                                    user!.remarks == null
-                                        ? ""
-                                        : user!.remarks.toString(),
-                                    style: TextStyle(
-                                        fontSize: 11,
-                                        color: Mycolors.textcolor,
-                                        fontWeight: FontWeight.bold)),
-                              ),
-                              SizedBox(height: 20)
-                            ]),
-                          ),
-                        ),
-                      );
-                    }
-
-                    return Card(
-                      elevation: 100,
-                      shape: CircleBorder(),
-                      borderOnForeground: false,
-                      child: Container(
+                      return Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
                           color: Colors.white,
                         ),
-                        height: 401,
-                        width: 320,
-                        child: Column(
-                          children: [
+                        height: 420,
+                        width: 300,
+                        child: SingleChildScrollView(
+                          child: Column(children: [
                             SizedBox(height: 10),
-                            Card(
-                              elevation: 3,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: InkWell(
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => searchPage()));
-                                },
-                                child: Container(
-                                    width: 300,
-                                    height: 33,
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 8.0),
-                                          child: Icon(Icons.search),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              right: 140.0),
-                                          child: Text("Search for a caregiver",
-                                              style: TextStyle(
-                                                  color: Mycolors.notpressed,
-                                                  fontSize: 12)),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 110.0),
+                                  child: Center(
+                                    child: Text(
+                                        user!.gender == null
+                                            ? ""
+                                            : user!.gender?.name == "male"
+                                                ? "M( " +
+                                                    user!.age.toString() +
+                                                    " y/o)"
+                                                : "F(" +
+                                                    user!.age.toString() +
+                                                    " y/o)",
+                                        style: TextStyle(
+                                            color: Mycolors.textcolor,
+                                            fontSize: 20)),
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                (profile2())));
+                                  },
+                                  child: Container(
+                                    width: 70,
+                                    height: 70,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Mycolors.fillingcolor
+                                              .withOpacity(0.2),
+                                          spreadRadius: 1,
+                                          blurRadius: 1,
+                                          offset: Offset(0, 3),
                                         ),
                                       ],
-                                    )),
-                              ),
-                            ),
-                            SizedBox(height: 10),
-                            // SizedBox(height: 30),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 8.0),
-                              child: Text(
-                                  "We understand that emergencies can be overwhelming, which is why it's important to have a support system in place. By adding a loved one or caregiver to be notified in case of an emergency.",
-                                  style: TextStyle(
-                                      color: Mycolors.notpressed,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600)),
-                            ),
-                            // SizedBox(height: 170),
-                            Spacer(),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 11.0, bottom: 11.0),
-                              child: RichText(
-                                text: TextSpan(
-                                  text: "Here's how it works:  ",
-                                  style: TextStyle(
-                                    color: Mycolors.textcolor,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  children: <TextSpan>[
-                                    TextSpan(
-                                      text:
-                                          "if you ever press the SOS button in our application, we'll send an SMS and app notification to your caregivers. This will let them know that you need help and provide them with your location information.",
-                                      style: TextStyle(
-                                        color: Mycolors.notpressed,
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.w600,
+                                    ),
+                                    child: Padding(
+                                      padding:
+                                          const EdgeInsets.only(right: 8.0),
+                                      child: Center(
+                                        child: CircleAvatar(
+                                            backgroundColor:
+                                                Mycolors.splashback,
+                                            radius: 18,
+                                            child: SvgPicture.asset(
+                                                "assets/images/updateMedicalCard.svg")),
                                       ),
                                     ),
-                                  ],
+                                  ),
                                 ),
+                              ],
+                            ),
+                            Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Column(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          SvgPicture.asset(
+                                              "assets/images/Vector (5).svg"),
+                                          Text("Height",
+                                              style: TextStyle(
+                                                  color: Mycolors.textcolor,
+                                                  fontSize: 15))
+                                        ],
+                                      ),
+                                      Text(
+                                          user!.height == null
+                                              ? ""
+                                              : user!.height.toString() + " Cm",
+                                          style: TextStyle(
+                                              color: Mycolors.textcolor,
+                                              fontSize: 24))
+                                    ],
+                                  ),
+                                  Column(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          SvgPicture.asset(
+                                              "assets/images/Vector (3).svg"),
+                                          Text("weight",
+                                              style: TextStyle(
+                                                  color: Mycolors.textcolor,
+                                                  fontSize: 15))
+                                        ],
+                                      ),
+                                      Text(
+                                          user!.weight == null
+                                              ? ""
+                                              : user!.weight.toString() + " Kg",
+                                          style: TextStyle(
+                                              color: Mycolors.textcolor,
+                                              fontSize: 24))
+                                    ],
+                                  ),
+                                ]),
+                            SizedBox(height: 10),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(right: 70.0, left: 40),
+                              child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        SvgPicture.asset(
+                                            "assets/images/Vector (4).svg"),
+                                        Text("Blood Type",
+                                            style: TextStyle(
+                                                color: Mycolors.textcolor,
+                                                fontSize: 20))
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text(
+                                            user!.bloodType == null
+                                                ? ""
+                                                : user!.bloodType!.name,
+                                            style: TextStyle(
+                                                fontSize: 24,
+                                                color: Mycolors.textcolor)),
+                                        Text(
+                                            user!.rhBloodType == null
+                                                ? ""
+                                                : user!.rhBloodType!.name ==
+                                                        "positive"
+                                                    ? "+"
+                                                    : "-",
+                                            style: TextStyle(
+                                                fontSize: 24,
+                                                color: Mycolors.textcolor)),
+                                      ],
+                                    ),
+                                  ]),
+                            ),
+                            SizedBox(height: 10),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16.0),
+                              child: Divider(
+                                color: Mycolors.numpad,
+                                thickness: 1.0,
                               ),
-                            )
-                          ],
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 210.0),
+                              child: Text("Health".toUpperCase(),
+                                  style: TextStyle(
+                                      color: Mycolors.notpressed,
+                                      fontSize: 11)),
+                            ),
+                            SizedBox(height: 10),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 125.0),
+                              child: Text("MEDICAL CONDITIONS",
+                                  style: TextStyle(
+                                      color: Mycolors.buttonsos, fontSize: 12)),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 23.0),
+                              child: Text(
+                                  textAlign: TextAlign.start,
+                                  user!.medicalCondition == null
+                                      ? ""
+                                      : user!.medicalCondition.toString(),
+                                  style: TextStyle(
+                                      fontSize: 11,
+                                      color: Mycolors.textcolor,
+                                      fontWeight: FontWeight.bold)),
+                            ),
+                            SizedBox(height: 10),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 175.0),
+                              child: Text("MEDICATIONS",
+                                  style: TextStyle(
+                                      color: Mycolors.buttonsos, fontSize: 12)),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 23.0),
+                              child: Text(
+                                  textAlign: TextAlign.start,
+                                  user!.medications == null
+                                      ? ""
+                                      : user!.medications.toString(),
+                                  style: TextStyle(
+                                      fontSize: 11,
+                                      color: Mycolors.textcolor,
+                                      fontWeight: FontWeight.bold)),
+                            ),
+                            SizedBox(height: 10),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 190.0),
+                              child: Text("ALLERGIES",
+                                  style: TextStyle(
+                                      color: Mycolors.buttonsos, fontSize: 12)),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 23.0),
+                              child: Text(
+                                  textAlign: TextAlign.start,
+                                  user!.allergies == null
+                                      ? ""
+                                      : user!.allergies.toString(),
+                                  style: TextStyle(
+                                      fontSize: 11,
+                                      color: Mycolors.textcolor,
+                                      fontWeight: FontWeight.bold)),
+                            ),
+                            SizedBox(height: 10),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 197.0),
+                              child: Text("REMARKS",
+                                  style: TextStyle(
+                                      color: Mycolors.buttonsos, fontSize: 12)),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 23.0),
+                              child: Text(
+                                  textAlign: TextAlign.start,
+                                  user!.remarks == null
+                                      ? ""
+                                      : user!.remarks.toString(),
+                                  style: TextStyle(
+                                      fontSize: 11,
+                                      color: Mycolors.textcolor,
+                                      fontWeight: FontWeight.bold)),
+                            ),
+                            SizedBox(height: 20)
+                          ]),
                         ),
+                      );
+                    }
+
+                    return Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: Colors.white,
+                      ),
+                      height: 420,
+                      width: 300,
+                      child: Column(
+                        children: [
+                          SizedBox(height: 10),
+                          Card(
+                            elevation: 3,
+                            child: Container(
+                                width: 300,
+                                height: 33,
+                                child: InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                searchPage()));
+                                  },
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 8.0),
+                                        child: Icon(Icons.search),
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(right: 140.0),
+                                        child: Text("Search for a caregiver",
+                                            style: TextStyle(
+                                                color: Mycolors.notpressed,
+                                                fontSize: 12)),
+                                      ),
+                                    ],
+                                  ),
+                                )),
+                          ),
+
+                          SizedBox(height: 10),
+                          // SizedBox(height: 30),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: Text(
+                                "We understand that emergencies can be overwhelming, which is why it's important to have a support system in place. By adding a loved one or caregiver to be notified in case of an emergency.",
+                                style: TextStyle(
+                                    color: Mycolors.notpressed,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600)),
+                          ),
+                          // SizedBox(height: 170),
+                          Spacer(),
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(left: 11.0, bottom: 11.0),
+                            child: RichText(
+                              text: TextSpan(
+                                text: "Here's how it works:  ",
+                                style: TextStyle(
+                                  color: Mycolors.textcolor,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                children: <TextSpan>[
+                                  TextSpan(
+                                    text:
+                                        "if you ever press the SOS button in our application, we'll send an SMS and app notification to your caregivers. This will let them know that you need help and provide them with your location information.",
+                                    style: TextStyle(
+                                      color: Mycolors.notpressed,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        ],
                       ),
                     );
                   }())

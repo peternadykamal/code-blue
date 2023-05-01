@@ -32,8 +32,7 @@ Future<void> testThis() async {
 
   // RelationRepository().deleteRelation(list[2].id.toString());
 
-  // List<Relation> list1 = await
-  //     RelationRepository().getRelationsForCurrentUser(); print(list1.length);
+  // await RelationRepository().addRelation('zrl4DQgjwRQ9KKpl1KnZjB9J37h2');
 
   // print(await UserRepository().getUserIdByEmail('nady.peter347@gmail.com'));
   // print(user.username); print(user.email); print(user.profileImageUrl);

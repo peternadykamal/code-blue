@@ -4,12 +4,16 @@ import 'package:flutter_svg/svg.dart';
 import 'package:gradproject/chatbot.dart';
 import 'package:gradproject/loadingcontainer.dart';
 import 'package:gradproject/profile1.dart';
+import 'package:gradproject/caregiversList.dart';
 import 'package:gradproject/repository/request_repository.dart';
 import 'package:gradproject/repository/user_repository.dart';
 import 'package:gradproject/style.dart';
 import 'package:gradproject/translations/locale_keys.g.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gradproject/utils/has_network.dart';
+import 'package:gradproject/notificationList.dart';
+import 'package:gradproject/repository/notification_repository.dart'
+    as notifyRepo;
 
 class sosPage extends StatefulWidget {
   const sosPage({super.key});
@@ -19,7 +23,7 @@ class sosPage extends StatefulWidget {
 }
 
 class _sosPageState extends State<sosPage> {
-  bool notification = true;
+  bool? hasNewNotification;
   UserProfile? user;
   Image? userProfileImage;
 
@@ -32,9 +36,12 @@ class _sosPageState extends State<sosPage> {
   void getuser() async {
     final fetchedUser = await UserRepository().getUserProfile();
     final fetchedUserProfileImage = await UserRepository().getProfileImage();
+    final fetchedHasNewNotificaiton =
+        await notifyRepo.NotificationRepository().hasNewNotification();
     setState(() {
       user = fetchedUser;
       userProfileImage = fetchedUserProfileImage;
+      hasNewNotification = fetchedHasNewNotificaiton;
     });
   }
 
@@ -98,9 +105,27 @@ class _sosPageState extends State<sosPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    SvgPicture.asset(notification == true
-                        ? ("assets/images/notification.svg")
-                        : ("assets/images/no notification.svg")),
+                    GestureDetector(
+                      onTap: () {
+                        // Navigator.pushReplacement(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //     builder: (context) => NotificationPage(),
+                        //   ),
+                        // );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CareGiversList(),
+                          ),
+                        );
+                      },
+                      child: SvgPicture.asset(
+                        hasNewNotification == true
+                            ? ("assets/images/notification.svg")
+                            : ("assets/images/no notification.svg"),
+                      ),
+                    ),
                     SizedBox(width: 10),
                     CircleAvatar(
                       radius: 25,
@@ -110,7 +135,8 @@ class _sosPageState extends State<sosPage> {
                           Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                  builder: ((context) => profileone())));
+                                builder: (context) => Profileone(),
+                              ));
                         },
                       ),
                     ),

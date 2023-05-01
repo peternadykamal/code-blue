@@ -191,9 +191,37 @@ class NotificationRepository {
       }
     }
     return {
-      'notifications': notificationsObjects,
-      'notificationsIds': notificationsMap['notificationsIds']
+      'notificationsObjects': notificationsObjects,
+      'notificationsIds': notificationsMap['notificationsIds'],
+      "notifications": notificationsMap['notifications']
     };
+  }
+
+  /// mark all notifications as seen
+  /// ```dart
+  /// await notificationRepository.markAllNotificationsAsSeen();
+  /// ```
+  Future<void> markAllNotificationsAsSeen() async {
+    Map<String, dynamic> notificationsMap = await _getNotifications(user!.uid);
+    List<String> notificationsIds = notificationsMap['notificationsIds'];
+    for (var notificationId in notificationsIds) {
+      await updateNotificationSeenStatus(notificationId, true);
+    }
+  }
+
+  /// check if there is any new notification for the current user
+  /// ```dart
+  /// final hasNewNotification = await notificationRepository.hasNewNotification();
+  /// ```
+  Future<bool> hasNewNotification() async {
+    Map<String, dynamic> notificationsMap = await _getNotifications(user!.uid);
+    List<Notification> notifications = notificationsMap['notifications'];
+    for (var notification in notifications) {
+      if (!notification.isSeen) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /// update the seen status of a notification

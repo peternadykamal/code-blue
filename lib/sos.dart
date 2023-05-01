@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gradproject/chatbot.dart';
 import 'package:gradproject/loadingcontainer.dart';
+import 'package:gradproject/maps.dart';
 import 'package:gradproject/profile1.dart';
 import 'package:gradproject/caregiversList.dart';
 import 'package:gradproject/repository/request_repository.dart';
@@ -49,23 +50,34 @@ class _sosPageState extends State<sosPage> {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Send SMS messages to caregivers?'),
-          content: Text('Do you want to send SMS messages to caregivers?'),
-          actions: [
-            ElevatedButton(
-              child: Text('No'),
-              onPressed: () {
-                Navigator.of(context).pop(false);
-              },
-            ),
-            ElevatedButton(
-              child: Text('Yes'),
-              onPressed: () {
-                Navigator.of(context).pop(true);
-              },
-            ),
-          ],
+        return WillPopScope(
+          onWillPop: () async {
+            Navigator.of(context).pop(null);
+            return true;
+          },
+          child: AlertDialog(
+            content: Text('Do you want to send SMS messages to caregivers?'),
+            actions: [
+              ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStatePropertyAll(Mycolors.buttoncolor)),
+                child: Text('No'),
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                },
+              ),
+              ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStatePropertyAll(Mycolors.buttoncolor)),
+                child: Text('Yes'),
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
+              ),
+            ],
+          ),
         );
       },
     ).then((value) async {
@@ -123,12 +135,8 @@ class _sosPageState extends State<sosPage> {
                             builder: (context) => NotificationPage(),
                           ),
                         );
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) => CareGiversList(),
-                        //   ),
-                        // );
+                        // Navigator.push( context, MaterialPageRoute( builder:
+                        //   (context) => CareGiversList(), ), );
                       },
                       child: SvgPicture.asset(
                         hasNewNotification == true
@@ -169,25 +177,23 @@ class _sosPageState extends State<sosPage> {
             SizedBox(height: 40),
             RawMaterialButton(
               onPressed: () async {
-                // this return an errror
-                // await withInternetConnection([
-                //   () => UserRepository().getUserById('halsdk;fj'),
-                // ]);
-                // to show how deal with an results list final results = await
+                // this return an errror await withInternetConnection([ () =>
+                // UserRepository().getUserById('halsdk;fj'), ]); to show how
+                //   deal with an results list final results = await
                 // withInternetConnection([ () => UserRepository()
-                //   .getUserById('mOWCpqtfbKenJvEblEXEBTgy1uP2'), () =>
-                //       UserRepository()
+                // .getUserById('mOWCpqtfbKenJvEblEXEBTgy1uP2'), () =>
+                // UserRepository()
                 //   .checkUserExist('mOWCpqtfbKenJvEblEXEBTgy1uP2'), ]); for
                 //       (dynamic object in results) { if (object is
-                // UserProfile) { print(object.username); } else if (object is
-                // bool) { print(object); } } example on how try catch block
-                //   works try { await
-                //     UserRepository().getUserById('halsdk;fj'); } catch (e) {
+                //   UserProfile) { print(object.username); } else if (object is
+                //       bool) { print(object); } } example on how try catch
+                // block works try { await
+                // UserRepository().getUserById('halsdk;fj'); } catch (e) {
                 //   print('object'); // print error in flutter toast
                 //     Fluttertoast.showToast( msg: e.toString(), toastLength:
                 //   Toast.LENGTH_SHORT, gravity: ToastGravity.BOTTOM,
-                // timeInSecForIosWeb: 1, backgroundColor: Colors.red,
-                // textColor: Colors.white, fontSize: 16.0); }
+                //     timeInSecForIosWeb: 1, backgroundColor: Colors.red,
+                //   textColor: Colors.white, fontSize: 16.0); }
                 returnDialoge();
               },
               elevation: 0.0,
@@ -286,27 +292,35 @@ class _sosPageState extends State<sosPage> {
                   ),
                   InkWell(
                     onTap: () {},
-                    child: Column(
-                      children: [
-                        SizedBox(height: 4),
-                        Stack(
-                          children: [
-                            Container(
-                                margin: EdgeInsets.only(right: 30),
-                                height: 35,
-                                width: 35,
-                                child: SvgPicture.asset(
-                                    "assets/images/Vector.svg"))
-                          ],
-                        ),
-                        SizedBox(height: 3),
-                        Container(
-                            margin: EdgeInsets.only(right: 30),
-                            child: Text("Maps",
-                                style: TextStyle(
-                                    color: Mycolors.notpressed,
-                                    fontWeight: FontWeight.w500))),
-                      ],
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: ((context) => MapsPage())));
+                      },
+                      child: Column(
+                        children: [
+                          SizedBox(height: 4),
+                          Stack(
+                            children: [
+                              Container(
+                                  margin: EdgeInsets.only(right: 30),
+                                  height: 35,
+                                  width: 35,
+                                  child: SvgPicture.asset(
+                                      "assets/images/Vector.svg"))
+                            ],
+                          ),
+                          SizedBox(height: 3),
+                          Container(
+                              margin: EdgeInsets.only(right: 30),
+                              child: Text("Maps",
+                                  style: TextStyle(
+                                      color: Mycolors.notpressed,
+                                      fontWeight: FontWeight.w500))),
+                        ],
+                      ),
                     ),
                   )
                 ],

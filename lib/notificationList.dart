@@ -270,8 +270,8 @@ class _NotificationPageState extends State<NotificationPage> {
                     MaterialPageRoute(builder: (context) => sosPage()));
               },
               child: Icon(Icons.arrow_back, color: Mycolors.textcolor)),
-          title:
-              Text("Notification", style: TextStyle(color: Mycolors.textcolor)),
+          title: Text("Notifications",
+              style: TextStyle(color: Mycolors.textcolor)),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.vertical(
             bottom: Radius.circular(15),

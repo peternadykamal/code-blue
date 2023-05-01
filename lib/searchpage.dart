@@ -74,6 +74,7 @@ class _searchPageState extends State<searchPage> {
                               List<String> userIDs = await UserRepository()
                                   .fuzzyUserEmailSearch(searchQuery,
                                       getIDsList: true);
+                              print(userIDs);
                               List<UserProfile> users = [];
                               for (String userID in userIDs) {
                                 users.add(

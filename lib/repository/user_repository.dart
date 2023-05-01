@@ -404,6 +404,11 @@ class UserRepository {
     Image defaultImage =
         Image.asset('assets/images/default profile picture.png');
     try {
+      if (await isNetworkAvailable()) {
+        return await StorageService()
+                .downloadImageFromFirebaseStorage(user!.photoURL!) ??
+            defaultImage;
+      }
       if (user != null) {
         final Directory tempDir = Directory.systemTemp;
         final File tempImage =
@@ -412,13 +417,6 @@ class UserRepository {
         if (await tempImage.exists()) {
           // get image from local storage of the device
           return Image.memory(await tempImage.readAsBytes());
-        } else {
-          // get image from firebase storage
-          if (await isNetworkAvailable()) {
-            return await StorageService()
-                    .downloadImageFromFirebaseStorage(user!.photoURL!) ??
-                defaultImage;
-          }
         }
       }
       return defaultImage;

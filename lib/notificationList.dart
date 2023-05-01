@@ -264,6 +264,8 @@ class _NotificationPageState extends State<NotificationPage> {
           elevation: 0.0,
           leading: InkWell(
               onTap: () {
+                notifyRepo.NotificationRepository()
+                    .markAllNotificationsAsSeen();
                 Navigator.pushReplacement(context,
                     MaterialPageRoute(builder: (context) => sosPage()));
               },

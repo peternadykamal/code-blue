@@ -45,7 +45,8 @@ class _ProfileoneState extends State<Profileone> {
   @override
   void initState() {
     super.initState();
-    getuser();
+    _getuser();
+    _getCareGivers();
   }
 
   Future<void> _getCareGivers() async {
@@ -75,7 +76,7 @@ class _ProfileoneState extends State<Profileone> {
     }
   }
 
-  void getuser() async {
+  void _getuser() async {
     final fetchedUser = await UserRepository().getUserProfile();
     final fetchedFirebaseUser = FirebaseAuth.instance.currentUser;
     final fetchedUserProfileImage = await UserRepository().getProfileImage();
@@ -180,14 +181,7 @@ class _ProfileoneState extends State<Profileone> {
                                   builder: (context) => authPage(),
                                 ),
                               );
-                            } else if (value == "settings") {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => profile2(),
-                                ),
-                              );
-                            }
+                            } else if (value == "settings") {}
                           },
                           child: Container(
                             margin: EdgeInsets.only(left: 30),
@@ -617,92 +611,230 @@ class _ProfileoneState extends State<Profileone> {
                       );
                     }
 
-                    return Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: Colors.white,
-                      ),
-                      height: 420,
-                      width: 300,
-                      child: Column(
-                        children: [
-                          SizedBox(height: 10),
-                          Card(
-                            elevation: 3,
-                            child: Container(
-                                width: 300,
-                                height: 33,
-                                child: InkWell(
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                searchPage()));
-                                  },
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 8.0),
-                                        child: Icon(Icons.search),
-                                      ),
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(right: 140.0),
-                                        child: Text("Search for a caregiver",
-                                            style: TextStyle(
-                                                color: Mycolors.notpressed,
-                                                fontSize: 12)),
-                                      ),
-                                    ],
-                                  ),
-                                )),
-                          ),
-
-                          SizedBox(height: 10),
-                          // SizedBox(height: 30),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 8.0),
-                            child: Text(
-                                "We understand that emergencies can be overwhelming, which is why it's important to have a support system in place. By adding a loved one or caregiver to be notified in case of an emergency.",
-                                style: TextStyle(
-                                    color: Mycolors.notpressed,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600)),
-                          ),
-                          // SizedBox(height: 170),
-                          Spacer(),
-                          Padding(
-                            padding:
-                                const EdgeInsets.only(left: 11.0, bottom: 11.0),
-                            child: RichText(
-                              text: TextSpan(
-                                text: "Here's how it works:  ",
-                                style: TextStyle(
-                                  color: Mycolors.textcolor,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
+                    return hasCareGivers == false
+                        ? Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: Colors.white,
+                            ),
+                            height: 420,
+                            width: 300,
+                            child: Column(
+                              children: [
+                                SizedBox(height: 10),
+                                Card(
+                                  elevation: 3,
+                                  child: Container(
+                                      width: 300,
+                                      height: 33,
+                                      child: InkWell(
+                                        onTap: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      searchPage()));
+                                        },
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 8.0),
+                                              child: Icon(Icons.search),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  right: 140.0),
+                                              child: Text(
+                                                  "Search for a caregiver",
+                                                  style: TextStyle(
+                                                      color:
+                                                          Mycolors.notpressed,
+                                                      fontSize: 12)),
+                                            ),
+                                          ],
+                                        ),
+                                      )),
                                 ),
-                                children: <TextSpan>[
-                                  TextSpan(
-                                    text:
-                                        "if you ever press the SOS button in our application, we'll send an SMS and app notification to your caregivers. This will let them know that you need help and provide them with your location information.",
-                                    style: TextStyle(
-                                      color: Mycolors.notpressed,
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.w600,
+
+                                SizedBox(height: 10),
+                                // SizedBox(height: 30),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 8.0),
+                                  child: Text(
+                                      "We understand that emergencies can be overwhelming, which is why it's important to have a support system in place. By adding a loved one or caregiver to be notified in case of an emergency.",
+                                      style: TextStyle(
+                                          color: Mycolors.notpressed,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600)),
+                                ),
+                                // SizedBox(height: 170),
+                                Spacer(),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 11.0, bottom: 11.0),
+                                  child: RichText(
+                                    text: TextSpan(
+                                      text: "Here's how it works:  ",
+                                      style: TextStyle(
+                                        color: Mycolors.textcolor,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      children: <TextSpan>[
+                                        TextSpan(
+                                          text:
+                                              "if you ever press the SOS button in our application, we'll send an SMS and app notification to your caregivers. This will let them know that you need help and provide them with your location information.",
+                                          style: TextStyle(
+                                            color: Mycolors.notpressed,
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                ],
-                              ),
+                                )
+                              ],
                             ),
                           )
-                        ],
-                      ),
-                    );
+                        : Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: Colors.white,
+                            ),
+                            height: 420,
+                            width: 300,
+                            child: SingleChildScrollView(
+                              child: Column(children: [
+                                SizedBox(height: 10),
+                                Card(
+                                    elevation: 3,
+                                    child: Container(
+                                        width: 300,
+                                        height: 33,
+                                        child: InkWell(
+                                          onTap: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        searchPage()));
+                                          },
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 8.0),
+                                                child: Icon(Icons.search),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    right: 140.0),
+                                                child: Text(
+                                                    "Search for a caregiver",
+                                                    style: TextStyle(
+                                                        color:
+                                                            Mycolors.notpressed,
+                                                        fontSize: 12)),
+                                              ),
+                                            ],
+                                          ),
+                                        ))),
+                                ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: _careGivers.length,
+                                  itemBuilder: (context, index) {
+                                    final careGiver = _careGivers[index];
+                                    return Container(
+                                      padding: EdgeInsets.only(left: 10),
+                                      margin: EdgeInsets.only(
+                                          left: 10,
+                                          right: 10,
+                                          bottom: 4,
+                                          top: 4),
+                                      decoration: BoxDecoration(
+                                          color: Mycolors.numpad,
+                                          borderRadius:
+                                              BorderRadius.circular(10)),
+                                      width: 200,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          CircleAvatar(
+                                            radius: 17,
+                                            backgroundImage:
+                                                careGiver.profileImage!.image,
+                                          ),
+                                          Expanded(
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  right: 40.0, left: 10),
+                                              child: Text(
+                                                careGiver.email,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: TextStyle(
+                                                  color: Mycolors.textcolor,
+                                                  fontSize: 17,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          IconButton(
+                                              icon: Icon(Icons.remove_circle),
+                                              onPressed: () {
+                                                showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return AlertDialog(
+                                                      content: Text(
+                                                          "Are you sure you want to remove this caregiver?"),
+                                                      actions: [
+                                                        TextButton(
+                                                          child: Text("Cancel",
+                                                              style: TextStyle(
+                                                                  color: Mycolors
+                                                                      .textcolor)),
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          },
+                                                        ),
+                                                        ElevatedButton(
+                                                          style: ButtonStyle(
+                                                              backgroundColor:
+                                                                  MaterialStatePropertyAll(
+                                                                      Mycolors
+                                                                          .buttoncolor)),
+                                                          child: Text("Remove"),
+                                                          onPressed: () {
+                                                            _deleteRelation(
+                                                                index);
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          },
+                                                        ),
+                                                      ],
+                                                    );
+                                                  },
+                                                );
+                                              }),
+                                        ],
+                                      ),
+                                    );
+                                    ;
+                                  },
+                                )
+                              ]),
+                            ));
                   }())
                 ],
               ),

@@ -1,4 +1,8 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/widgets.dart';
 import 'package:gradproject/services/fcm_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:gradproject/utils/has_network.dart';
@@ -12,8 +16,8 @@ class AuthService {
     if (user != null) {
       print('User signed in: ${user.uid}');
 
-      // save phone numbers of caregivers in shared preferences
       if (await isNetworkAvailable()) {
+        // save phone numbers of caregivers in shared preferences
         final SharedPreferences prefs = await SharedPreferences.getInstance();
         List<Relation> list = (await RelationRepository()
             .getRelationsForCurrentUser())['relations'];
@@ -24,6 +28,23 @@ class AuthService {
           phoneNumbers.add(user.phoneNumber);
         }
         prefs.setStringList('caregiversPhoneNumbers', phoneNumbers);
+        // save user profile locally
+        if (user.photoURL != null) {
+          final FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
+          final Reference reference =
+              _firebaseStorage.refFromURL(user.photoURL!);
+          final data = await reference.getData();
+          // store image locally
+          final Directory tempDir = Directory.systemTemp;
+          // check if user id directory exists
+          final Directory userDir = Directory('${tempDir.path}/${user.uid}');
+          if (!await userDir.exists()) {
+            await userDir.create();
+          }
+          final File tempImage =
+              await File('${tempDir.path}/${user.uid}/profile.png').create();
+          await tempImage.writeAsBytes(data!);
+        }
       }
 
       // final SharedPreferences prefs = await SharedPreferences.getInstance();

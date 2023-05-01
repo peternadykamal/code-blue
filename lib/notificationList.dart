@@ -21,6 +21,7 @@ class NotificationPage extends StatefulWidget {
 class _NotificationPageState extends State<NotificationPage> {
   List<dynamic> _notificationsObjects = [];
   List<notifyRepo.Notification> _notifications = [];
+  List<String> _notificationsIds = [];
 
   @override
   void initState() {
@@ -34,7 +35,10 @@ class _NotificationPageState extends State<NotificationPage> {
     setState(() {
       _notificationsObjects = notifications['notificationsObjects'];
       _notifications = notifications['notifications'];
+      _notificationsIds = notifications['notificationsIds'];
     });
+    await notifyRepo.NotificationRepository()
+        .markAllNotificationsAsSeen(_notifications, _notificationsIds);
   }
 
   Widget _buildNotification(
@@ -250,7 +254,6 @@ class _NotificationPageState extends State<NotificationPage> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        notifyRepo.NotificationRepository().markAllNotificationsAsSeen();
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => sosPage()));
         return false;
@@ -263,9 +266,7 @@ class _NotificationPageState extends State<NotificationPage> {
           bottomOpacity: 0.0,
           elevation: 0.0,
           leading: InkWell(
-              onTap: () {
-                notifyRepo.NotificationRepository()
-                    .markAllNotificationsAsSeen();
+              onTap: () async {
                 Navigator.pushReplacement(context,
                     MaterialPageRoute(builder: (context) => sosPage()));
               },

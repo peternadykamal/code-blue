@@ -26,7 +26,6 @@ class sosPage extends StatefulWidget {
 class _sosPageState extends State<sosPage> {
   bool? hasNewNotification;
   UserProfile? user;
-  Image? userProfileImage;
 
   @override
   void initState() {
@@ -36,12 +35,10 @@ class _sosPageState extends State<sosPage> {
 
   void getuser() async {
     final fetchedUser = await UserRepository().getUserProfile();
-    final fetchedUserProfileImage = await UserRepository().getProfileImage();
     final fetchedHasNewNotificaiton =
         await notifyRepo.NotificationRepository().hasNewNotification();
     setState(() {
       user = fetchedUser;
-      userProfileImage = fetchedUserProfileImage;
       hasNewNotification = fetchedHasNewNotificaiton;
     });
   }
@@ -147,7 +144,7 @@ class _sosPageState extends State<sosPage> {
                     SizedBox(width: 10),
                     CircleAvatar(
                       radius: 25,
-                      backgroundImage: userProfileImage!.image,
+                      backgroundImage: user?.profileImage?.image,
                       child: InkWell(
                         onTap: () {
                           Navigator.pushReplacement(

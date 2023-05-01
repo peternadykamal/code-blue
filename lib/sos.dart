@@ -69,9 +69,19 @@ class _sosPageState extends State<sosPage> {
         );
       },
     ).then((value) async {
-      await withInternetConnection([
-        () => RequestRepository().createRequestAndNotifyCaregivers(value),
-      ]);
+      try {
+        await RequestRepository().createRequestAndNotifyCaregivers(value);
+      } catch (e) {
+        Fluttertoast.showToast(
+          msg: e.toString(),
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.TOP,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Mycolors.buttoncolor,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+      }
     });
   }
 

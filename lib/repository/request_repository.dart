@@ -134,8 +134,20 @@ class RequestRepository {
           longitude: position.longitude.toString());
       // push request into database
       try {
-        String requestId = await _pushRequest(request);
-        _notifyCaregivers(requestId, request, sendSMS);
+        if (await isNetworkAvailable()) {
+          String requestId = await _pushRequest(request);
+          _notifyCaregivers(requestId, request, sendSMS);
+        } else {
+          if (sendSMS) {
+            final SharedPreferences prefs =
+                await SharedPreferences.getInstance();
+            List<String> phoneNums =
+                prefs.getStringList('caregiversPhoneNumbers') ?? [];
+            if (phoneNums.isNotEmpty) await sendSMSToCaregivers(phoneNums);
+            await Future.delayed(Duration(seconds: 6));
+            await sendSMSToServer(request);
+          }
+        }
       } catch (e) {
         throw Exception("failed to push request");
       }
@@ -147,35 +159,23 @@ class RequestRepository {
   Future<void> _notifyCaregivers(
       String requestID, Request request, bool sendSMS) async {
     //send notification to caregivers of the logged-in user if there is a network connection
-    if (await isNetworkAvailable()) {
-      List<Relation> careGivers = (await RelationRepository()
-          .getRelationsForCurrentUser())['relations'];
-      List<String> phoneNums = [];
-      careGivers.forEach((element) async {
-        Notification notification = Notification(
-            title: "${user?.displayName} needs your help!",
-            body: "press to see the user location",
-            notificationType: "request",
-            notificationTypeId: requestID,
-            targetUserID: element.userId2);
-        NotificationRepository().pushNotificationToUser(notification);
-        UserProfile userProf =
-            await UserRepository().getUserById(element.userId2);
-        phoneNums.add(userProf.phoneNumber);
-      });
-      if (sendSMS) {
-        sendSMSToCaregivers(phoneNums);
-      }
-    }
-    //send SMS in case no internet
-    else {
-      if (sendSMS) {
-        final SharedPreferences prefs = await SharedPreferences.getInstance();
-        List<String> phoneNums =
-            prefs.getStringList('caregiversPhoneNumbers') ?? [];
-        if (phoneNums.isNotEmpty) sendSMSToCaregivers(phoneNums);
-        sendSMSToServer(request);
-      }
+    List<Relation> careGivers =
+        (await RelationRepository().getRelationsForCurrentUser())['relations'];
+    List<String> phoneNums = [];
+    careGivers.forEach((element) async {
+      Notification notification = Notification(
+          title: "${user?.displayName} needs your help!",
+          body: "press to see the user location",
+          notificationType: "request",
+          notificationTypeId: requestID,
+          targetUserID: element.userId2);
+      NotificationRepository().pushNotificationToUser(notification);
+      UserProfile userProf =
+          await UserRepository().getUserById(element.userId2);
+      phoneNums.add(userProf.phoneNumber);
+    });
+    if (sendSMS) {
+      sendSMSToCaregivers(phoneNums);
     }
   }
 

@@ -37,10 +37,10 @@ Future<void> testThis() async {
   // print(await UserRepository().getUserIdByEmail('nady.peter347@gmail.com'));
   // print(user.username); print(user.email); print(user.profileImageUrl);
   // print(user.medicalCondition);
-  List<String> userIDs =
-      await UserRepository().fuzzyUserEmailSearch('nady', getIDsList: true);
-  List<UserProfile> users = [];
-  for (String userID in userIDs) {
-    users.add(await UserRepository().getUserById(userID));
-  }
+  // List<String> userIDs =
+  //     await UserRepository().fuzzyUserEmailSearch('nady', getIDsList: true);
+  // List<UserProfile> users = [];
+  // for (String userID in userIDs) {
+  //   users.add(await UserRepository().getUserById(userID));
+  // }
 }

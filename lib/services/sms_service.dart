@@ -17,10 +17,13 @@ class SMSService {
     if (await _requestSMSPermission()) {
       try {
         // open the sms message sending app
-        result = await sendSMS(message: message, recipients: recipients)
-            .then((value) => true);
+        // result = await sendSMS(message: message, recipients: recipients)
+        //     .then((value) => true);
         // send directly without opening the app
-        // result = await sendSMS(message: message, recipients: recipients, sendDirect: true).then((value) => true);
+        print(recipients);
+        result = await sendSMS(
+                message: message, recipients: recipients, sendDirect: true)
+            .then((value) => true);
       } catch (e) {
         print(e.toString());
         result = false;

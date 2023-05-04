@@ -623,42 +623,45 @@ class _ProfileoneState extends State<Profileone> {
                               children: [
                                 SizedBox(height: 10),
                                 Card(
-                                  elevation: 3,
-                                  child: Container(
-                                      width: 300,
-                                      height: 33,
-                                      child: InkWell(
-                                        onTap: () {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      searchPage()));
-                                        },
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 8.0),
-                                              child: Icon(Icons.search),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  right: 140.0),
-                                              child: Text(
-                                                  "Search for a caregiver",
-                                                  style: TextStyle(
-                                                      color:
-                                                          Mycolors.notpressed,
-                                                      fontSize: 12)),
-                                            ),
-                                          ],
-                                        ),
-                                      )),
-                                ),
-
+                                    elevation: 3,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(15)),
+                                    margin: EdgeInsets.only(
+                                        left: 10, right: 10, bottom: 5),
+                                    child: Container(
+                                        width: 300,
+                                        height: 40,
+                                        child: InkWell(
+                                          onTap: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        searchPage()));
+                                          },
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 8.0),
+                                                child: Icon(Icons.search),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    right: 130.0),
+                                                child: Text(
+                                                    "Search for a caregiver",
+                                                    style: TextStyle(
+                                                        color:
+                                                            Mycolors.notpressed,
+                                                        fontSize: 12)),
+                                              ),
+                                            ],
+                                          ),
+                                        ))),
                                 SizedBox(height: 10),
                                 // SizedBox(height: 30),
                                 Padding(
@@ -712,9 +715,14 @@ class _ProfileoneState extends State<Profileone> {
                                 SizedBox(height: 10),
                                 Card(
                                     elevation: 3,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(15)),
+                                    margin: EdgeInsets.only(
+                                        left: 10, right: 10, bottom: 5),
                                     child: Container(
                                         width: 300,
-                                        height: 33,
+                                        height: 40,
                                         child: InkWell(
                                           onTap: () {
                                             Navigator.push(
@@ -734,7 +742,7 @@ class _ProfileoneState extends State<Profileone> {
                                               ),
                                               Padding(
                                                 padding: const EdgeInsets.only(
-                                                    right: 140.0),
+                                                    right: 130.0),
                                                 child: Text(
                                                     "Search for a caregiver",
                                                     style: TextStyle(

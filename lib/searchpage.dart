@@ -21,6 +21,10 @@ class searchPage extends StatefulWidget {
 }
 
 class _searchPageState extends State<searchPage> {
+  final TextEditingController _controller = TextEditingController();
+  final EndlessPaginationController<UserProfile> _users =
+      EndlessPaginationController<UserProfile>();
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -45,6 +49,8 @@ class _searchPageState extends State<searchPage> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: PaginatedSearchBar<UserProfile>(
+                      inputController: _controller,
+                      listController: _users,
                       containerDecoration:
                           BoxDecoration(color: Mycolors.fillingcolor),
                       maxHeight: 300,
@@ -59,6 +65,7 @@ class _searchPageState extends State<searchPage> {
                         pageSize: 20,
                         maxPages: 3,
                       ),
+                      minSearchLength: 0,
                       onSearch: ({
                         required pageIndex,
                         required pageSize,
@@ -74,7 +81,6 @@ class _searchPageState extends State<searchPage> {
                               List<String> userIDs = await UserRepository()
                                   .fuzzyUserEmailSearch(searchQuery,
                                       getIDsList: true);
-                              print(userIDs);
                               List<UserProfile> users = [];
                               for (String userID in userIDs) {
                                 users.add(
@@ -96,6 +102,8 @@ class _searchPageState extends State<searchPage> {
                             try {
                               String id = await UserRepository()
                                   .getUserIdByEmail(item.email);
+                              _controller.clear();
+                              _users.clear();
                               await InviteRepository().createInvitation(id);
                               Fluttertoast.showToast(
                                 msg: 'Invitation Sent',

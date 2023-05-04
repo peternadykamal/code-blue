@@ -162,7 +162,7 @@ class RequestRepository {
     List<Relation> careGivers =
         (await RelationRepository().getRelationsForCurrentUser())['relations'];
     List<String> phoneNums = [];
-    careGivers.forEach((element) async {
+    await Future.forEach(careGivers, (element) async {
       Notification notification = Notification(
           title: "${user?.displayName} needs your help!",
           body: "press to see the user location",
@@ -174,7 +174,7 @@ class RequestRepository {
           await UserRepository().getUserById(element.userId2);
       phoneNums.add(userProf.phoneNumber);
     });
-    if (sendSMS) {
+    if (sendSMS && phoneNums.isNotEmpty) {
       sendSMSToCaregivers(phoneNums);
     }
   }

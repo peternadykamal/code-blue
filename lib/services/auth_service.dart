@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gradproject/services/fcm_service.dart';
@@ -17,6 +18,12 @@ class AuthService {
       print('User signed in: ${user.uid}');
 
       if (await isNetworkAvailable()) {
+        //update fcm token
+        String? fcmToken = await FirebaseMessaging.instance.getToken();
+        fcmToken != null
+            ? await UserRepository().updateFcmToken(fcmToken)
+            : null;
+
         // save phone numbers of caregivers in shared preferences
         final SharedPreferences prefs = await SharedPreferences.getInstance();
         List<Relation> list = (await RelationRepository()
@@ -28,6 +35,7 @@ class AuthService {
           phoneNumbers.add(user.phoneNumber);
         }
         prefs.setStringList('caregiversPhoneNumbers', phoneNumbers);
+
         // save user profile locally
         if (user.photoURL != null) {
           final FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
@@ -47,6 +55,7 @@ class AuthService {
         }
       }
 
+      // how to get phone numbers
       // final SharedPreferences prefs = await SharedPreferences.getInstance();
       // List<String> phoneNumbers =
       //     prefs.getStringList('caregiversPhoneNumbers') ?? [];
@@ -60,6 +69,7 @@ class AuthService {
 
   // signOut user
   Future<void> signOut() async {
+    await UserRepository().deleteFcmToken();
     await _auth.signOut();
   }
 

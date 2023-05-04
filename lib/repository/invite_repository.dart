@@ -63,13 +63,18 @@ class InviteRepository {
       throw Exception('User does not exist');
     }
 
+    // check if the user is trying to add himself, if so, throw an error
+    if (user!.uid == receiverId) {
+      throw Exception('You cannot add yourself');
+    }
+
     // check if there is a relation between the two users, if there is one, throw an error
     if (await RelationRepository().checkRelationExist(receiverId)) {
       throw Exception('they already become your caregiver');
     }
 
     // check if there is an invite with the same user and receiver, if there is one and with status pending or accepted, throw an error
-    final invites = await _invitesRef
+    DataSnapshot invites = await _invitesRef
         .orderByChild('inviteSenderID')
         .equalTo(user!.uid)
         .get();
@@ -78,6 +83,20 @@ class InviteRepository {
         // convert it to an invite object
         final inviteObj = Invite.fromMapToInvites(invite.children);
         if (inviteObj.inviteReceiverID == receiverId &&
+            inviteObj.inviteStatus == InviteStatus.pending) {
+          throw Exception('Invite already exists and is pending');
+        }
+      }
+    }
+    invites = await _invitesRef
+        .orderByChild('inviteReceiverID')
+        .equalTo(user!.uid)
+        .get();
+    if (invites.value != null) {
+      for (var invite in invites.children) {
+        // convert it to an invite object
+        final inviteObj = Invite.fromMapToInvites(invite.children);
+        if (inviteObj.inviteSenderID == receiverId &&
             inviteObj.inviteStatus == InviteStatus.pending) {
           throw Exception('Invite already exists and is pending');
         }

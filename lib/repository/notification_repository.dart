@@ -107,7 +107,7 @@ class Notification {
       'notificationType': data.notificationType,
       'notificationTypeId': data.notificationTypeId,
       'date': data.date.toString(),
-      'isSeen': data.isSeen,
+      'isSeen': data.isSeen.toString(),
     };
   }
 }
@@ -150,6 +150,20 @@ class NotificationRepository {
             .add(Notification.fromMapToNotification(value.key, value.children));
       }
     }
+    // sort notifications by date and ids the newest first
+    notificationsIds.sort((a, b) {
+      final aIndex = notificationsIds.indexOf(a);
+      final bIndex = notificationsIds.indexOf(b) == -1
+          ? notificationsIds.length - 1
+          : notificationsIds.indexOf(b);
+      final aDate =
+          aIndex < notifications.length ? notifications[aIndex].date : null;
+      final bDate =
+          bIndex < notifications.length ? notifications[bIndex].date : null;
+      return bDate?.compareTo(aDate!) ?? -1;
+    });
+    notifications.sort((a, b) => b.date!.compareTo(a.date!));
+
     return {
       'notifications': notifications,
       'notificationsIds': notificationsIds
@@ -159,9 +173,10 @@ class NotificationRepository {
   /// get all notifications for the current user in form of a list of objects as invites and requests are notifications
   /// ```dart
   /// final notificationsMap = await notificationRepository.getNotifications();
-  /// List<dynamic> notifications = notificationsMap['notifications'];
-  /// List<String> notifcationsId = notificationsMap['notificationsIds'];
-  /// for (var notification in notifications) {
+  /// final notifications = notificationsMap['notifications'];
+  /// final notificationsIds = notificationsMap['notificationsIds'];
+  /// final notificationsObjects = notificationsMap['notificationsObjects'];
+  /// for (var notification in notificationsObjects) {
   ///   if(notification is Invite){
   ///     print(notification.inviteSenderID);
   ///     print(notification.inviteReceiverID);
@@ -176,8 +191,7 @@ class NotificationRepository {
     Map<String, dynamic> notificationsMap = await _getNotifications(user!.uid);
     List<Notification> notifications = notificationsMap['notifications'];
     final List<dynamic> notificationsObjects = [];
-    // sort notifications by date the newest first
-    notifications.sort((a, b) => b.date!.compareTo(a.date!));
+
     for (var notification in notifications) {
       switch (notification.notificationType) {
         case 'invite':
@@ -204,8 +218,11 @@ class NotificationRepository {
   Future<void> markAllNotificationsAsSeen(
       List<Notification> notifications, List<String> notificationsIds) async {
     for (int i = 0; i < notifications.length; i++) {
-      if (notifications[i].isSeen)
+      if (!notifications[i].isSeen) {
         await updateNotificationSeenStatus(notificationsIds[i], true);
+      } else {
+        break;
+      }
     }
   }
 
@@ -232,7 +249,7 @@ class NotificationRepository {
   Future<void> updateNotificationSeenStatus(
       String notificationID, bool isSeen) async {
     await databaseReference.child(notificationID).update({
-      'isSeen': isSeen,
+      'isSeen': isSeen.toString(),
     });
   }
 
@@ -270,11 +287,13 @@ class NotificationRepository {
         jsonEncode({'idToken': idToken, 'notificationId': notificationId});
     final response = await http.post(url, headers: headers, body: body);
 
-    if (response.statusCode != 200) {
-      // delete the notification if the server return a code other than 200
-      await deleteNotification(notificationId);
-      notificationId = '';
-    }
+    // there is no reason to completely delete the notification if we failed to push to the other device
+    //as it will appear in the notification list
+    // if (response.statusCode != 200) {
+    //   // delete the notification if the server return a code other than 200
+    //   await deleteNotification(notificationId);
+    //   notificationId = '';
+    // }
 
     return {
       'success': response.statusCode == 200,

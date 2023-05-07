@@ -5,9 +5,9 @@ import 'package:geolocator/geolocator.dart';
 import 'package:gradproject/repository/user_repository.dart';
 import 'package:gradproject/repository/relation_repository.dart';
 import 'package:gradproject/repository/notification_repository.dart';
+import 'package:gradproject/services/settings_service.dart';
 import 'package:gradproject/utils/has_network.dart';
 import 'package:gradproject/utils/user_geolocation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../services/sms_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -139,12 +139,9 @@ class RequestRepository {
           _notifyCaregivers(requestId, request, sendSMS);
         } else {
           if (sendSMS) {
-            final SharedPreferences prefs =
-                await SharedPreferences.getInstance();
-            List<String> phoneNums =
-                prefs.getStringList('caregiversPhoneNumbers') ?? [];
+            List<String> phoneNums = await SettingsService.getAllPhoneNumbers();
             if (phoneNums.isNotEmpty) await sendSMSToCaregivers(phoneNums);
-            await Future.delayed(Duration(seconds: 6));
+            // await Future.delayed(Duration(seconds: 6)); // if we gone avoid using send direct sms approach
             await sendSMSToServer(request);
           }
         }
@@ -162,7 +159,7 @@ class RequestRepository {
     List<Relation> careGivers =
         (await RelationRepository().getRelationsForCurrentUser())['relations'];
     List<String> phoneNums = [];
-    careGivers.forEach((element) async {
+    await Future.forEach(careGivers, (element) async {
       Notification notification = Notification(
           title: "${user?.displayName} needs your help!",
           body: "press to see the user location",
@@ -174,8 +171,12 @@ class RequestRepository {
           await UserRepository().getUserById(element.userId2);
       phoneNums.add(userProf.phoneNumber);
     });
-    if (sendSMS) {
-      sendSMSToCaregivers(phoneNums);
+    for (var element
+        in (await SettingsService.getNonCaregiversPhoneNumbers())) {
+      if (!phoneNums.contains(element)) phoneNums.add(element);
+    }
+    if (sendSMS && phoneNums.isNotEmpty) {
+      await sendSMSToCaregivers(phoneNums);
     }
   }
 

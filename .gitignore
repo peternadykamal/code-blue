@@ -44,3 +44,7 @@ app.*.map.json
 /android/app/release
 
 /firebase\ sdk\ python/
+
+# node and python dependencies
+**/node_modules/
+**/env/

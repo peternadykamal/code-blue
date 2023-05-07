@@ -57,7 +57,7 @@ class FcmService {
 
   Future<void> initialize() async {
     RemoteMessage? initialMessage =
-        await FirebaseMessaging.instance.getInitialMessage();
+        await _firebaseMessaging.getInitialMessage();
     if (initialMessage != null) {
       messageHandler(initialMessage);
     }

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Real-time Location Tracking</title>
+    <meta
+      name="viewport"
+      content="initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6.5.0/turf.min.js"></script>
+    <link
+      href="https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.css"
+      rel="stylesheet"
+    />
+    <style>
+      #map {
+        height: 100%;
+        width: 100%;
+        position: absolute;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+      mapboxgl.accessToken =
+        "pk.eyJ1IjoicGV0ZXJuYWR5IiwiYSI6ImNsZW12a3JqbjAxOHc0NnBhZmFhZWliOWMifQ.yImyNototbp36myOh1hjvg";
+      const source = "29.975672,31.251539";
+      const destination = "29.987396,31.240725";
+      const velocity = 30; // km/h
+      let currentCoordinateIndex = 0;
+      let currentLocationMarker = null;
+      const coordinates = [];
+
+      // Initialize the map
+      const map = new mapboxgl.Map({
+        container: "map",
+        style: "mapbox://styles/mapbox/streets-v11",
+        center: [29.975672, 31.251539], // United States center
+        zoom: 10,
+      });
+
+      async function getDrivingDirections(source, destination) {
+        const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${source};${destination}?annotations=duration&overview=full&geometries=geojson&access_token=${mapboxgl.accessToken}`;
+
+        try {
+          const response = await axios.get(url);
+          return response.data.routes[0].geometry.coordinates;
+        } catch (error) {
+          console.error(error);
+          return null;
+        }
+      }
+
+      async function printCoordinatesWithVelocity(coordinates, velocity) {
+        for (let i = 0; i < coordinates.length - 1; i++) {
+          const from = turf.point(coordinates[i]);
+          const to = turf.point(coordinates[i + 1]);
+          const distance = turf.distance(from, to);
+
+          const timeToWait = distance / velocity;
+          console.log(timeToWait);
+          console.log(`Coordinate ${i + 1}: ${coordinates[i]}`);
+
+          await new Promise((resolve) =>
+            setTimeout(resolve, timeToWait * 3600000)
+          );
+
+          // Update the current location marker
+          if (currentLocationMarker !== null) {
+            currentLocationMarker.remove();
+          }
+
+          currentCoordinateIndex = i + 1;
+          const currentCoordinate = coordinates[currentCoordinateIndex];
+          currentLocationMarker = new mapboxgl.Marker()
+            .setLngLat(currentCoordinate)
+            .addTo(map);
+        }
+
+        // Update the current location marker to the final destination
+        if (currentLocationMarker !== null) {
+          currentLocationMarker.remove();
+        }
+
+        currentCoordinateIndex = coordinates.length - 1;
+        const currentCoordinate = coordinates[currentCoordinateIndex];
+        currentLocationMarker = new mapboxgl.Marker()
+          .setLngLat(currentCoordinate)
+          .addTo(map);
+      }
+
+      async function main() {
+        // Get the driving directions between the source and destination
+        // coordinates
+        const routeCoordinates = await getDrivingDirections(
+          source,
+          destination
+        );
+
+        // Add the route to the map
+        map.on("load", function () {
+          map.addSource("route", {
+            type: "geojson",
+            data: {
+              type: "Feature",
+              properties: {},
+              geometry: {
+                type: "LineString",
+                coordinates: routeCoordinates,
+              },
+            },
+          });
+
+          map.addLayer({
+            id: "route",
+            type: "line",
+            source: "route",
+            layout: {
+              "line-join": "round",
+              "line-cap": "round",
+            },
+            paint: {
+              "line-color": "#888",
+              "line-width": 8,
+            },
+          });
+        });
+
+        // Print the coordinates along the route with a given velocity
+        await printCoordinatesWithVelocity(routeCoordinates, velocity);
+      }
+
+      // Start the real-time location tracking
+      main();
+    </script>
+  </body>
+</html>

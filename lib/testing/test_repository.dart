@@ -1,6 +1,9 @@
 import 'package:geolocator/geolocator.dart';
 import 'package:gradproject/repository//user_repository.dart';
+import 'package:gradproject/repository/notification_repository.dart';
+import 'package:gradproject/repository/request_repository.dart';
 import 'package:gradproject/services/auth_service.dart';
+import 'package:gradproject/services/settings_service.dart';
 import 'package:gradproject/utils/has_network.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:gradproject/repository/relation_repository.dart';
@@ -43,4 +46,9 @@ Future<void> testThis() async {
   // for (String userID in userIDs) {
   //   users.add(await UserRepository().getUserById(userID));
   // }
+
+  // await RequestRepository().addNonCaregiversPhoneNumbers('+201204290582');
+  // await RequestRepository().removeNonCaregiversPhoneNumbers('+201204290582');
+  // print(await SettintgsService.getAllPhoneNumbers());
+  // print(await SettintgsService.getNonCaregiversPhoneNumbers());
 }

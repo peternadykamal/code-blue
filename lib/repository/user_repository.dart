@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/widgets.dart';
@@ -364,6 +365,17 @@ class UserRepository {
         await _usersRef.child(user!.uid).update({
           'deviceToken': token,
         });
+      }
+    } catch (e) {
+      throw Exception("Error updating user fcmToken: $e");
+    }
+  }
+
+  Future<void> deleteFcmToken() async {
+    try {
+      if (user != null) {
+        // remove deviceToken from user profile
+        await _usersRef.child('${user!.uid}/deviceToken').remove();
       }
     } catch (e) {
       throw Exception("Error updating user fcmToken: $e");

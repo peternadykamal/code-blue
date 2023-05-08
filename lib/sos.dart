@@ -1,8 +1,11 @@
+import 'dart:ui';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gradproject/chatbot.dart';
 import 'package:gradproject/loadingcontainer.dart';
+import 'package:gradproject/main.dart';
 import 'package:gradproject/maps.dart';
 import 'package:gradproject/profile1.dart';
 import 'package:gradproject/caregiversList.dart';
@@ -53,13 +56,13 @@ class _sosPageState extends State<sosPage> {
             return true;
           },
           child: AlertDialog(
-            content: Text('Do you want to send SMS messages to caregivers?'),
+            content: Text(LocaleKeys.sendmessage.tr()),
             actions: [
               ElevatedButton(
                 style: ButtonStyle(
                     backgroundColor:
                         MaterialStatePropertyAll(Mycolors.buttoncolor)),
-                child: Text('No'),
+                child: Text(LocaleKeys.no.tr()),
                 onPressed: () {
                   Navigator.of(context).pop(false);
                 },
@@ -68,7 +71,7 @@ class _sosPageState extends State<sosPage> {
                 style: ButtonStyle(
                     backgroundColor:
                         MaterialStatePropertyAll(Mycolors.buttoncolor)),
-                child: Text('Yes'),
+                child: Text(LocaleKeys.yes.tr()),
                 onPressed: () {
                   Navigator.of(context).pop(true);
                 },
@@ -242,27 +245,37 @@ class _sosPageState extends State<sosPage> {
                           MaterialPageRoute(
                               builder: (context) => chatbotPage()));
                     },
-                    child: Column(
-                      children: [
-                        SizedBox(height: 4),
-                        Stack(
-                          children: [
-                            Container(
-                                margin: EdgeInsets.only(left: 30),
-                                height: 35,
-                                width: 35,
-                                child: SvgPicture.asset(
-                                    "assets/images/carbon_chat-bot.svg"))
-                          ],
-                        ),
-                        SizedBox(height: 3),
-                        Container(
-                            margin: EdgeInsets.only(left: 30),
-                            child: Text("Chatbot",
-                                style: TextStyle(
-                                    color: Mycolors.notpressed,
-                                    fontWeight: FontWeight.w500))),
-                      ],
+                    child: Container(
+                      margin: langCode == 'en'
+                          ? EdgeInsets.all(0)
+                          : EdgeInsets.only(right: 20),
+                      child: Column(
+                        children: [
+                          SizedBox(height: 4),
+                          Stack(
+                            children: [
+                              Container(
+                                  margin: EdgeInsets.only(left: 30),
+                                  height: 35,
+                                  width: 35,
+                                  child: SvgPicture.asset(
+                                      "assets/images/carbon_chat-bot.svg"))
+                            ],
+                          ),
+                          SizedBox(height: 3),
+                          Container(
+                              margin: EdgeInsets.only(left: 30),
+                              child: Text(LocaleKeys.chatbot.tr(),
+                                  style: langCode == 'en'
+                                      ? TextStyle(
+                                          color: Mycolors.notpressed,
+                                          fontWeight: FontWeight.w500)
+                                      : TextStyle(
+                                          color: Mycolors.notpressed,
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 10))),
+                        ],
+                      ),
                     ),
                   ),
                   InkWell(
@@ -280,10 +293,15 @@ class _sosPageState extends State<sosPage> {
                           ],
                         ),
                         SizedBox(height: 3),
-                        Text("Home",
-                            style: TextStyle(
-                                color: Mycolors.textcolor,
-                                fontWeight: FontWeight.w500)),
+                        Text(LocaleKeys.Home.tr(),
+                            style: langCode == 'en'
+                                ? TextStyle(
+                                    color: Mycolors.textcolor,
+                                    fontWeight: FontWeight.w500)
+                                : TextStyle(
+                                    color: Mycolors.textcolor,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 10)),
                       ],
                     ),
                   ),
@@ -296,27 +314,37 @@ class _sosPageState extends State<sosPage> {
                             MaterialPageRoute(
                                 builder: ((context) => MapsPage())));
                       },
-                      child: Column(
-                        children: [
-                          SizedBox(height: 4),
-                          Stack(
-                            children: [
-                              Container(
-                                  margin: EdgeInsets.only(right: 30),
-                                  height: 35,
-                                  width: 35,
-                                  child: SvgPicture.asset(
-                                      "assets/images/Vector.svg"))
-                            ],
-                          ),
-                          SizedBox(height: 3),
-                          Container(
-                              margin: EdgeInsets.only(right: 30),
-                              child: Text("Maps",
-                                  style: TextStyle(
-                                      color: Mycolors.notpressed,
-                                      fontWeight: FontWeight.w500))),
-                        ],
+                      child: Container(
+                        margin: langCode == 'en'
+                            ? EdgeInsets.all(0)
+                            : EdgeInsets.only(left: 20),
+                        child: Column(
+                          children: [
+                            SizedBox(height: 4),
+                            Stack(
+                              children: [
+                                Container(
+                                    margin: EdgeInsets.only(right: 30),
+                                    height: 35,
+                                    width: 35,
+                                    child: SvgPicture.asset(
+                                        "assets/images/Vector.svg"))
+                              ],
+                            ),
+                            SizedBox(height: 3),
+                            Container(
+                                margin: EdgeInsets.only(right: 30),
+                                child: Text(LocaleKeys.maps.tr(),
+                                    style: langCode == 'en'
+                                        ? TextStyle(
+                                            color: Mycolors.notpressed,
+                                            fontWeight: FontWeight.w500)
+                                        : TextStyle(
+                                            color: Mycolors.notpressed,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 10))),
+                          ],
+                        ),
                       ),
                     ),
                   )

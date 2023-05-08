@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -12,12 +13,14 @@ import 'package:gradproject/button.dart';
 import 'package:gradproject/button2.dart';
 import 'package:gradproject/buttonselevated.dart';
 import 'package:gradproject/loadingcontainer.dart';
+import 'package:gradproject/main.dart';
 import 'package:gradproject/medicalCard.dart';
 import 'package:gradproject/repository/relation_repository.dart';
 import 'package:gradproject/repository/user_repository.dart';
 import 'package:gradproject/searchpage.dart';
 import 'package:gradproject/sos.dart';
 import 'package:gradproject/style.dart';
+import 'package:gradproject/translations/locale_keys.g.dart';
 import 'package:gradproject/utils/has_network.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:paginated_search_bar/paginated_search_bar_state_property.dart';
@@ -136,7 +139,7 @@ class _ProfileoneState extends State<Profileone> {
                                     MainAxisAlignment.spaceEvenly,
                                 children: [
                                   Text(
-                                    "Log Out",
+                                    LocaleKeys.logout.tr(),
                                     style: TextStyle(
                                       color: Mycolors.buttoncolor,
                                       fontSize: 18,
@@ -157,7 +160,7 @@ class _ProfileoneState extends State<Profileone> {
                                     MainAxisAlignment.spaceEvenly,
                                 children: [
                                   Text(
-                                    "Settings",
+                                    LocaleKeys.settings.tr(),
                                     style: TextStyle(
                                       color: Mycolors.buttoncolor,
                                       fontSize: 18,
@@ -264,7 +267,7 @@ class _ProfileoneState extends State<Profileone> {
                                   });
                                 },
                                 child: elevButtons(
-                                    text: "Medical Card",
+                                    text: LocaleKeys.medicalcard.tr(),
                                     elevcolor: selectMedical
                                         ? Colors.white
                                         : Mycolors.buttoncolor,
@@ -281,7 +284,7 @@ class _ProfileoneState extends State<Profileone> {
                               });
                             },
                             child: elevButtons(
-                                text: "Care Givers",
+                                text: LocaleKeys.caregivers.tr(),
                                 elevcolor: selectCare
                                     ? Colors.white
                                     : Mycolors.buttoncolor,
@@ -318,7 +321,7 @@ class _ProfileoneState extends State<Profileone> {
                               children: [
                                 SizedBox(height: 20),
                                 Button2(
-                                    textButton: "Fill Out Your Medical Info",
+                                    textButton: LocaleKeys.fillout.tr(),
                                     onTap: () async {
                                       if (await isNetworkAvailable != true) {
                                         Navigator.pushReplacement(
@@ -328,7 +331,7 @@ class _ProfileoneState extends State<Profileone> {
                                                     profile2()));
                                       } else {
                                         Fluttertoast.showToast(
-                                            msg: "No Internet connection",
+                                            msg: LocaleKeys.nointernet.tr(),
                                             toastLength: Toast.LENGTH_SHORT,
                                             gravity: ToastGravity.BOTTOM,
                                             timeInSecForIosWeb: 1,
@@ -343,8 +346,7 @@ class _ProfileoneState extends State<Profileone> {
                                 SizedBox(height: 20),
                                 Padding(
                                   padding: const EdgeInsets.only(left: 8.0),
-                                  child: Text(
-                                      "In case of an emergency, paramedics will be able to quickly access vital information about your health, allergies, medications, and more, potentially saving your life.",
+                                  child: Text(LocaleKeys.emergencycase.tr(),
                                       style: TextStyle(
                                           color: Mycolors.notpressed,
                                           fontSize: 12,
@@ -369,18 +371,28 @@ class _ProfileoneState extends State<Profileone> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.only(left: 110.0),
+                                  padding: langCode == 'en'
+                                      ? const EdgeInsets.only(left: 110.0)
+                                      : const EdgeInsets.only(right: 100.0),
                                   child: Center(
                                     child: Text(
                                         user!.gender == null
                                             ? ""
                                             : user!.gender?.name == "male"
-                                                ? "M( " +
-                                                    user!.age.toString() +
-                                                    " y/o)"
-                                                : "F(" +
-                                                    user!.age.toString() +
-                                                    " y/o)",
+                                                ? langCode == 'en'
+                                                    ? "M( " +
+                                                        user!.age.toString() +
+                                                        " y/o)"
+                                                    : "(ذكر " +
+                                                        user!.age.toString() +
+                                                        " سنة )"
+                                                : langCode == 'en'
+                                                    ? "F( " +
+                                                        user!.age.toString() +
+                                                        " y/o)"
+                                                    : "(انثى " +
+                                                        user!.age.toString() +
+                                                        " سنة )",
                                         style: TextStyle(
                                             color: Mycolors.textcolor,
                                             fontSize: 20)),
@@ -435,7 +447,10 @@ class _ProfileoneState extends State<Profileone> {
                                         children: [
                                           SvgPicture.asset(
                                               "assets/images/Vector (5).svg"),
-                                          Text("Height",
+                                          Text(
+                                              langCode == 'en'
+                                                  ? "Height"
+                                                  : "الطول",
                                               style: TextStyle(
                                                   color: Mycolors.textcolor,
                                                   fontSize: 15))
@@ -444,7 +459,11 @@ class _ProfileoneState extends State<Profileone> {
                                       Text(
                                           user!.height == null
                                               ? ""
-                                              : user!.height.toString() + " Cm",
+                                              : langCode == 'en'
+                                                  ? user!.height.toString() +
+                                                      " Cm"
+                                                  : user!.height.toString() +
+                                                      " سم",
                                           style: TextStyle(
                                               color: Mycolors.textcolor,
                                               fontSize: 24))
@@ -456,7 +475,10 @@ class _ProfileoneState extends State<Profileone> {
                                         children: [
                                           SvgPicture.asset(
                                               "assets/images/Vector (3).svg"),
-                                          Text("weight",
+                                          Text(
+                                              langCode == 'en'
+                                                  ? "weight"
+                                                  : "الوزن",
                                               style: TextStyle(
                                                   color: Mycolors.textcolor,
                                                   fontSize: 15))
@@ -465,7 +487,11 @@ class _ProfileoneState extends State<Profileone> {
                                       Text(
                                           user!.weight == null
                                               ? ""
-                                              : user!.weight.toString() + " Kg",
+                                              : langCode == 'en'
+                                                  ? user!.weight.toString() +
+                                                      " Kg"
+                                                  : user!.weight.toString() +
+                                                      " كج",
                                           style: TextStyle(
                                               color: Mycolors.textcolor,
                                               fontSize: 24))
@@ -474,8 +500,10 @@ class _ProfileoneState extends State<Profileone> {
                                 ]),
                             SizedBox(height: 10),
                             Padding(
-                              padding:
-                                  const EdgeInsets.only(right: 70.0, left: 40),
+                              padding: langCode == 'en'
+                                  ? const EdgeInsets.only(right: 70.0, left: 40)
+                                  : const EdgeInsets.only(
+                                      right: 40.0, left: 70),
                               child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -484,7 +512,10 @@ class _ProfileoneState extends State<Profileone> {
                                       children: [
                                         SvgPicture.asset(
                                             "assets/images/Vector (4).svg"),
-                                        Text("Blood Type",
+                                        Text(
+                                            langCode == 'en'
+                                                ? "Blood Type"
+                                                : "فصيلة الدم",
                                             style: TextStyle(
                                                 color: Mycolors.textcolor,
                                                 fontSize: 20))
@@ -523,21 +554,33 @@ class _ProfileoneState extends State<Profileone> {
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.only(right: 210.0),
-                              child: Text("Health".toUpperCase(),
+                              padding: langCode == 'en'
+                                  ? const EdgeInsets.only(right: 210.0)
+                                  : const EdgeInsets.only(left: 210.0),
+                              child: Text(
+                                  langCode == 'en'
+                                      ? "Health".toUpperCase()
+                                      : "الصحة",
                                   style: TextStyle(
                                       color: Mycolors.notpressed,
                                       fontSize: 11)),
                             ),
                             SizedBox(height: 10),
                             Padding(
-                              padding: const EdgeInsets.only(right: 125.0),
-                              child: Text("MEDICAL CONDITIONS",
+                              padding: langCode == 'en'
+                                  ? const EdgeInsets.only(right: 125.0)
+                                  : const EdgeInsets.only(left: 180.0),
+                              child: Text(
+                                  langCode == 'en'
+                                      ? "MEDICAL CONDITIONS"
+                                      : "حالات طبية",
                                   style: TextStyle(
                                       color: Mycolors.buttonsos, fontSize: 12)),
                             ),
                             Padding(
-                              padding: const EdgeInsets.only(left: 23.0),
+                              padding: langCode == 'en'
+                                  ? const EdgeInsets.only(left: 23.0)
+                                  : const EdgeInsets.only(right: 23.0),
                               child: Text(
                                   textAlign: TextAlign.start,
                                   user!.medicalCondition == null
@@ -550,13 +593,18 @@ class _ProfileoneState extends State<Profileone> {
                             ),
                             SizedBox(height: 10),
                             Padding(
-                              padding: const EdgeInsets.only(right: 175.0),
-                              child: Text("MEDICATIONS",
+                              padding: langCode == 'en'
+                                  ? const EdgeInsets.only(right: 175.0)
+                                  : const EdgeInsets.only(left: 200.0),
+                              child: Text(
+                                  langCode == 'en' ? "MEDICATIONS" : "الأدوية",
                                   style: TextStyle(
                                       color: Mycolors.buttonsos, fontSize: 12)),
                             ),
                             Padding(
-                              padding: const EdgeInsets.only(left: 23.0),
+                              padding: langCode == 'en'
+                                  ? const EdgeInsets.only(left: 23.0)
+                                  : const EdgeInsets.only(right: 23.0),
                               child: Text(
                                   textAlign: TextAlign.start,
                                   user!.medications == null
@@ -569,13 +617,18 @@ class _ProfileoneState extends State<Profileone> {
                             ),
                             SizedBox(height: 10),
                             Padding(
-                              padding: const EdgeInsets.only(right: 190.0),
-                              child: Text("ALLERGIES",
+                              padding: langCode == 'en'
+                                  ? const EdgeInsets.only(right: 190.0)
+                                  : const EdgeInsets.only(left: 190.0),
+                              child: Text(
+                                  langCode == 'en' ? "ALLERGIES" : "الحساسية",
                                   style: TextStyle(
                                       color: Mycolors.buttonsos, fontSize: 12)),
                             ),
                             Padding(
-                              padding: const EdgeInsets.only(left: 23.0),
+                              padding: langCode == 'en'
+                                  ? const EdgeInsets.only(left: 23.0)
+                                  : const EdgeInsets.only(right: 23.0),
                               child: Text(
                                   textAlign: TextAlign.start,
                                   user!.allergies == null
@@ -588,13 +641,18 @@ class _ProfileoneState extends State<Profileone> {
                             ),
                             SizedBox(height: 10),
                             Padding(
-                              padding: const EdgeInsets.only(right: 197.0),
-                              child: Text("REMARKS",
+                              padding: langCode == 'en'
+                                  ? const EdgeInsets.only(right: 197.0)
+                                  : const EdgeInsets.only(left: 197.0),
+                              child: Text(
+                                  langCode == 'en' ? "REMARKS" : "ملاحظات",
                                   style: TextStyle(
                                       color: Mycolors.buttonsos, fontSize: 12)),
                             ),
                             Padding(
-                              padding: const EdgeInsets.only(left: 23.0),
+                              padding: langCode == 'en'
+                                  ? const EdgeInsets.only(left: 23.0)
+                                  : const EdgeInsets.only(right: 23.0),
                               child: Text(
                                   textAlign: TextAlign.start,
                                   user!.remarks == null
@@ -633,41 +691,79 @@ class _ProfileoneState extends State<Profileone> {
                                         width: 300,
                                         height: 40,
                                         child: InkWell(
-                                          onTap: () {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        searchPage()));
-                                          },
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 8.0),
-                                                child: Icon(Icons.search),
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    right: 130.0),
-                                                child: Text(
-                                                    "Search for a caregiver",
-                                                    style: TextStyle(
-                                                        color:
-                                                            Mycolors.notpressed,
-                                                        fontSize: 12)),
-                                              ),
-                                            ],
-                                          ),
-                                        ))),
+                                            onTap: () {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          searchPage()));
+                                            },
+                                            child: langCode == 'en'
+                                                ? Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .only(
+                                                                left: 8.0),
+                                                        child:
+                                                            Icon(Icons.search),
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .only(
+                                                                right: 130.0),
+                                                        child: Text(
+                                                            LocaleKeys
+                                                                .searchcaregiver
+                                                                .tr(),
+                                                            style: TextStyle(
+                                                                color: Mycolors
+                                                                    .notpressed,
+                                                                fontSize: 12)),
+                                                      ),
+                                                    ],
+                                                  )
+                                                : Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .only(
+                                                                right: 130.0),
+                                                        child: Text(
+                                                            LocaleKeys
+                                                                .searchcaregiver
+                                                                .tr(),
+                                                            style: TextStyle(
+                                                                color: Mycolors
+                                                                    .notpressed,
+                                                                fontSize: 12)),
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .only(
+                                                                left: 8.0),
+                                                        child:
+                                                            Icon(Icons.search),
+                                                      ),
+                                                    ],
+                                                  )))),
                                 SizedBox(height: 10),
                                 // SizedBox(height: 30),
                                 Padding(
-                                  padding: const EdgeInsets.only(left: 8.0),
-                                  child: Text(
-                                      "We understand that emergencies can be overwhelming, which is why it's important to have a support system in place. By adding a loved one or caregiver to be notified in case of an emergency.",
+                                  padding: langCode == 'en'
+                                      ? EdgeInsets.only(left: 8.0)
+                                      : EdgeInsets.only(right: 8.0),
+                                  child: Text(LocaleKeys.overwhelming.tr(),
                                       style: TextStyle(
                                           color: Mycolors.notpressed,
                                           fontSize: 12,
@@ -676,11 +772,14 @@ class _ProfileoneState extends State<Profileone> {
                                 // SizedBox(height: 170),
                                 Spacer(),
                                 Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 11.0, bottom: 11.0),
+                                  padding: langCode == 'en'
+                                      ? const EdgeInsets.only(
+                                          left: 11.0, bottom: 11.0)
+                                      : const EdgeInsets.only(
+                                          right: 11.0, bottom: 11.0),
                                   child: RichText(
                                     text: TextSpan(
-                                      text: "Here's how it works:  ",
+                                      text: LocaleKeys.herehow.tr(),
                                       style: TextStyle(
                                         color: Mycolors.textcolor,
                                         fontSize: 12,
@@ -688,8 +787,7 @@ class _ProfileoneState extends State<Profileone> {
                                       ),
                                       children: <TextSpan>[
                                         TextSpan(
-                                          text:
-                                              "if you ever press the SOS button in our application, we'll send an SMS and app notification to your caregivers. This will let them know that you need help and provide them with your location information.",
+                                          text: LocaleKeys.wesendsms.tr(),
                                           style: TextStyle(
                                             color: Mycolors.notpressed,
                                             fontSize: 10,
@@ -731,27 +829,59 @@ class _ProfileoneState extends State<Profileone> {
                                                     builder: (context) =>
                                                         searchPage()));
                                           },
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 8.0),
-                                                child: Icon(Icons.search),
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    right: 130.0),
-                                                child: Text(
-                                                    "Search for a caregiver",
-                                                    style: TextStyle(
-                                                        color:
-                                                            Mycolors.notpressed,
-                                                        fontSize: 12)),
-                                              ),
-                                            ],
-                                          ),
+                                          child: langCode == 'en'
+                                              ? Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 8.0),
+                                                      child: Icon(Icons.search),
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              right: 130.0),
+                                                      child: Text(
+                                                          LocaleKeys
+                                                              .searchcaregiver
+                                                              .tr(),
+                                                          style: TextStyle(
+                                                              color: Mycolors
+                                                                  .notpressed,
+                                                              fontSize: 12)),
+                                                    ),
+                                                  ],
+                                                )
+                                              : Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              right: 130.0),
+                                                      child: Text(
+                                                          LocaleKeys
+                                                              .searchcaregiver
+                                                              .tr(),
+                                                          style: TextStyle(
+                                                              color: Mycolors
+                                                                  .notpressed,
+                                                              fontSize: 12)),
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 8.0),
+                                                      child: Icon(Icons.search),
+                                                    ),
+                                                  ],
+                                                ),
                                         ))),
                                 ListView.builder(
                                   shrinkWrap: true,

@@ -109,7 +109,7 @@ class _ContinueWithPhoneState extends State<ContinueWithPhone> {
                         children: <Widget>[
                           IntlPhoneField(
                             decoration: InputDecoration(
-                              labelText: 'Phone Number',
+                              labelText: LocaleKeys.phonenumber.tr(),
                               border: OutlineInputBorder(
                                 borderSide: BorderSide(),
                               ),

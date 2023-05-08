@@ -61,9 +61,9 @@ class _VerifyPhoneState extends State<VerifyPhone> {
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => sosPage()));
       }
-      Fluttertoast.showToast(msg: "Verification successful");
+      Fluttertoast.showToast(msg: LocaleKeys.verification.tr());
     } catch (e) {
-      Fluttertoast.showToast(msg: "Invalid verification code");
+      Fluttertoast.showToast(msg: LocaleKeys.invalidverification.tr());
     }
   }
 
@@ -82,7 +82,7 @@ class _VerifyPhoneState extends State<VerifyPhone> {
           ),
         ),
         title: Text(
-          "Verify phone",
+          LocaleKeys.verifyphone.tr(),
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -107,7 +107,7 @@ class _VerifyPhoneState extends State<VerifyPhone> {
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 14),
                     child: Text(
-                      "Code is sent to " + widget.phoneNumber,
+                      LocaleKeys.verifycodesentto.tr() + widget.phoneNumber,
                       style: TextStyle(
                         fontSize: 22,
                         color: Color(0xFF818181),
@@ -140,7 +140,7 @@ class _VerifyPhoneState extends State<VerifyPhone> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Text(
-                          "Didn't recieve code? ",
+                          LocaleKeys.didnotrec.tr(),
                           style: TextStyle(
                             fontSize: 18,
                             color: Mycolors.notpressed,
@@ -192,7 +192,7 @@ class _VerifyPhoneState extends State<VerifyPhone> {
                             );
                           },
                           child: Text(
-                            "Request again",
+                            LocaleKeys.Requestagain.tr(),
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.w700),
                           ),

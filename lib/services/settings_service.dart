@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsService {
@@ -14,8 +15,10 @@ class SettingsService {
 
   // language getters and setters
   static Future<String> getLanguage() async {
+    Locale deviceLocale = window.locale;
+    String langCode = deviceLocale.languageCode;
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('language') ?? 'en';
+    return prefs.getString('language') ?? langCode;
   }
 
   static Future<void> setLanguage(String value) async {

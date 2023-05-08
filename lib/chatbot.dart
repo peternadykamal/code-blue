@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:gradproject/main.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gradproject/services/chat_service.dart';
@@ -73,7 +74,7 @@ class _chatbotPageState extends State<chatbotPage> {
             child: Icon(Icons.arrow_back, color: Mycolors.textcolor)),
         title: Row(
           children: [
-            Text("Blu: the chatbot ",
+            Text(langCode == 'en' ? "Blu: the chatbot " : "بلو: الي دردشة",
                 style: TextStyle(color: Mycolors.textcolor))
           ],
         ),

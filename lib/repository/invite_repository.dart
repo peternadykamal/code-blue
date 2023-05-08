@@ -1,5 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:gradproject/main.dart';
 import 'package:gradproject/repository/notification_repository.dart';
 import 'package:gradproject/repository/relation_repository.dart';
 import 'package:gradproject/repository/user_repository.dart';
@@ -7,7 +8,8 @@ import 'package:gradproject/repository/user_repository.dart';
 enum InviteStatus { pending, accepted, rejected }
 
 class Invite {
-  // invites have some properties, 1-notificationID, 2-inviteStatus, 3-inviteSenderID, 4-inviteReceiverID
+  // invites have some properties, 1-notificationID, 2-inviteStatus,
+  // 3-inviteSenderID, 4-inviteReceiverID
   InviteStatus? inviteStatus;
   String inviteSenderID;
   String inviteReceiverID;
@@ -57,7 +59,8 @@ class InviteRepository {
 
   // create invite function
   Future<void> createInvitation(String receiverId) async {
-    // first let's make sure that the user is logged in and the receiverId is in users table, thorw an error if not
+    // first let's make sure that the user is logged in and the receiverId is in
+    // users table, thorw an error if not
     if (user == null) throw Exception('User is not logged in');
     if (!await UserRepository().checkUserExist(receiverId)) {
       throw Exception('User does not exist');
@@ -68,12 +71,14 @@ class InviteRepository {
       throw Exception('You cannot add yourself');
     }
 
-    // check if there is a relation between the two users, if there is one, throw an error
+    // check if there is a relation between the two users, if there is one,
+    // throw an error
     if (await RelationRepository().checkRelationExist(receiverId)) {
       throw Exception('they already become your caregiver');
     }
 
-    // check if there is an invite with the same user and receiver, if there is one and with status pending or accepted, throw an error
+    // check if there is an invite with the same user and receiver, if there is
+    // one and with status pending or accepted, throw an error
     DataSnapshot invites = await _invitesRef
         .orderByChild('inviteSenderID')
         .equalTo(user!.uid)
@@ -128,9 +133,11 @@ class InviteRepository {
     }
   }
 
-  // accept invite function, first update the invite status to accepted, then add a relation between the two users in the relations table
+  // accept invite function, first update the invite status to accepted, then
+  // add a relation between the two users in the relations table
   Future<void> acceptInvitation(String inviteId) async {
-    // first let's make sure that the user is logged in and the inviteId is in invites table, throw an error if not
+    // first let's make sure that the user is logged in and the inviteId is in
+    // invites table, throw an error if not
     if (user == null) throw Exception('User is not logged in');
     if (!await checkInviteExist(inviteId)) {
       throw Exception('Invite does not exist');
@@ -153,7 +160,8 @@ class InviteRepository {
 
   // reject invite function, first update the invite status to rejected
   Future<void> rejectInvitation(String inviteId) async {
-    // first let's make sure that the user is logged in and the inviteId is in invites table, throw an error if not
+    // first let's make sure that the user is logged in and the inviteId is in
+    // invites table, throw an error if not
     if (user == null) throw Exception('User is not logged in');
     if (!await checkInviteExist(inviteId)) {
       throw Exception('Invite does not exist');

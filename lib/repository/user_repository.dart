@@ -316,10 +316,18 @@ class UserRepository {
   Future<void> deleteUserAccount() async {
     try {
       if (user != null) {
+        await user!.delete();
+        Map<String, dynamic> relationMap =
+            await RelationRepository().getRelationsForCurrentUser();
+        List<String> relationsId = relationMap['relationsId'];
+        for (String relationId in relationsId) {
+          await RelationRepository().deleteRelation(relationId);
+        }
         _usersRef.child(user!.uid).remove();
       }
     } catch (e) {
-      throw Exception("Error deleting user account: $e");
+      throw Exception(
+          "Error deleting user account, as a security measure you need be recently logged in to delete your account");
     }
   }
 

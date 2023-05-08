@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:gradproject/onboardscreen.dart';
+import 'package:gradproject/services/settings_service.dart';
 import 'package:gradproject/splashscreen.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -15,8 +16,11 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:gradproject/services/notification_service.dart';
 import 'testing/test_repository.dart';
 
-Locale deviceLocale = window.locale;
-String langCode = deviceLocale.languageCode;
+String langCode = "en";
+
+Future<void> updateLanguage() async {
+  langCode = await SettingsService.getLanguage();
+}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -55,7 +59,9 @@ class MyApp extends StatelessWidget {
     if (kDebugMode) {
       testThis().then((value) => {print("test done")});
     }
-
+    // get the language code from the shared preferences
+    updateLanguage()
+        .then((value) => {print("------------------------>language updated")});
     return MaterialApp(
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,

@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:gradproject/main.dart';
 import 'package:gradproject/repository/notification_repository.dart'
     as notifyRepo;
 import 'package:gradproject/repository/request_repository.dart';
@@ -271,7 +272,7 @@ class _NotificationPageState extends State<NotificationPage> {
                     MaterialPageRoute(builder: (context) => sosPage()));
               },
               child: Icon(Icons.arrow_back, color: Mycolors.textcolor)),
-          title: Text("Notifications",
+          title: Text(langCode == 'en' ? "Notifications" : "اشعارات",
               style: TextStyle(color: Mycolors.textcolor)),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.vertical(

@@ -18,6 +18,7 @@ import 'package:gradproject/medicalCard.dart';
 import 'package:gradproject/repository/relation_repository.dart';
 import 'package:gradproject/repository/user_repository.dart';
 import 'package:gradproject/searchpage.dart';
+import 'package:gradproject/settings.dart';
 import 'package:gradproject/sos.dart';
 import 'package:gradproject/style.dart';
 import 'package:gradproject/translations/locale_keys.g.dart';
@@ -184,7 +185,13 @@ class _ProfileoneState extends State<Profileone> {
                                   builder: (context) => authPage(),
                                 ),
                               );
-                            } else if (value == "settings") {}
+                            } else if (value == "settings") {
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => settingsPage(),
+                                  ));
+                            }
                           },
                           child: Container(
                             margin: EdgeInsets.only(left: 30),

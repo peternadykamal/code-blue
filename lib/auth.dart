@@ -122,10 +122,14 @@ class _authPageState extends State<authPage> {
                 if (selectlogin) {
                   String? validateEmail(String? formEmail) {
                     if (formEmail == null || formEmail.isEmpty) {
-                      return 'Email is required';
+                      return langCode == 'en'
+                          ? 'Email is required'
+                          : "يجب ادخال بريد الكتروني";
                     }
                     if (!RegExp(r'\S+@\S+\.\S+').hasMatch(formEmail)) {
-                      return "Please enter a valid email address";
+                      return langCode == 'en'
+                          ? "Please enter a valid email address"
+                          : "يرجى إدخال عنوان بريد إلكتروني صالح";
                     }
                   }
 
@@ -133,7 +137,9 @@ class _authPageState extends State<authPage> {
 
                   String? validatePass(String? formPass) {
                     if (formPass == null || formPass.isEmpty) {
-                      return 'Password is required';
+                      return langCode == 'en'
+                          ? 'Password is required'
+                          : 'يجب ادخال كلمة السر';
                     }
                     return null;
                   }
@@ -245,33 +251,24 @@ class _authPageState extends State<authPage> {
                               Padding(
                                 padding: const EdgeInsets.only(left: 170.0),
                                 child: InkWell(
-                                    onTap: () async {
-                                      await () => AuthService().resetPassword();
-                                      // Navigator.pushReplacement(
-                                      //     context,
-                                      //     MaterialPageRoute(
-                                      //         builder: (BuildContext context) =>
-                                      //             ContinueWithPhone(
-                                      //                 email:
-                                      //                     _emailcontrollersignUp
-                                      //                         .text,
-                                      //                 pass:
-                                      //                     _passcontrollersignUp
-                                      //                         .text,
-                                      //                 username:
-                                      //                     _usernamecontrollersignUp
-                                      //                         .text)));
-                                    },
-                                    child: Text(LocaleKeys.forgetpass.tr(),
-                                        style: TextStyle(
-                                            fontFamily: 'Arial',
-                                            color: Mycolors.textcolor,
-                                            fontSize: 13))),
+                                  onTap: () async {
+                                    await AuthService().forgetPassword(
+                                        _emailcontrollerlogin.text.trim());
+                                  },
+                                  child: Text(LocaleKeys.forgetpass.tr(),
+                                      style: TextStyle(
+                                          fontFamily: 'Arial',
+                                          color: Mycolors.textcolor,
+                                          fontSize: 13)),
+                                ),
                               ),
                               SizedBox(height: 100),
                               selectError == true
                                   ? Text("")
-                                  : Text("Invalid email or password",
+                                  : Text(
+                                      langCode == 'en'
+                                          ? "Invalid email or password"
+                                          : "البريد الإلكتروني أو كلمة السر خاطئة",
                                       style: TextStyle(
                                           color: Colors.red, fontSize: 12)),
                               SizedBox(height: 20),
@@ -319,10 +316,14 @@ class _authPageState extends State<authPage> {
 
                 String? validateEmail(String? formEmail) {
                   if (formEmail == null || formEmail.isEmpty) {
-                    return 'Email is required';
+                    return langCode == 'en'
+                        ? 'Email is required'
+                        : "يجب ادخال بريد الكتروني";
                   }
                   if (!RegExp(r'\S+@\S+\.\S+').hasMatch(formEmail)) {
-                    return "Please enter a valid email address";
+                    return langCode == 'en'
+                        ? "Please enter a valid email address"
+                        : "يرجى إدخال عنوان بريد إلكتروني صالح";
                   }
                 }
 
@@ -381,10 +382,14 @@ class _authPageState extends State<authPage> {
                                 child: TextFieldWidget(
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
-                                        return 'Username is required';
+                                        return langCode == 'en'
+                                            ? 'Username is required'
+                                            : "يرجى ادخال اسم المستخدم";
                                       }
                                       if (value.length > 20) {
-                                        return ("username is too long");
+                                        return langCode == 'en'
+                                            ? ("username is too long")
+                                            : "اسم المستخدم طويل جدا";
                                       }
                                     },
                                     icon: Icons.person,
@@ -399,7 +404,9 @@ class _authPageState extends State<authPage> {
                               child: TextFormField(
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
-                                    return 'Password is required';
+                                    return langCode == 'en'
+                                        ? 'Password is required'
+                                        : "يجب ادخال كلمة السر";
                                   }
                                 },
                                 controller: _passcontrollersignUp,
@@ -457,10 +464,14 @@ class _authPageState extends State<authPage> {
                               child: TextFormField(
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
-                                    return 'Confirm pass is required';
+                                    return langCode == 'en'
+                                        ? 'Confirm pass is required'
+                                        : "يجب تأكيد كلمة السر";
                                   }
                                   if (value != _passcontrollersignUp.text) {
-                                    return "password not match";
+                                    return langCode == 'en'
+                                        ? "passwords not matching"
+                                        : "كلمات المرور غير متطابقة";
                                   }
                                 },
                                 controller: _confirmpasscontrollersignUp,

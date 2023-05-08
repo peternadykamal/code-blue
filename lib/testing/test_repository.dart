@@ -39,16 +39,13 @@ Future<void> testThis() async {
 
   // print(await UserRepository().getUserIdByEmail('nady.peter347@gmail.com'));
   // print(user.username); print(user.email); print(user.profileImageUrl);
-  // print(user.medicalCondition);
-  // List<String> userIDs =
-  //     await UserRepository().fuzzyUserEmailSearch('nady', getIDsList: true);
-  // List<UserProfile> users = [];
-  // for (String userID in userIDs) {
-  //   users.add(await UserRepository().getUserById(userID));
-  // }
+  // print(user.medicalCondition); List<String> userIDs = await
+  // UserRepository().fuzzyUserEmailSearch('nady', getIDsList: true);
+  //     List<UserProfile> users = []; for (String userID in userIDs) {
+  // users.add(await UserRepository().getUserById(userID)); }
 
   // await RequestRepository().addNonCaregiversPhoneNumbers('+201204290582');
   // await RequestRepository().removeNonCaregiversPhoneNumbers('+201204290582');
-  // print(await SettintgsService.getAllPhoneNumbers());
-  // print(await SettintgsService.getNonCaregiversPhoneNumbers());
+  // print(await SettintgsService.getAllPhoneNumbers()); print(await
+  // SettintgsService.getNonCaregiversPhoneNumbers());
 }

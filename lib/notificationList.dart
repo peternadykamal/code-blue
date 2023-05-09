@@ -218,7 +218,9 @@ class _NotificationPageState extends State<NotificationPage> {
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Requested your help'),
+                langCode == 'en'
+                    ? Text('Requested your help')
+                    : Text('طلب مساعدتك'),
                 Text(
                   '${date}',
                   style: TextStyle(

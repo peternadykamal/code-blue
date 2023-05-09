@@ -414,7 +414,6 @@ class _settingsPageState extends State<settingsPage> {
                         : ["انجليزي", "عربي"],
                     selectedIndex: selectedLang == 'en' ? 0 : 1,
                     selectedLabelIndex: (index) async {
-                      print(index);
                       if (index == 0) {
                         selectedLang = 'en';
                         await SettingsService.setLanguage('en');
@@ -427,6 +426,9 @@ class _settingsPageState extends State<settingsPage> {
                   ),
                 ],
               ),
+              SizedBox(
+                height: 20,
+              )
             ],
           ),
         ),

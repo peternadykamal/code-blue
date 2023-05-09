@@ -8,8 +8,11 @@ import 'package:gradproject/repository/notification_repository.dart';
 import 'package:gradproject/services/settings_service.dart';
 import 'package:gradproject/utils/has_network.dart';
 import 'package:gradproject/utils/user_geolocation.dart';
+import '../main.dart';
 import '../services/sms_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+import '../utils/get_difference_of_stings.dart';
 
 enum RequestStatus { pending, completed, canceled }
 
@@ -94,6 +97,10 @@ class RequestRepository {
       FirebaseDatabase.instance.ref().child('requests');
   User? user = FirebaseAuth.instance.currentUser;
 
+  // notification format
+  String _titleFormat = " needs your help!";
+  String _bodyFormat = "press to see the user location";
+
   /// create an order request for another user which means you need to specify the location of that user
   /// '''dart
   /// String requestId = await createRequest('31.2', '31.2');
@@ -162,8 +169,8 @@ class RequestRepository {
     List<String> phoneNums = [];
     await Future.forEach(careGivers, (element) async {
       Notification notification = Notification(
-          title: "${user?.displayName} needs your help!",
-          body: "press to see the user location",
+          title: user!.displayName! + _titleFormat,
+          body: _bodyFormat,
           notificationType: "request",
           notificationTypeId: requestID,
           targetUserID: element.userId2);
@@ -226,5 +233,23 @@ class RequestRepository {
     await SMSService.sendSmsMessage(
         recipients: [dotenv.env['SERVER_PHONE_NUMBER']!],
         message: encodedRequest);
+  }
+
+  // give the right format depending on langCode
+  Map<String, String> formatRequestNotification(String title, String body) {
+    // we assume that the title and body stored in database is stored in english and we translate if we need it
+    String userName = compareStrings(title, _titleFormat);
+    if (langCode == 'ar') {
+      return {
+        'title': "${userName} بحاجة لمساعدتك!",
+        'body': 'اضغط لمعرفة موقع المستخدم',
+      };
+      // } else if (langCode == 'en') {
+    } else {
+      return {
+        'title': title,
+        'body': body,
+      };
+    }
   }
 }

@@ -1,6 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
+import 'package:gradproject/main.dart';
 import 'package:gradproject/repository/invite_repository.dart';
 import 'package:gradproject/repository/request_repository.dart';
 import 'package:http/http.dart' as http;
@@ -26,23 +26,38 @@ class Notification {
   /// id will be set automatically when geting getting notification of specific user when calling notificationRepository.getNotifications()
   /// if you didn't set date, it will be set to the current date
   /// if you didn't set senderUserID, it will be set to the current user id
-  Notification({
-    required this.title,
-    required this.body,
-    required this.targetUserID,
-    required this.notificationType,
-    required this.notificationTypeId,
-    this.senderUserID,
-    this.date,
-    this.isSeen = false,
-    this.id,
-  }) {
+  Notification(
+      {required this.title,
+      required this.body,
+      required this.targetUserID,
+      required this.notificationType,
+      required this.notificationTypeId,
+      this.senderUserID,
+      this.date,
+      this.isSeen = false,
+      this.id,
+      langCode}) {
     // set senderUserID if it is null
     if (user != null) {
       senderUserID ??= user?.uid;
     }
     // set date if it is null
     date ??= DateTime.now();
+
+    // depending on lang code, set the title and body
+    if (langCode != null) {
+      if (notificationType == 'invite') {
+        Map<String, String> mapList =
+            InviteRepository().formatInviteNotification(title, body);
+        title = mapList['title']!;
+        body = mapList['body']!;
+      } else if (notificationType == 'request') {
+        Map<String, String> mapList =
+            RequestRepository().formatRequestNotification(title, body);
+        title = mapList['title']!;
+        body = mapList['body']!;
+      }
+    }
   }
 
   /// convert a map to a notification
@@ -94,6 +109,7 @@ class Notification {
       notificationTypeId: notificationTypeId,
       date: date,
       isSeen: isSeen,
+      langCode: langCode,
     );
   }
 

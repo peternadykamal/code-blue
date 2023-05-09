@@ -46,57 +46,6 @@ class _sosPageState extends State<sosPage> {
     });
   }
 
-  Future<Null> returnDialoge() {
-    return showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return WillPopScope(
-          onWillPop: () async {
-            Navigator.of(context).pop(null);
-            return true;
-          },
-          child: AlertDialog(
-            content: Text(LocaleKeys.sendmessage.tr()),
-            actions: [
-              ElevatedButton(
-                style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStatePropertyAll(Mycolors.buttoncolor)),
-                child: Text(LocaleKeys.no.tr()),
-                onPressed: () {
-                  Navigator.of(context).pop(false);
-                },
-              ),
-              ElevatedButton(
-                style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStatePropertyAll(Mycolors.buttoncolor)),
-                child: Text(LocaleKeys.yes.tr()),
-                onPressed: () {
-                  Navigator.of(context).pop(true);
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    ).then((value) async {
-      try {
-        await RequestRepository().createRequestAndNotifyCaregivers(value);
-      } catch (e) {
-        Fluttertoast.showToast(
-          msg: e.toString(),
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.TOP,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Mycolors.buttoncolor,
-          textColor: Colors.white,
-          fontSize: 16.0,
-        );
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     if (user == null) {
@@ -194,7 +143,19 @@ class _sosPageState extends State<sosPage> {
                 //   Toast.LENGTH_SHORT, gravity: ToastGravity.BOTTOM,
                 //     timeInSecForIosWeb: 1, backgroundColor: Colors.red,
                 //   textColor: Colors.white, fontSize: 16.0); }
-                returnDialoge();
+                try {
+                  await RequestRepository().createRequestAndNotifyCaregivers();
+                } catch (e) {
+                  Fluttertoast.showToast(
+                    msg: e.toString(),
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.TOP,
+                    timeInSecForIosWeb: 1,
+                    backgroundColor: Mycolors.buttoncolor,
+                    textColor: Colors.white,
+                    fontSize: 16.0,
+                  );
+                }
               },
               elevation: 0.0,
               highlightElevation: 15.0,

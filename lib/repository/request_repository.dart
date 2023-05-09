@@ -98,8 +98,8 @@ class RequestRepository {
   /// '''dart
   /// String requestId = await createRequest('31.2', '31.2');
   /// '''
-  Future<String> createRequest(
-      String latitude, String longitude, bool sendSMS) async {
+  Future<String> createRequest(String latitude, String longitude) async {
+    bool sendSMS = await SettingsService.getSendSms();
     //create request instance
     Request request = Request(
         userID: user!.uid,
@@ -122,7 +122,8 @@ class RequestRepository {
   /// '''dart
   /// await createRequestAndNotifyCaregivers();
   /// '''
-  Future<void> createRequestAndNotifyCaregivers(bool sendSMS) async {
+  Future<void> createRequestAndNotifyCaregivers() async {
+    bool sendSMS = await SettingsService.getSendSms();
     //create request instance
     Position? position = await getCurrentPosition();
     // get current user location

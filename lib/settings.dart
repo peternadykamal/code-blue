@@ -13,6 +13,7 @@ import 'package:gradproject/services/settings_service.dart';
 import 'package:gradproject/splashscreen.dart';
 import 'package:gradproject/style.dart';
 import 'package:flutter_native_contact_picker/flutter_native_contact_picker.dart';
+import 'package:gradproject/utils/has_network.dart';
 
 class settingsPage extends StatefulWidget {
   const settingsPage({super.key});
@@ -91,9 +92,36 @@ class _settingsPageState extends State<settingsPage> {
                 padding: const EdgeInsets.all(8.0),
                 child: InkWell(
                   onTap: () async {
-                    // await AuthService().resetPassword(); await
-                    // AuthService().signOut(); Navigator.pushReplacement(context,
-                    // MaterialPageRoute(builder: (context) => MyApp()));
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('You will be signed out.'),
+                          content: Text(
+                              'Please check your email to reset your password.'),
+                          actions: [
+                            TextButton(
+                              child: Text('Cancel'),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                            TextButton(
+                              child: Text('Confirm'),
+                              onPressed: () async {
+                                Navigator.of(context).pop();
+                                await AuthService().resetPassword();
+                                await AuthService().signOut();
+                                Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => MyApp()));
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -113,10 +141,39 @@ class _settingsPageState extends State<settingsPage> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: InkWell(
-                  onTap: () {
-                    UserRepository().deleteUserAccount();
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context) => MyApp()));
+                  onTap: () async {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('Delete Account'),
+                          content: Text(
+                              'Are you sure you want to delete your account? This action cannot be undone.'),
+                          actions: [
+                            TextButton(
+                              child: Text('Cancel'),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                            TextButton(
+                              child: Text('Delete',
+                                  style: TextStyle(
+                                      color: Mycolors.xbutton, fontSize: 16)),
+                              onPressed: () async {
+                                Navigator.of(context).pop();
+                                await withInternetConnection(
+                                    [UserRepository().deleteUserAccount]);
+                                Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => MyApp()));
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,

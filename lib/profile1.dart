@@ -224,7 +224,9 @@ class _ProfileoneState extends State<Profileone> {
                             onTap: () async {
                               XFile? image = await ImagePicker()
                                   .pickImage(source: ImageSource.gallery);
-                              UserRepository().changeProfile(image!);
+                              if (image != null) {
+                                UserRepository().changeProfile(image);
+                              }
                             },
                             child: CircleAvatar(
                               radius: 15,

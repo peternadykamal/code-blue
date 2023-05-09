@@ -4,6 +4,9 @@ import 'package:gradproject/main.dart';
 import 'package:gradproject/repository/notification_repository.dart';
 import 'package:gradproject/repository/relation_repository.dart';
 import 'package:gradproject/repository/user_repository.dart';
+import 'package:gradproject/testing/test_repository.dart';
+
+import 'package:gradproject/utils/get_difference_of_stings.dart';
 
 enum InviteStatus { pending, accepted, rejected }
 
@@ -56,6 +59,10 @@ class Invite {
 class InviteRepository {
   final _invitesRef = FirebaseDatabase.instance.ref().child('invites');
   User? user = FirebaseAuth.instance.currentUser;
+
+  // notification format
+  String _titleFormat = "you have a new invitation";
+  String _bodyFormat = " wants to add you to their caregiver list";
 
   // create invite function
   Future<void> createInvitation(String receiverId) async {
@@ -125,8 +132,8 @@ class InviteRepository {
       senderUserID: user!.uid,
       notificationType: 'invite',
       notificationTypeId: id,
-      title: "you have a new invitation",
-      body: "${userInfo.username} wants to add you to their caregiver list",
+      title: _titleFormat,
+      body: userInfo.username + _bodyFormat,
     ));
     if (!result['success']) {
       throw Exception('Failed to send notification but invite was created');
@@ -193,5 +200,23 @@ class InviteRepository {
     await _invitesRef.child(inviteId).update({
       'inviteStatus': status.index,
     });
+  }
+
+  // give the right format depending on langCode
+  Map<String, String> formatInviteNotification(String title, String body) {
+    // we assume that the title and body stored in database is stored in english and we translate if we need it
+    String userName = compareStrings(body, _bodyFormat);
+    if (langCode == 'ar') {
+      return {
+        'title': 'لديك دعوة جديدة',
+        'body': 'يود ${userName} إضافتك إلى قائمة مقدمي الرعاية الخاصة بهم',
+      };
+      // } else if (langCode == 'en') {
+    } else {
+      return {
+        'title': title,
+        'body': body,
+      };
+    }
   }
 }

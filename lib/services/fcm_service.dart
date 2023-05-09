@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:gradproject/main.dart';
 import 'package:gradproject/repository/notification_repository.dart';
 import 'package:gradproject/repository/request_repository.dart';
 import 'package:gradproject/repository/user_repository.dart';
@@ -38,13 +39,14 @@ Future<void> messageHandler(RemoteMessage message) async {
           try {
             Request request = await RequestRepository()
                 .getRequestById(notification.notificationTypeId);
-            NotificationService.showMapNotification(
-                title, body, request.latitude!, request.longitude!);
+            NotificationService.showMapNotification(notification.title,
+                notification.body, request.latitude!, request.longitude!);
           } catch (e) {
             print(e);
           }
         } else if (notification.notificationType == 'invite') {
-          NotificationService.showNotification(title, body);
+          NotificationService.showNotification(
+              notification.title, notification.body);
         }
       }
     }

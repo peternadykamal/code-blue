@@ -1,5 +1,6 @@
 import 'package:geolocator/geolocator.dart';
 import 'package:gradproject/repository//user_repository.dart';
+import 'package:gradproject/repository/invite_repository.dart';
 import 'package:gradproject/repository/notification_repository.dart';
 import 'package:gradproject/repository/request_repository.dart';
 import 'package:gradproject/services/auth_service.dart';
@@ -48,4 +49,9 @@ Future<void> testThis() async {
   // await RequestRepository().removeNonCaregiversPhoneNumbers('+201204290582');
   // print(await SettintgsService.getAllPhoneNumbers()); print(await
   // SettintgsService.getNonCaregiversPhoneNumbers());
+  // Map<String, String> mapList = InviteRepository().formatInviteNotification(
+  //     'you have a new invitation',
+  //     'peter nady wants to add you to their caregiver list');
+  // print(mapList['title']);
+  // print(mapList['body']);
 }

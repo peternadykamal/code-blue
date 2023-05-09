@@ -716,8 +716,7 @@ class _ProfileoneState extends State<Profileone> {
                                                       Padding(
                                                         padding:
                                                             const EdgeInsets
-                                                                    .only(
-                                                                left: 8.0),
+                                                                .only(left: .0),
                                                         child:
                                                             Icon(Icons.search),
                                                       ),
@@ -853,7 +852,7 @@ class _ProfileoneState extends State<Profileone> {
                                                     Padding(
                                                       padding:
                                                           const EdgeInsets.only(
-                                                              right: 130.0),
+                                                              right: 120.0),
                                                       child: Text(
                                                           LocaleKeys
                                                               .searchcaregiver

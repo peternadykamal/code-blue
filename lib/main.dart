@@ -60,8 +60,7 @@ class MyApp extends StatelessWidget {
       testThis().then((value) => {print("test done")});
     }
     // get the language code from the shared preferences
-    updateLanguage()
-        .then((value) => {print("------------------------>language updated")});
+    updateLanguage().then((value) => {print("language updated")});
     return MaterialApp(
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,

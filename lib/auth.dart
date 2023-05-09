@@ -252,6 +252,25 @@ class _authPageState extends State<authPage> {
                                 padding: const EdgeInsets.only(left: 170.0),
                                 child: InkWell(
                                   onTap: () async {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title:
+                                              Text('Password Reset Email Sent'),
+                                          content: Text(
+                                              'An email has been sent to your email address with instructions to reset your password.'),
+                                          actions: [
+                                            TextButton(
+                                              child: Text('OK'),
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
                                     await AuthService().forgetPassword(
                                         _emailcontrollerlogin.text.trim());
                                   },

@@ -69,6 +69,11 @@ dependencies:
   speech_to_text: ^6.1.1
   android_intent_plus: ^3.1.9
   paginated_search_bar: ^1.1.2
+  google_maps_flutter: ^2.2.5
+  provider: ^6.0.5
+  flutter_geofire: ^2.0.3
+  maps_toolkit: ^2.0.1
+  animated_text_kit: ^4.2.2
 
 dev_dependencies:
   flutter_test:
@@ -101,6 +106,14 @@ flutter:
     - assets/images/
     - assets/translations/
     - .env
+
+  fonts:
+      - family: Brand-Bold
+        fonts:
+          - asset: assets/fonts/bolt-semibold.ttf
+      - family: Brand-regular
+        fonts:
+          - asset: assets/fonts/bolt-regular.ttf
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

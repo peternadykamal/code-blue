@@ -6,6 +6,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:gradproject/globalvariables.dart';
+import 'package:gradproject/trip/CarSimulationScreen.dart';
 import 'package:gradproject/trip/DriverAssignedDetails.dart';
 import 'package:gradproject/trip/NoDriverDialog.dart';
 import 'package:gradproject/trip/appdata.dart';
@@ -536,14 +537,19 @@ class _showMapState extends State<showMap> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
 
-                                Container(
-                                  height: 50,
-                                  width: 50,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.all(Radius.circular((25))),
-                                    border: Border.all(width: 1.0, color: BrandColors.colorTextLight),
+                                GestureDetector(
+                                  onTap: (){
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => CarWidget()),);
+                                  },
+                                  child: Container(
+                                    height: 50,
+                                    width: 50,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.all(Radius.circular((25))),
+                                      border: Border.all(width: 1.0, color: BrandColors.colorTextLight),
+                                    ),
+                                    child: Icon(Icons.list),
                                   ),
-                                  child: Icon(Icons.list),
                                 ),
 
                                 SizedBox(height: 10,),

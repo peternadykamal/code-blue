@@ -4,11 +4,13 @@ import 'dart:math' show atan2, pi;
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart' as gmaps;
 import 'package:geolocator/geolocator.dart';
+import 'package:gradproject/trip/safeHandsDialog.dart';
 import 'package:latlong2/latlong.dart';
 
 
 import 'BrandDivider.dart';
 import 'LatLngTween.dart';
+import 'customizedButton.dart';
 
 
 
@@ -63,13 +65,13 @@ class _CarWidgetState extends State<CarWidget> with SingleTickerProviderStateMix
 
 
   @override
-  void initState() {
+  void initState()  {
     super.initState();
     _controller = AnimationController(
       duration: Duration(milliseconds: _duration),
       vsync: this,
     );
-    startPosition = gmaps.LatLng(31.2360983, 29.9498319); // starting location of car
+    startPosition = gmaps.LatLng(31.2344113, 29.962754); // starting location of car
     endPosition = gmaps.LatLng(31.232807, 29.9590441); // ending location of car
 
     // create a polyline between the start and end positions
@@ -128,23 +130,7 @@ class _CarWidgetState extends State<CarWidget> with SingleTickerProviderStateMix
         });
       });
 
-    // _animation = LatLngTween(begin: startPosition, end: endPosition).animate(
-    //   CurvedAnimation(parent: _controller!, curve: Curves.easeInOut),
-    // )
 
-
-    // _animation = LatLngTween(begin: _intermediatePoints.first, end: _intermediatePoints.last).animate(
-    //   CurvedAnimation(parent: _controller!, curve: Curves.easeInOut),
-    // )
-    //
-    //   ..addListener(() {
-    //     setState(() {
-    //
-    //       // Update the start position to the current position of the car
-    //       startPosition = _animation.value;
-    //
-    //     });
-    //   });
     _controller?.forward();
 
     _startTimer();
@@ -168,16 +154,13 @@ class _CarWidgetState extends State<CarWidget> with SingleTickerProviderStateMix
   }
 
 
-
-
-  // void _startTimer() {
-  //   _timer = Timer.periodic(Duration(seconds: 10), (timer) {
-  //     // call the code to calculate the ETA here
-  //     // assuming you have access to the start and end positions
-  //     _calculateETA(startPosition, endPosition);
-  //   });
-  // }
-
+  void safeHands(){
+    print('No Drivers Available');
+    showDialog(context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) => safeHandsDialog(),
+    );
+  }
 
 
   void _startTimer() {
@@ -340,6 +323,20 @@ class _CarWidgetState extends State<CarWidget> with SingleTickerProviderStateMix
                         BrandDivider(),
                         SizedBox(height: 20,),
                         Text(etaInSeconds, style: TextStyle(fontSize: 20)),
+
+                        SizedBox(height:20,),
+
+                        customizedButton(
+                          title: 'GO BACK',
+                          color: Colors.blue,
+                          onPressed: (){
+
+                            Navigator.pop(context);
+
+
+
+                          },
+                        )
 
 
                       ],

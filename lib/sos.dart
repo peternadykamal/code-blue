@@ -61,7 +61,7 @@ class _sosPageState extends State<sosPage> {
     currentPosition = position;
     print('This is current location Lat ${currentPosition.latitude.toString()}');
     print('This is current location Lng ${currentPosition.longitude.toString()}');
-    print('CURRENT USERNAME ${currentUserInfo!.username}');
+    //print('CURRENT USERNAME ${currentUserInfo!.username}');
     startGeofireListener();
 
 
@@ -85,7 +85,7 @@ class _sosPageState extends State<sosPage> {
       'rider_phone': currentUserInfo?.phoneNumber,
       //'pickup_address': pickup.placeName,
       'location': pickupMap,
-      'driver_id': 'waiting',
+
     };
 
 
@@ -167,8 +167,31 @@ class _sosPageState extends State<sosPage> {
 
 
     var driver = availableDrivers?[0];
-    DatabaseReference driverTripRef = FirebaseDatabase.instance.reference().child('drivers/${driver?.key}/newtrip');
+    DatabaseReference driverTripRef = FirebaseDatabase.instance.reference().child('Hospitals/${driver?.key}/newRequest');
     driverTripRef?.set(rideRef?.key);
+
+    // Update the number of ambulances
+    DatabaseReference ambulanceRef = FirebaseDatabase.instance.reference()
+        .child('Hospitals/${driver?.key}/Ambulances');
+    ambulanceRef.once().then((DatabaseEvent databaseEvent) async {
+
+      //final snapshot2= await ambulanceRef.get();
+      dynamic rideData3=databaseEvent.snapshot.value;
+
+      int currentAmbulances = int.tryParse(rideData3.toString()) ?? 0;
+      int newAmbulances = currentAmbulances - 1;
+
+      if (newAmbulances >= 0) {
+        ambulanceRef.set(newAmbulances.toString());
+        print("Number of ambulances updated: $newAmbulances");
+      } else {
+        print("Insufficient ambulances available.");
+      }
+
+
+    }).catchError((error) {
+      // Handle errors here
+    });
 
 
     getCurrentDriverInfo(driver!);
@@ -186,9 +209,9 @@ class _sosPageState extends State<sosPage> {
   }
   void startGeofireListener() {
 
-    Geofire.initialize('driversAvailable');
+    Geofire.initialize('hospitalsAvailable');
 
-    Geofire.queryAtLocation(currentPosition.latitude, currentPosition.longitude, 20)?.listen((map) {
+    Geofire.queryAtLocation(currentPosition.latitude, currentPosition.longitude, 0.4)?.listen((map) {
       print(map);
       print('BEFORE.........');
       if (map != null) {
@@ -236,6 +259,7 @@ class _sosPageState extends State<sosPage> {
 
             print('Firehelper length: ${FireHelper.nearbyDriverList.length}');
 
+
             nearbyDriversKeysLoaded = true;
             //updateDriversOnMap();
             break;
@@ -248,7 +272,7 @@ class _sosPageState extends State<sosPage> {
   void getCurrentDriverInfo (NearbyDriver driver) async {
 
 
-    DatabaseReference driverRef = FirebaseDatabase.instance.reference().child('drivers/${driver.key}');
+    DatabaseReference driverRef = FirebaseDatabase.instance.reference().child('Hospitals/${driver.key}');
 
     driverRef?.once().then((DatabaseEvent databaseEvent) async {
 
@@ -260,10 +284,12 @@ class _sosPageState extends State<sosPage> {
 
         currentDriverInfo = Driver.fromSnapshot(databaseEvent.snapshot);
         print('getCurrentDriverInfo is working ........');
-        print(currentDriverInfo?.fullName);
+        // print(currentDriverInfo?.fullName);
         print(currentDriverInfo?.id);
-        print(currentDriverInfo?.phone);
-        print(currentDriverInfo?.vehicleNumber);
+        print(currentDriverInfo?.hospitalName);
+
+        // print(currentDriverInfo?.phone);
+        // print(currentDriverInfo?.vehicleNumber);
         acceptTrip(rideRef?.key);
 
       }
@@ -291,13 +317,15 @@ class _sosPageState extends State<sosPage> {
     DatabaseReference rideRef2  =  FirebaseDatabase.instance.reference().child('rideRequest/$rideID');
 
     rideRef2?.child('status').set('accepted');
-    rideRef2?.child('driver_name').set(currentDriverInfo?.fullName);
-    rideRef2?.child('driver_phone').set(currentDriverInfo?.phone);
-    rideRef2?.child('driver_id').set(currentDriverInfo?.id);
-    rideRef2?.child('vehicle_details').set(currentDriverInfo?.vehicleNumber);
+    // rideRef2?.child('driver_name').set(currentDriverInfo?.fullName);
+    // rideRef2?.child('driver_phone').set(currentDriverInfo?.phone);
+    rideRef2?.child('hospital_id').set(currentDriverInfo?.id);
+    rideRef2?.child('hospital_name').set(currentDriverInfo?.hospitalName);
+
+    // rideRef2?.child('vehicle_details').set(currentDriverInfo?.vehicleNumber);
     print('ACCEPTNG TRIP');
-    print(currentDriverInfo?.fullName);
-    print(currentDriverInfo?.vehicleNumber);
+    print(currentDriverInfo?.hospitalName);
+    // print(currentDriverInfo?.vehicleNumber);
 
     rideSubscription= rideRef2?.onValue.listen((event) async {
 
@@ -310,8 +338,8 @@ class _sosPageState extends State<sosPage> {
       }
 
       // Get Driver Name
-      if(rideData['driver_name'] != null){
-        driverFullName = rideData['driver_name'].toString();
+      if(rideData['hospital_name'] != null){
+        driverFullName = rideData['hospital_name'].toString();
         print('Driver Name is:  ${driverFullName}');
 
       }
@@ -332,8 +360,8 @@ class _sosPageState extends State<sosPage> {
 
 
       details.driverName = driverFullName;
-      details.driverPhone = driverPhone;
-      details.vehicle_Number= driverCarNumber;
+      // details.driverPhone = driverPhone;
+      // details.vehicle_Number= driverCarNumber;
       details.rideID= rideRef?.key;
 
       print('DRIVER ASSIGNED DETAILS IS HERE !!!!');

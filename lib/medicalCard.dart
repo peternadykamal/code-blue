@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:gradproject/main.dart';
 import 'package:gradproject/profile1.dart';
 import 'package:gradproject/repository/user_repository.dart';
 import 'package:gradproject/repository/user_repository.dart';
@@ -67,11 +68,13 @@ class _profile2State extends State<profile2> {
                                   builder: (context) => Profileone()));
                         },
                         child: Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
+                          padding: langCode == 'en'
+                              ? const EdgeInsets.only(left: 8.0)
+                              : const EdgeInsets.only(right: 8.0),
                           child: Icon(Icons.arrow_back,
                               size: 30, color: Mycolors.textcolor),
                         )),
-                    Text("Medical Card",
+                    Text(langCode == 'en' ? "Medical Card" : "البطاقة الطبية",
                         style:
                             TextStyle(color: Mycolors.textcolor, fontSize: 20)),
                     GestureDetector(
@@ -112,7 +115,9 @@ class _profile2State extends State<profile2> {
                           );
                         },
                         child: Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
+                          padding: langCode == 'en'
+                              ? const EdgeInsets.only(right: 8.0)
+                              : const EdgeInsets.only(left: 8.0),
                           child: Icon(Icons.done,
                               size: 30, color: Mycolors.textcolor),
                         ))
@@ -120,9 +125,13 @@ class _profile2State extends State<profile2> {
             ),
             SizedBox(height: 10),
             Padding(
-              padding: const EdgeInsets.only(right: 280.0),
+              padding: langCode == 'en'
+                  ? const EdgeInsets.only(right: 280.0)
+                  : const EdgeInsets.only(left: 270.0),
               child: Text(
-                "Basic info".toUpperCase(),
+                langCode == 'en'
+                    ? "Basic info".toUpperCase()
+                    : "معلومات أساسية",
                 style: TextStyle(color: Mycolors.buttonsos, fontSize: 12),
               ),
             ),
@@ -131,8 +140,10 @@ class _profile2State extends State<profile2> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(right: 97.0),
-                  child: Text("Gender",
+                  padding: langCode == 'en'
+                      ? const EdgeInsets.only(right: 97.0)
+                      : const EdgeInsets.only(left: 97.0),
+                  child: Text(langCode == 'en' ? "Gender" : "الجنس",
                       style:
                           TextStyle(color: Mycolors.textcolor, fontSize: 15)),
                 ),
@@ -148,7 +159,10 @@ class _profile2State extends State<profile2> {
                     ),
                   ),
                   unSelectedColor: Mycolors.numpad,
-                  buttonLables: ["Male", "Female"],
+                  buttonLables: [
+                    langCode == 'en' ? "Male" : "ذكر",
+                    langCode == 'en' ? "Female" : "انثى"
+                  ],
                   buttonValues: [Gender.male, Gender.female],
                   radioButtonValue: (values) {
                     g = values;
@@ -178,7 +192,7 @@ class _profile2State extends State<profile2> {
                       fontSize: 16,
                       fontWeight: FontWeight.w600),
                   contentPadding: EdgeInsets.only(top: 7),
-                  hintText: 'dd/mm/yyyy',
+                  hintText: langCode == 'en' ? 'dd/mm/yyyy' : "يوم-شهر-سنة",
                   filled: true,
                   fillColor: Mycolors.fillingcolor,
                   isDense: true,
@@ -215,8 +229,10 @@ class _profile2State extends State<profile2> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(right: 290.0),
-                  child: Text("Height ",
+                  padding: langCode == 'en'
+                      ? const EdgeInsets.only(right: 290.0)
+                      : const EdgeInsets.only(left: 290.0),
+                  child: Text(langCode == 'en' ? "Height " : "الطول",
                       style:
                           TextStyle(color: Mycolors.textcolor, fontSize: 15)),
                 ),
@@ -247,8 +263,10 @@ class _profile2State extends State<profile2> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(right: 290.0),
-                  child: Text("Weight ",
+                  padding: langCode == 'en'
+                      ? const EdgeInsets.only(right: 290.0)
+                      : const EdgeInsets.only(left: 290.0),
+                  child: Text(langCode == 'en' ? "Weight " : "الوزن",
                       style:
                           TextStyle(color: Mycolors.textcolor, fontSize: 15)),
                 ),
@@ -278,7 +296,7 @@ class _profile2State extends State<profile2> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Text("Blood Type",
+                Text(langCode == 'en' ? "Blood Type" : "الفصيلة",
                     style: TextStyle(color: Mycolors.textcolor, fontSize: 15)),
                 CustomRadioButton(
                   height: 29,
@@ -312,7 +330,7 @@ class _profile2State extends State<profile2> {
                   spacing: 0,
                   horizontal: false,
                   enableButtonWrap: false,
-                  width: 55,
+                  width: langCode == 'en' ? 55 : 57,
                   absoluteZeroSpacing: false,
                   selectedColor: Mycolors.xbutton,
                   padding: 10,
@@ -324,8 +342,11 @@ class _profile2State extends State<profile2> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(right: 27.0),
-                  child: Text("RH Blood Type",
+                  padding: langCode == 'en'
+                      ? const EdgeInsets.only(right: 27.0)
+                      : const EdgeInsets.only(left: 27.0),
+                  child: Text(
+                      langCode == 'en' ? "RH Blood Type" : "نوع الفصيلة",
                       style:
                           TextStyle(color: Mycolors.textcolor, fontSize: 15)),
                 ),
@@ -342,8 +363,8 @@ class _profile2State extends State<profile2> {
                   ),
                   unSelectedColor: Mycolors.numpad,
                   buttonLables: [
-                    "Positive",
-                    "Negative",
+                    langCode == 'en' ? "Positive" : "موجب",
+                    langCode == 'en' ? "Negative" : "سالب",
                   ],
                   buttonValues: [RhBloodType.positive, RhBloodType.negative],
                   radioButtonValue: (values) {
@@ -371,9 +392,11 @@ class _profile2State extends State<profile2> {
             ),
             SizedBox(height: 20),
             Padding(
-              padding: const EdgeInsets.only(right: 290.0),
+              padding: langCode == 'en'
+                  ? const EdgeInsets.only(right: 290.0)
+                  : const EdgeInsets.only(left: 290.0),
               child: Text(
-                "Health".toUpperCase(),
+                langCode == 'en' ? "Health".toUpperCase() : "الصحة",
                 style: TextStyle(color: Mycolors.buttonsos, fontSize: 12),
               ),
             ),
@@ -390,7 +413,8 @@ class _profile2State extends State<profile2> {
                         color: Mycolors.notpressed,
                         fontSize: 17,
                         fontWeight: FontWeight.w600),
-                    hintText: "medical conditions".toUpperCase(),
+                    hintText:
+                        langCode == 'en' ? "MEDICAL CONDITION" : "حالتك الطبية",
                     filled: true,
                     fillColor: Mycolors.fillingcolor,
                     isDense: true,
@@ -413,7 +437,7 @@ class _profile2State extends State<profile2> {
                         color: Mycolors.notpressed,
                         fontSize: 17,
                         fontWeight: FontWeight.w600),
-                    hintText: "Medications".toUpperCase(),
+                    hintText: langCode == 'en' ? "MEDICATIONS" : "الأدوية",
                     filled: true,
                     fillColor: Mycolors.fillingcolor,
                     isDense: true,
@@ -436,7 +460,7 @@ class _profile2State extends State<profile2> {
                         color: Mycolors.notpressed,
                         fontSize: 17,
                         fontWeight: FontWeight.w600),
-                    hintText: "Allergies".toUpperCase(),
+                    hintText: langCode == 'en' ? "ALLERGIES" : "الحساسية",
                     filled: true,
                     fillColor: Mycolors.fillingcolor,
                     isDense: true,
@@ -459,7 +483,7 @@ class _profile2State extends State<profile2> {
                         color: Mycolors.notpressed,
                         fontSize: 17,
                         fontWeight: FontWeight.w600),
-                    hintText: "Remarks".toUpperCase(),
+                    hintText: langCode == 'en' ? "REMARKS" : "ملاحظات",
                     filled: true,
                     fillColor: Mycolors.fillingcolor,
                     isDense: true,

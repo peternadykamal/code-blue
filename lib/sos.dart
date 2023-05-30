@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -9,6 +10,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:gradproject/chatbot.dart';
 import 'package:gradproject/loadingcontainer.dart';
+import 'package:gradproject/main.dart';
 import 'package:gradproject/maps.dart';
 import 'package:gradproject/profile1.dart';
 import 'package:gradproject/caregiversList.dart';
@@ -472,57 +474,6 @@ class _sosPageState extends State<sosPage> {
     });
   }
 
-  Future<Null> returnDialoge() {
-    return showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return WillPopScope(
-          onWillPop: () async {
-            Navigator.of(context).pop(null);
-            return true;
-          },
-          child: AlertDialog(
-            content: Text('Do you want to send SMS messages to caregivers?'),
-            actions: [
-              ElevatedButton(
-                style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStatePropertyAll(Mycolors.buttoncolor)),
-                child: Text('No'),
-                onPressed: () {
-                  Navigator.of(context).pop(false);
-                },
-              ),
-              ElevatedButton(
-                style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStatePropertyAll(Mycolors.buttoncolor)),
-                child: Text('Yes'),
-                onPressed: () {
-                  Navigator.of(context).pop(true);
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    ).then((value) async {
-      try {
-        await RequestRepository().createRequestAndNotifyCaregivers(value);
-      } catch (e) {
-        Fluttertoast.showToast(
-          msg: e.toString(),
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.TOP,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Mycolors.buttoncolor,
-          textColor: Colors.white,
-          fontSize: 16.0,
-        );
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     if (user == null) {
@@ -621,23 +572,30 @@ class _sosPageState extends State<sosPage> {
                 //     timeInSecForIosWeb: 1, backgroundColor: Colors.red,
                 //   textColor: Colors.white, fontSize: 16.0); }
 
-                createRideRequest();
-                availableDrivers =FireHelper.nearbyDriverList;
-                findDriver();
-                details = await acceptTrip(rideRef?.key);
-                print('Please Work');
-                print(details);
-                print(details.driverName);
-                while (details == null ){
-                  await Future.delayed(Duration(milliseconds: 500));
-
+                try {
+                  await RequestRepository().createRequestAndNotifyCaregivers();
+                  createRideRequest();
+                  availableDrivers =FireHelper.nearbyDriverList;
+                  findDriver();
+                  details = await acceptTrip(rideRef?.key);
+                  print('Please Work');
+                  print(details);
+                  print(details.driverName);
+                  while (details == null ){
+                    await Future.delayed(Duration(milliseconds: 500));
+                  }
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => showMap( driverAssignedDetails: details,)),);
+                } catch (e) {
+                  Fluttertoast.showToast(
+                    msg: e.toString(),
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.TOP,
+                    timeInSecForIosWeb: 1,
+                    backgroundColor: Mycolors.buttoncolor,
+                    textColor: Colors.white,
+                    fontSize: 16.0,
+                  );
                 }
-                Navigator.push(context, MaterialPageRoute(builder: (context) => showMap( driverAssignedDetails: details,)),);
-
-
-
-
-                returnDialoge();
               },
               elevation: 0.0,
               highlightElevation: 15.0,
@@ -688,27 +646,37 @@ class _sosPageState extends State<sosPage> {
                           MaterialPageRoute(
                               builder: (context) => chatbotPage()));
                     },
-                    child: Column(
-                      children: [
-                        SizedBox(height: 4),
-                        Stack(
-                          children: [
-                            Container(
-                                margin: EdgeInsets.only(left: 30),
-                                height: 35,
-                                width: 35,
-                                child: SvgPicture.asset(
-                                    "assets/images/carbon_chat-bot.svg"))
-                          ],
-                        ),
-                        SizedBox(height: 3),
-                        Container(
-                            margin: EdgeInsets.only(left: 30),
-                            child: Text("Chatbot",
-                                style: TextStyle(
-                                    color: Mycolors.notpressed,
-                                    fontWeight: FontWeight.w500))),
-                      ],
+                    child: Container(
+                      margin: langCode == 'en'
+                          ? EdgeInsets.all(0)
+                          : EdgeInsets.only(right: 20),
+                      child: Column(
+                        children: [
+                          SizedBox(height: 4),
+                          Stack(
+                            children: [
+                              Container(
+                                  margin: EdgeInsets.only(left: 30),
+                                  height: 35,
+                                  width: 35,
+                                  child: SvgPicture.asset(
+                                      "assets/images/carbon_chat-bot.svg"))
+                            ],
+                          ),
+                          SizedBox(height: 3),
+                          Container(
+                              margin: EdgeInsets.only(left: 30),
+                              child: Text(LocaleKeys.chatbot.tr(),
+                                  style: langCode == 'en'
+                                      ? TextStyle(
+                                          color: Mycolors.notpressed,
+                                          fontWeight: FontWeight.w500)
+                                      : TextStyle(
+                                          color: Mycolors.notpressed,
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 10))),
+                        ],
+                      ),
                     ),
                   ),
                   InkWell(
@@ -726,10 +694,15 @@ class _sosPageState extends State<sosPage> {
                           ],
                         ),
                         SizedBox(height: 3),
-                        Text("Home",
-                            style: TextStyle(
-                                color: Mycolors.textcolor,
-                                fontWeight: FontWeight.w500)),
+                        Text(LocaleKeys.Home.tr(),
+                            style: langCode == 'en'
+                                ? TextStyle(
+                                    color: Mycolors.textcolor,
+                                    fontWeight: FontWeight.w500)
+                                : TextStyle(
+                                    color: Mycolors.textcolor,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 10)),
                       ],
                     ),
                   ),
@@ -742,27 +715,37 @@ class _sosPageState extends State<sosPage> {
                             MaterialPageRoute(
                                 builder: ((context) => MapsPage())));
                       },
-                      child: Column(
-                        children: [
-                          SizedBox(height: 4),
-                          Stack(
-                            children: [
-                              Container(
-                                  margin: EdgeInsets.only(right: 30),
-                                  height: 35,
-                                  width: 35,
-                                  child: SvgPicture.asset(
-                                      "assets/images/Vector.svg"))
-                            ],
-                          ),
-                          SizedBox(height: 3),
-                          Container(
-                              margin: EdgeInsets.only(right: 30),
-                              child: Text("Maps",
-                                  style: TextStyle(
-                                      color: Mycolors.notpressed,
-                                      fontWeight: FontWeight.w500))),
-                        ],
+                      child: Container(
+                        margin: langCode == 'en'
+                            ? EdgeInsets.all(0)
+                            : EdgeInsets.only(left: 20),
+                        child: Column(
+                          children: [
+                            SizedBox(height: 4),
+                            Stack(
+                              children: [
+                                Container(
+                                    margin: EdgeInsets.only(right: 30),
+                                    height: 35,
+                                    width: 35,
+                                    child: SvgPicture.asset(
+                                        "assets/images/Vector.svg"))
+                              ],
+                            ),
+                            SizedBox(height: 3),
+                            Container(
+                                margin: EdgeInsets.only(right: 30),
+                                child: Text(LocaleKeys.maps.tr(),
+                                    style: langCode == 'en'
+                                        ? TextStyle(
+                                            color: Mycolors.notpressed,
+                                            fontWeight: FontWeight.w500)
+                                        : TextStyle(
+                                            color: Mycolors.notpressed,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 10))),
+                          ],
+                        ),
                       ),
                     ),
                   )

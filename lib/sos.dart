@@ -268,7 +268,13 @@ class _sosPageState extends State<sosPage> {
         }
       }
 
-      setState(() {});
+      // setState(() {});
+
+      if (mounted){
+        setState(() {});
+      }
+
+
     });
   }
   void getCurrentDriverInfo (NearbyDriver driver) async {
@@ -310,6 +316,7 @@ class _sosPageState extends State<sosPage> {
 
 
   }
+
 
 
    Future <DriverAssignedDetails> acceptTrip(String? rideID ) async  {
@@ -463,7 +470,13 @@ class _sosPageState extends State<sosPage> {
     getuser();
     setupPositionLocator();
   }
-
+  // void dispose() {
+  //   GeofireListener.cancel();
+  //   Geofire.removeGeoQuery('hospitalsAvailable');
+  //   super.dispose();
+  //
+  //
+  // }
   void getuser() async {
     final fetchedUser = await UserRepository().getUserProfile();
     final fetchedHasNewNotificaiton =

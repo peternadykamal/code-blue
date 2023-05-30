@@ -14,7 +14,10 @@ import 'package:gradproject/services/auth_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:gradproject/services/notification_service.dart';
+import 'package:gradproject/trip/appdata.dart';
+import 'package:provider/provider.dart';
 import 'testing/test_repository.dart';
+import 'services/auth_service.dart';
 
 String langCode = "en";
 
@@ -59,18 +62,22 @@ class MyApp extends StatelessWidget {
     if (kDebugMode) {
       testThis().then((value) => {print("test done")});
     }
+
     // get the language code from the shared preferences
     updateLanguage().then((value) => null);
-    return MaterialApp(
-      localizationsDelegates: context.localizationDelegates,
-      supportedLocales: context.supportedLocales,
-      locale: context.locale,
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return ChangeNotifierProvider(
+      create: (context) => AppData(),
+      child: MaterialApp(
+        localizationsDelegates: context.localizationDelegates,
+        supportedLocales: context.supportedLocales,
+        locale: context.locale,
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: user == null ? onBoardScreen() : splashScreen(),
+        debugShowCheckedModeBanner: false,
       ),
-      home: user == null ? onBoardScreen() : splashScreen(),
-      debugShowCheckedModeBanner: false,
     );
   }
 }

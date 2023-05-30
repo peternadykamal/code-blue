@@ -34,5 +34,34 @@ abstract class  LocaleKeys {
   static const clickbuttonbelow = 'clickbuttonbelow';
   static const duringemerg = 'duringemerg';
   static const usernameone = 'usernameone';
+  static const sendmessage = 'sendmessage';
+  static const yes = 'yes';
+  static const no = 'no';
+  static const chatbot = 'chatbot';
+  static const maps = 'maps';
+  static const Home = 'Home';
+  static const logout = 'logout';
+  static const settings = 'settings';
+  static const medicalcard  = 'medicalcard ';
+  static const caregivers = 'caregivers';
+  static const fillout = 'fillout';
+  static const nointernet = 'nointernet';
+  static const emergencycase = 'emergencycase';
+  static const searchcaregiver = 'searchcaregiver';
+  static const overwhelming = 'overwhelming';
+  static const herehow = 'herehow';
+  static const wesendsms = 'wesendsms';
+  static const search = 'search';
+  static const sendinvite = 'sendinvite';
+  static const usernotfound = 'usernotfound';
+  static const invitationsent = 'invitationsent';
+  static const verification = 'verification';
+  static const invalidverification = 'invalidverification';
+  static const verifyphone = 'verifyphone';
+  static const requestagain = 'requestagain';
+  static const didnotrec = 'didnotrec';
+  static const welcomecode = 'welcomecode';
+  static const codeblue = 'codeblue';
+  static const youcanview = 'youcanview';
 
 }

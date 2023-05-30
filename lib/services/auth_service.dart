@@ -55,11 +55,10 @@ class AuthService {
         }
       }
 
-      // how to get phone numbers
-      // final SharedPreferences prefs = await SharedPreferences.getInstance();
-      // List<String> phoneNumbers =
-      //     prefs.getStringList('caregiversPhoneNumbers') ?? [];
-      // print(phoneNumbers);
+      // how to get phone numbers final SharedPreferences prefs = await
+      // SharedPreferences.getInstance(); List<String> phoneNumbers =
+      // prefs.getStringList('caregiversPhoneNumbers') ?? [];
+      //     print(phoneNumbers);
 
       await FcmService().initialize();
     } else {
@@ -77,10 +76,8 @@ class AuthService {
   /// ```dart
   /// AuthService().deleteUser();
   /// ```
-  /// returns true if user is deleted
-  /// returns false if user is not deleted
-  /// returns false if user is null
-  /// returns false if user is not deleted
+  /// returns true if user is deleted returns false if user is not deleted
+  /// returns false if user is null returns false if user is not deleted
   Future<bool> deleteUser() async {
     if (_auth.currentUser != null) {
       try {
@@ -99,10 +96,8 @@ class AuthService {
   /// ```dart
   /// AuthService().signInWithEmail(email, password);
   /// ```
-  /// returns user if user is signed in
-  /// returns null if user is not signed in
-  /// returns null if user is not found
-  /// returns null if password is wrong
+  /// returns user if user is signed in returns null if user is not signed in
+  /// returns null if user is not found returns null if password is wrong
   Future<User?> signInWithEmail(
       {required String email, required String password}) async {
     try {
@@ -125,8 +120,7 @@ class AuthService {
   /// ```dart
   /// AuthService().signUpWithEmail(email, password);
   /// ```
-  /// returns user if user is signed up
-  /// returns null if error signing up
+  /// returns user if user is signed up returns null if error signing up
   Future<User?> signUpWithEmail(
       {required String email, required String password}) async {
     try {
@@ -162,15 +156,14 @@ class AuthService {
   ///     // Update the UI - wait for the user to enter the SMS code
   ///     String smsCode = 'xxxx';
 
-  ///     // Create a PhoneAuthCredential with the code
-  ///     PhoneAuthCredential credential = PhoneAuthProvider.credential(verificationId: verificationId, smsCode: smsCode);
+  ///     // Create a PhoneAuthCredential with the code PhoneAuthCredential
+  ///     credential = PhoneAuthProvider.credential(verificationId:
+  ///     verificationId, smsCode: smsCode);
 
-  ///    // Sign the user in (or link) with the credential
-  ///     await auth.signInWithCredential(credential);
-  ///    },
-  ///     onCodeAutoRetrievalTimeout: (verificationId) {
-  ///       // Handle code auto retrieval timeout event and update UI
-  ///     },
+  ///    // Sign the user in (or link) with the credential await
+  ///     auth.signInWithCredential(credential); }, onCodeAutoRetrievalTimeout:
+  ///    (verificationId) { // Handle code auto retrieval timeout event and
+  ///     update UI },
   ///   );
   /// }
   /// ```
@@ -234,12 +227,21 @@ class AuthService {
         timeout: const Duration(seconds: 60));
   }
 
-  /// to reset password
-  /// returns true if password is reset
-  /// returns false if error resetting password
+  /// to reset password returns true if password is reset returns false if error
+  /// resetting password
   Future<bool> resetPassword() async {
     try {
       await _auth.sendPasswordResetEmail(email: _auth.currentUser!.email!);
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  Future<bool> forgetPassword(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
       return true;
     } catch (e) {
       print(e);

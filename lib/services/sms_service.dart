@@ -20,7 +20,6 @@ class SMSService {
         // result = await sendSMS(message: message, recipients: recipients)
         //     .then((value) => true);
         // send directly without opening the app
-        print(recipients);
         result = await sendSMS(
                 message: message, recipients: recipients, sendDirect: true)
             .then((value) => true);

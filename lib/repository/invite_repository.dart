@@ -1,13 +1,18 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:gradproject/main.dart';
 import 'package:gradproject/repository/notification_repository.dart';
 import 'package:gradproject/repository/relation_repository.dart';
 import 'package:gradproject/repository/user_repository.dart';
+import 'package:gradproject/testing/test_repository.dart';
+
+import 'package:gradproject/utils/get_difference_of_stings.dart';
 
 enum InviteStatus { pending, accepted, rejected }
 
 class Invite {
-  // invites have some properties, 1-notificationID, 2-inviteStatus, 3-inviteSenderID, 4-inviteReceiverID
+  // invites have some properties, 1-notificationID, 2-inviteStatus,
+  // 3-inviteSenderID, 4-inviteReceiverID
   InviteStatus? inviteStatus;
   String inviteSenderID;
   String inviteReceiverID;
@@ -55,9 +60,14 @@ class InviteRepository {
   final _invitesRef = FirebaseDatabase.instance.ref().child('invites');
   User? user = FirebaseAuth.instance.currentUser;
 
+  // notification format
+  String _titleFormat = "you have a new invitation";
+  String _bodyFormat = " wants to add you to their caregiver list";
+
   // create invite function
   Future<void> createInvitation(String receiverId) async {
-    // first let's make sure that the user is logged in and the receiverId is in users table, thorw an error if not
+    // first let's make sure that the user is logged in and the receiverId is in
+    // users table, thorw an error if not
     if (user == null) throw Exception('User is not logged in');
     if (!await UserRepository().checkUserExist(receiverId)) {
       throw Exception('User does not exist');
@@ -68,12 +78,14 @@ class InviteRepository {
       throw Exception('You cannot add yourself');
     }
 
-    // check if there is a relation between the two users, if there is one, throw an error
+    // check if there is a relation between the two users, if there is one,
+    // throw an error
     if (await RelationRepository().checkRelationExist(receiverId)) {
       throw Exception('they already become your caregiver');
     }
 
-    // check if there is an invite with the same user and receiver, if there is one and with status pending or accepted, throw an error
+    // check if there is an invite with the same user and receiver, if there is
+    // one and with status pending or accepted, throw an error
     DataSnapshot invites = await _invitesRef
         .orderByChild('inviteSenderID')
         .equalTo(user!.uid)
@@ -120,17 +132,19 @@ class InviteRepository {
       senderUserID: user!.uid,
       notificationType: 'invite',
       notificationTypeId: id,
-      title: "you have a new invitation",
-      body: "${userInfo.username} wants to add you to their caregiver list",
+      title: _titleFormat,
+      body: userInfo.username + _bodyFormat,
     ));
     if (!result['success']) {
       throw Exception('Failed to send notification but invite was created');
     }
   }
 
-  // accept invite function, first update the invite status to accepted, then add a relation between the two users in the relations table
+  // accept invite function, first update the invite status to accepted, then
+  // add a relation between the two users in the relations table
   Future<void> acceptInvitation(String inviteId) async {
-    // first let's make sure that the user is logged in and the inviteId is in invites table, throw an error if not
+    // first let's make sure that the user is logged in and the inviteId is in
+    // invites table, throw an error if not
     if (user == null) throw Exception('User is not logged in');
     if (!await checkInviteExist(inviteId)) {
       throw Exception('Invite does not exist');
@@ -153,7 +167,8 @@ class InviteRepository {
 
   // reject invite function, first update the invite status to rejected
   Future<void> rejectInvitation(String inviteId) async {
-    // first let's make sure that the user is logged in and the inviteId is in invites table, throw an error if not
+    // first let's make sure that the user is logged in and the inviteId is in
+    // invites table, throw an error if not
     if (user == null) throw Exception('User is not logged in');
     if (!await checkInviteExist(inviteId)) {
       throw Exception('Invite does not exist');
@@ -185,5 +200,23 @@ class InviteRepository {
     await _invitesRef.child(inviteId).update({
       'inviteStatus': status.index,
     });
+  }
+
+  // give the right format depending on langCode
+  Map<String, String> formatInviteNotification(String title, String body) {
+    // we assume that the title and body stored in database is stored in english and we translate if we need it
+    String userName = compareStrings(body, _bodyFormat);
+    if (langCode == 'ar') {
+      return {
+        'title': 'لديك دعوة جديدة',
+        'body': 'يود ${userName} إضافتك إلى قائمة مقدمي الرعاية الخاصة بهم',
+      };
+      // } else if (langCode == 'en') {
+    } else {
+      return {
+        'title': title,
+        'body': body,
+      };
+    }
   }
 }

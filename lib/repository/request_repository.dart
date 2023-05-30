@@ -5,11 +5,14 @@ import 'package:geolocator/geolocator.dart';
 import 'package:gradproject/repository/user_repository.dart';
 import 'package:gradproject/repository/relation_repository.dart';
 import 'package:gradproject/repository/notification_repository.dart';
+import 'package:gradproject/services/settings_service.dart';
 import 'package:gradproject/utils/has_network.dart';
 import 'package:gradproject/utils/user_geolocation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../main.dart';
 import '../services/sms_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+import '../utils/get_difference_of_stings.dart';
 
 enum RequestStatus { pending, completed, canceled }
 
@@ -94,12 +97,16 @@ class RequestRepository {
       FirebaseDatabase.instance.ref().child('requests');
   User? user = FirebaseAuth.instance.currentUser;
 
+  // notification format
+  String _titleFormat = " needs your help!";
+  String _bodyFormat = "press to see the user location";
+
   /// create an order request for another user which means you need to specify the location of that user
   /// '''dart
   /// String requestId = await createRequest('31.2', '31.2');
   /// '''
-  Future<String> createRequest(
-      String latitude, String longitude, bool sendSMS) async {
+  Future<String> createRequest(String latitude, String longitude) async {
+    bool sendSMS = await SettingsService.getSendSms();
     //create request instance
     Request request = Request(
         userID: user!.uid,
@@ -122,7 +129,8 @@ class RequestRepository {
   /// '''dart
   /// await createRequestAndNotifyCaregivers();
   /// '''
-  Future<void> createRequestAndNotifyCaregivers(bool sendSMS) async {
+  Future<void> createRequestAndNotifyCaregivers() async {
+    bool sendSMS = await SettingsService.getSendSms();
     //create request instance
     Position? position = await getCurrentPosition();
     // get current user location
@@ -139,12 +147,9 @@ class RequestRepository {
           _notifyCaregivers(requestId, request, sendSMS);
         } else {
           if (sendSMS) {
-            final SharedPreferences prefs =
-                await SharedPreferences.getInstance();
-            List<String> phoneNums =
-                prefs.getStringList('caregiversPhoneNumbers') ?? [];
+            List<String> phoneNums = await SettingsService.getAllPhoneNumbers();
             if (phoneNums.isNotEmpty) await sendSMSToCaregivers(phoneNums);
-            await Future.delayed(Duration(seconds: 6));
+            // await Future.delayed(Duration(seconds: 6)); // if we gone avoid using send direct sms approach
             await sendSMSToServer(request);
           }
         }
@@ -164,8 +169,8 @@ class RequestRepository {
     List<String> phoneNums = [];
     await Future.forEach(careGivers, (element) async {
       Notification notification = Notification(
-          title: "${user?.displayName} needs your help!",
-          body: "press to see the user location",
+          title: user!.displayName! + _titleFormat,
+          body: _bodyFormat,
           notificationType: "request",
           notificationTypeId: requestID,
           targetUserID: element.userId2);
@@ -174,8 +179,12 @@ class RequestRepository {
           await UserRepository().getUserById(element.userId2);
       phoneNums.add(userProf.phoneNumber);
     });
+    for (var element
+        in (await SettingsService.getNonCaregiversPhoneNumbers())) {
+      if (!phoneNums.contains(element)) phoneNums.add(element);
+    }
     if (sendSMS && phoneNums.isNotEmpty) {
-      sendSMSToCaregivers(phoneNums);
+      await sendSMSToCaregivers(phoneNums);
     }
   }
 
@@ -224,5 +233,23 @@ class RequestRepository {
     await SMSService.sendSmsMessage(
         recipients: [dotenv.env['SERVER_PHONE_NUMBER']!],
         message: encodedRequest);
+  }
+
+  // give the right format depending on langCode
+  Map<String, String> formatRequestNotification(String title, String body) {
+    // we assume that the title and body stored in database is stored in english and we translate if we need it
+    String userName = compareStrings(title, _titleFormat);
+    if (langCode == 'ar') {
+      return {
+        'title': "${userName} بحاجة لمساعدتك!",
+        'body': 'اضغط لمعرفة موقع المستخدم',
+      };
+      // } else if (langCode == 'en') {
+    } else {
+      return {
+        'title': title,
+        'body': body,
+      };
+    }
   }
 }

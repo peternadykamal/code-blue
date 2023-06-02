@@ -7,24 +7,21 @@ import 'package:geolocator/geolocator.dart';
 import 'package:gradproject/trip/safeHandsDialog.dart';
 import 'package:latlong2/latlong.dart';
 
-
 import 'BrandDivider.dart';
 import 'LatLngTween.dart';
 import 'customizedButton.dart';
-
-
-
 
 class CarWidget extends StatefulWidget {
   @override
   _CarWidgetState createState() => _CarWidgetState();
 }
 
-class _CarWidgetState extends State<CarWidget> with SingleTickerProviderStateMixin {
+class _CarWidgetState extends State<CarWidget>
+    with SingleTickerProviderStateMixin {
   AnimationController? _controller;
   Animation<gmaps.LatLng>? _animation;
-  gmaps.LatLng startPosition =gmaps.LatLng(31.2360983, 29.9498319);
-  gmaps.LatLng endPosition =  gmaps.LatLng(31.232807, 29.9590441);
+  gmaps.LatLng startPosition = gmaps.LatLng(31.2360983, 29.9498319);
+  gmaps.LatLng endPosition = gmaps.LatLng(31.232807, 29.9590441);
   int _duration = 12000; // duration of animation in milliseconds '10000'
   gmaps.BitmapDescriptor? _carIcon; // icon to represent the car on the map
   List<gmaps.LatLng> _intermediatePoints = [];
@@ -32,14 +29,12 @@ class _CarWidgetState extends State<CarWidget> with SingleTickerProviderStateMix
   double tripSheetHeight = 300;
   GlobalKey<ScaffoldState> scaffoldkey = new GlobalKey<ScaffoldState>();
   double mapBottomPadding = 300;
-  final Completer<gmaps.GoogleMapController> _controller2 = Completer<gmaps.GoogleMapController>();
+  final Completer<gmaps.GoogleMapController> _controller2 =
+      Completer<gmaps.GoogleMapController>();
   late gmaps.GoogleMapController mapController;
   String eta = '';
-  String etaInSeconds='';
+  String etaInSeconds = '';
   late Timer _timer;
-
-
-
 
   // String getEtaString() {
   //   Duration duration = calculateETA(startPosition!, endPosition!);
@@ -61,17 +56,15 @@ class _CarWidgetState extends State<CarWidget> with SingleTickerProviderStateMix
   //           .round());
   // }
 
-
-
-
   @override
-  void initState()  {
+  void initState() {
     super.initState();
     _controller = AnimationController(
       duration: Duration(milliseconds: _duration),
       vsync: this,
     );
-    startPosition = gmaps.LatLng(31.2344113, 29.962754); // starting location of car
+    startPosition =
+        gmaps.LatLng(31.2344113, 29.962754); // starting location of car
     endPosition = gmaps.LatLng(31.232807, 29.9590441); // ending location of car
 
     // create a polyline between the start and end positions
@@ -84,7 +77,8 @@ class _CarWidgetState extends State<CarWidget> with SingleTickerProviderStateMix
       ),
     );
 
-    final int steps = 100; // number of interpolation steps: step = duration / interval (Before 100 )
+    final int steps =
+        100; // number of interpolation steps: step = duration / interval (Before 100 )
     // For example, if your interval is 20 milliseconds, and you want a duration of 72000 milliseconds, then the number of steps should be step = 72000 / 20 = 3600.
     for (int i = 1; i <= steps; i++) {
       double t = i / steps;
@@ -98,16 +92,14 @@ class _CarWidgetState extends State<CarWidget> with SingleTickerProviderStateMix
 
     _animation = LatLngTween(begin: startPosition, end: endPosition).animate(
       CurvedAnimation(parent: _controller!, curve: Curves.easeInOut),
-    )
-      ..addListener(() {
+    )..addListener(() {
         setState(() {
           // Update the start position to the current position of the car
 
           final _animation = this._animation;
-          if (_animation != null){
+          if (_animation != null) {
             startPosition = _animation.value;
           }
-
 
           // Calculate the remaining distance to the destination
           final Distance distance = Distance();
@@ -119,17 +111,15 @@ class _CarWidgetState extends State<CarWidget> with SingleTickerProviderStateMix
           // Calculate the remaining time based on the current speed of the car
           final double speedInMps = 15.0;
           final double remainingTimeInSeconds =
-          (remainingDistance / speedInMps).round().toDouble();
+              (remainingDistance / speedInMps).round().toDouble();
           final Duration remainingTime =
-          Duration(seconds: remainingTimeInSeconds.toInt());
+              Duration(seconds: remainingTimeInSeconds.toInt());
 
           // Update the ETA
           eta = 'ETA: ${remainingTime.inMinutes} minutes';
-          etaInSeconds ='ETA: ${remainingTime} Seconds ';
-
+          etaInSeconds = 'ETA: ${remainingTime} Seconds ';
         });
       });
-
 
     _controller?.forward();
 
@@ -141,9 +131,6 @@ class _CarWidgetState extends State<CarWidget> with SingleTickerProviderStateMix
       ImageConfiguration(size: Size(2, 2)),
       'assets/images/car_android.png',
     )?.then((icon) => _carIcon = icon);
-
-
-
   }
 
   @override
@@ -153,15 +140,14 @@ class _CarWidgetState extends State<CarWidget> with SingleTickerProviderStateMix
     super.dispose();
   }
 
-
-  void safeHands(){
+  void safeHands() {
     print('No Drivers Available');
-    showDialog(context: context,
+    showDialog(
+      context: context,
       barrierDismissible: false,
       builder: (BuildContext context) => safeHandsDialog(),
     );
   }
-
 
   void _startTimer() {
     _timer = Timer.periodic(Duration(seconds: 10), (timer) {
@@ -186,13 +172,11 @@ class _CarWidgetState extends State<CarWidget> with SingleTickerProviderStateMix
     });
   }
 
-
-
   void _cancelTimer() {
     _timer.cancel();
   }
 
-  void _calculateETA( gmaps.LatLng startPosition, gmaps.LatLng endPosition) {
+  void _calculateETA(gmaps.LatLng startPosition, gmaps.LatLng endPosition) {
     final Distance distance = Distance();
     final double totalDistance = distance(
       LatLng(startPosition.latitude, startPosition.longitude),
@@ -200,23 +184,17 @@ class _CarWidgetState extends State<CarWidget> with SingleTickerProviderStateMix
     );
     final double speedInMps = 15.0;
     final double durationInSeconds =
-    (totalDistance / speedInMps).round().toDouble();
+        (totalDistance / speedInMps).round().toDouble();
     final Duration duration = Duration(seconds: durationInSeconds.toInt());
 
     setState(() {
       eta = 'ETA: ${duration.inMinutes} minutes';
       print('ETA: ${duration.inMinutes} minutes');
-      etaInSeconds ='ETA: ${duration} Seconds ';
+      etaInSeconds = 'ETA: ${duration} Seconds ';
       print('ETA: ${duration} Seconds ');
       print('Total Distance: ${totalDistance}');
     });
   }
-
-
-
-
-
-
 
   double _getRotation() {
     // get the coordinates of the start and end points of the polyline
@@ -236,14 +214,12 @@ class _CarWidgetState extends State<CarWidget> with SingleTickerProviderStateMix
     return angle;
   }
 
-
-
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
+    return Scaffold(
         key: scaffoldkey,
         body: Stack(
-          children: <Widget> [
+          children: <Widget>[
             gmaps.GoogleMap(
               padding: EdgeInsets.only(bottom: mapBottomPadding),
               mapType: gmaps.MapType.normal,
@@ -258,8 +234,8 @@ class _CarWidgetState extends State<CarWidget> with SingleTickerProviderStateMix
               markers: [
                 gmaps.Marker(
                   markerId: gmaps.MarkerId("car"),
-                  position: _animation!.value ?? gmaps.LatLng(0,0) ,
-                  icon: _carIcon! ,
+                  position: _animation!.value ?? gmaps.LatLng(0, 0),
+                  icon: _carIcon!,
                   rotation: _getRotation(),
                 ),
               ].toSet(),
@@ -284,7 +260,9 @@ class _CarWidgetState extends State<CarWidget> with SingleTickerProviderStateMix
                 child: Container(
                   decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.only(topLeft: Radius.circular(15),topRight: Radius.circular(15)),
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(15),
+                          topRight: Radius.circular(15)),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black26,
@@ -295,50 +273,51 @@ class _CarWidgetState extends State<CarWidget> with SingleTickerProviderStateMix
                             0.7, //Move to the bottom 10 Vertically
                           ),
                         )
-                      ]
-                  ),
+                      ]),
                   height: tripSheetHeight,
                   child: Padding(
-                    padding:  EdgeInsets.symmetric(vertical: 18, horizontal: 24),
+                    padding: EdgeInsets.symmetric(vertical: 18, horizontal: 24),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-
-
-                        SizedBox(height: 5,),
+                        SizedBox(
+                          height: 5,
+                        ),
 
                         //TripStatus
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(eta,
+                            Text(
+                              eta,
                               textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 20, fontFamily: 'Brand-Bold'),
+                              style: TextStyle(
+                                  fontSize: 20, fontFamily: 'Brand-Bold'),
                             ),
                           ],
                         ),
 
-                        SizedBox(height: 20,),
+                        SizedBox(
+                          height: 20,
+                        ),
 
                         BrandDivider(),
-                        SizedBox(height: 20,),
+                        SizedBox(
+                          height: 20,
+                        ),
                         Text(etaInSeconds, style: TextStyle(fontSize: 20)),
 
-                        SizedBox(height:20,),
+                        SizedBox(
+                          height: 20,
+                        ),
 
                         customizedButton(
                           title: 'GO BACK',
                           color: Colors.blue,
-                          onPressed: (){
-
+                          onPressed: () {
                             Navigator.pop(context);
-
-
-
                           },
                         )
-
-
                       ],
                     ),
                   ),
@@ -346,13 +325,6 @@ class _CarWidgetState extends State<CarWidget> with SingleTickerProviderStateMix
               ),
             ),
           ],
-
-        )
-    );
+        ));
   }
-
-
-
-
-
 }

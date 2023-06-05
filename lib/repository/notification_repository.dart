@@ -169,13 +169,13 @@ class NotificationRepository {
     // sort notifications by date and ids the newest first
     notificationsIds.sort((a, b) {
       final aIndex = notificationsIds.indexOf(a);
-      final bIndex = notificationsIds.indexOf(b) == -1
-          ? notificationsIds.length - 1
-          : notificationsIds.indexOf(b);
-      final aDate =
-          aIndex < notifications.length ? notifications[aIndex].date : null;
-      final bDate =
-          bIndex < notifications.length ? notifications[bIndex].date : null;
+      final bIndex = notificationsIds.indexOf(b);
+      final aDate = aIndex >= 0 && aIndex < notifications.length
+          ? notifications[aIndex].date
+          : null;
+      final bDate = bIndex >= 0 && bIndex < notifications.length
+          ? notifications[bIndex].date
+          : null;
       return bDate?.compareTo(aDate!) ?? -1;
     });
     notifications.sort((a, b) => b.date!.compareTo(a.date!));

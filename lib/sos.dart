@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_geofire/flutter_geofire.dart';
@@ -32,16 +33,16 @@ import 'package:gradproject/utils/has_network.dart';
 import 'package:gradproject/notificationList.dart';
 import 'package:gradproject/repository/notification_repository.dart'
     as notifyRepo;
+import 'package:gradproject/utils/no_inernet_toast.dart';
 import 'package:provider/provider.dart';
 
 import 'globalvariables.dart';
 
 class sosPage extends StatefulWidget {
+  final UserProfile user;
+  final Map<String, dynamic> relations;
 
-
-
-  const sosPage({super.key});
-
+  const sosPage({required this.user, required this.relations, super.key});
 
   @override
   State<sosPage> createState() => _sosPageState();
@@ -52,34 +53,33 @@ class _sosPageState extends State<sosPage> {
   bool? hasNewNotification;
   UserProfile? user;
   DatabaseReference? rideRef;
-  List <NearbyDriver> ?availableDrivers;
-  StreamSubscription<DatabaseEvent> ?rideSubscription;
+  List<NearbyDriver>? availableDrivers;
+  StreamSubscription<DatabaseEvent>? rideSubscription;
   bool nearbyDriversKeysLoaded = false;
   DriverAssignedDetails details = DriverAssignedDetails();
 
-
   void setupPositionLocator() async {
-    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.bestForNavigation);
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.bestForNavigation);
     currentPosition = position;
-    print('This is current location Lat ${currentPosition.latitude.toString()}');
-    print('This is current location Lng ${currentPosition.longitude.toString()}');
+    print(
+        'This is current location Lat ${currentPosition.latitude.toString()}');
+    print(
+        'This is current location Lng ${currentPosition.longitude.toString()}');
     //print('CURRENT USERNAME ${currentUserInfo!.username}');
     startGeofireListener();
-
-
   }
 
-  void createRideRequest(){
+  void createRideRequest() {
     //print('CURRENT USERNAME ${currentUserInfo!.username}');
     rideRef = FirebaseDatabase.instance.reference().child('rideRequest').push();
 
     // var pickup = Provider.of<AppData>(context, listen: false).pickupAddress;
 
     Map pickupMap = {
-      'latitude':currentPosition.latitude.toString(),
-      'longitude':currentPosition.longitude.toString(),
+      'latitude': currentPosition.latitude.toString(),
+      'longitude': currentPosition.longitude.toString(),
     };
-
 
     Map rideMap = {
       'created_at': DateTime.now().toString(),
@@ -87,9 +87,7 @@ class _sosPageState extends State<sosPage> {
       'rider_phone': currentUserInfo?.phoneNumber,
       //'pickup_address': pickup.placeName,
       'location': pickupMap,
-
     };
-
 
     rideRef?.set(rideMap);
     print('RideRequested Check firebase');
@@ -155,30 +153,28 @@ class _sosPageState extends State<sosPage> {
     //
     //
     // });
-
-
-
   }
-  void findDriver(){
 
-    if(availableDrivers?.length == 0){
+  void findDriver() {
+    if (availableDrivers?.length == 0) {
       //No Driver
       print('NO DRIVER AVAILABLE');
       return;
     }
 
-
     var driver = availableDrivers?[0];
-    DatabaseReference driverTripRef = FirebaseDatabase.instance.reference().child('Hospitals/${driver?.key}/newRequest');
+    DatabaseReference driverTripRef = FirebaseDatabase.instance
+        .reference()
+        .child('Hospitals/${driver?.key}/newRequest');
     driverTripRef?.set(rideRef?.key);
 
     // Update the number of ambulances
-    DatabaseReference ambulanceRef = FirebaseDatabase.instance.reference()
+    DatabaseReference ambulanceRef = FirebaseDatabase.instance
+        .reference()
         .child('Hospitals/${driver?.key}/Ambulances');
     ambulanceRef.once().then((DatabaseEvent databaseEvent) async {
-
       //final snapshot2= await ambulanceRef.get();
-      dynamic rideData3=databaseEvent.snapshot.value;
+      dynamic rideData3 = databaseEvent.snapshot.value;
 
       int currentAmbulances = int.tryParse(rideData3.toString()) ?? 0;
       int newAmbulances = currentAmbulances - 1;
@@ -189,31 +185,25 @@ class _sosPageState extends State<sosPage> {
       } else {
         print("Insufficient ambulances available.");
       }
-
-
     }).catchError((error) {
       // Handle errors here
     });
 
-
     getCurrentDriverInfo(driver!);
 
-
     //fetchRideInfo(rideRef?.key);
-
-
 
     //availableDrivers?.removeAt(0);
     print("DRIVER IS ASSIGNED");
     print(driver?.key);
-
-
   }
-  void startGeofireListener() {
 
+  void startGeofireListener() {
     Geofire.initialize('hospitalsAvailable');
 
-    Geofire.queryAtLocation(currentPosition.latitude, currentPosition.longitude, 0.4)?.listen((map) {
+    Geofire.queryAtLocation(
+            currentPosition.latitude, currentPosition.longitude, 0.4)
+        ?.listen((map) {
       print(map);
       print('BEFORE.........');
       if (map != null) {
@@ -224,14 +214,13 @@ class _sosPageState extends State<sosPage> {
 
         switch (callBack) {
           case Geofire.onKeyEntered:
-
             NearbyDriver nearbyDriver = NearbyDriver();
             nearbyDriver.key = map['key'];
             nearbyDriver.latitude = map['latitude'];
             nearbyDriver.longitude = map['longitude'];
             FireHelper.nearbyDriverList.add(nearbyDriver);
 
-            if(nearbyDriversKeysLoaded){
+            if (nearbyDriversKeysLoaded) {
               //updateDriversOnMap();
               print('NearbyDriverKeys is Loaded');
             }
@@ -244,7 +233,7 @@ class _sosPageState extends State<sosPage> {
             break;
 
           case Geofire.onKeyMoved:
-          // Update your key's location
+            // Update your key's location
             NearbyDriver nearbyDriver = NearbyDriver();
             nearbyDriver.key = map['key'];
             nearbyDriver.latitude = map['latitude'];
@@ -256,11 +245,10 @@ class _sosPageState extends State<sosPage> {
             break;
 
           case Geofire.onGeoQueryReady:
-          // All Intial Data is loaded
-          //print(map['result']);
+            // All Intial Data is loaded
+            //print(map['result']);
 
             print('Firehelper length: ${FireHelper.nearbyDriverList.length}');
-
 
             nearbyDriversKeysLoaded = true;
             //updateDriversOnMap();
@@ -270,26 +258,20 @@ class _sosPageState extends State<sosPage> {
 
       // setState(() {});
 
-      if (mounted){
+      if (mounted) {
         setState(() {});
       }
-
-
     });
   }
-  void getCurrentDriverInfo (NearbyDriver driver) async {
 
-
-    DatabaseReference driverRef = FirebaseDatabase.instance.reference().child('Hospitals/${driver.key}');
+  void getCurrentDriverInfo(NearbyDriver driver) async {
+    DatabaseReference driverRef =
+        FirebaseDatabase.instance.reference().child('Hospitals/${driver.key}');
 
     driverRef?.once().then((DatabaseEvent databaseEvent) async {
-
-
-      dynamic rideData=databaseEvent.snapshot.value;
+      dynamic rideData = databaseEvent.snapshot.value;
 
       if (rideData != null) {
-
-
         currentDriverInfo = Driver.fromSnapshot(databaseEvent.snapshot);
         print('getCurrentDriverInfo is working ........');
         // print(currentDriverInfo?.fullName);
@@ -299,31 +281,21 @@ class _sosPageState extends State<sosPage> {
         // print(currentDriverInfo?.phone);
         // print(currentDriverInfo?.vehicleNumber);
         acceptTrip(rideRef?.key);
-
-      }
-      else{
+      } else {
         print('Snapshot is Null');
       }
-
     }).catchError((error) {
       // Handle errors here
       print('Error retrieving data: $error');
-
     });
-
-
-
-
-
   }
 
+  Future<DriverAssignedDetails> acceptTrip(String? rideID) async {
+    Completer<DriverAssignedDetails> completer =
+        Completer<DriverAssignedDetails>();
 
-
-   Future <DriverAssignedDetails> acceptTrip(String? rideID ) async  {
-
-     Completer<DriverAssignedDetails> completer = Completer<DriverAssignedDetails>();
-
-    DatabaseReference rideRef2  =  FirebaseDatabase.instance.reference().child('rideRequest/$rideID');
+    DatabaseReference rideRef2 =
+        FirebaseDatabase.instance.reference().child('rideRequest/$rideID');
 
     rideRef2?.child('status').set('accepted');
     // rideRef2?.child('driver_name').set(currentDriverInfo?.fullName);
@@ -336,8 +308,7 @@ class _sosPageState extends State<sosPage> {
     print(currentDriverInfo?.hospitalName);
     // print(currentDriverInfo?.vehicleNumber);
 
-    rideSubscription= rideRef2?.onValue.listen((event) async {
-
+    rideSubscription = rideRef2?.onValue.listen((event) async {
       //check for null snapshot
 
       dynamic rideData = event.snapshot.value;
@@ -347,37 +318,30 @@ class _sosPageState extends State<sosPage> {
       }
 
       // Get Driver Name
-      if(rideData['hospital_name'] != null){
+      if (rideData['hospital_name'] != null) {
         driverFullName = rideData['hospital_name'].toString();
         print('Driver Name is:  ${driverFullName}');
-
       }
       // Get Driver Phone
-      if(rideData['driver_phone'] != null){
+      if (rideData['driver_phone'] != null) {
         driverPhone = rideData['driver_phone'].toString();
         print('Driver mobile number is:  ${driverPhone}');
-
       }
       // Get Driver Vehicle Details
-      if(rideData['vehicle_details'] != null){
+      if (rideData['vehicle_details'] != null) {
         driverCarNumber = rideData['vehicle_details'].toString();
         print('vehicle number = ${driverCarNumber}');
-
       }
-
-
-
 
       details.driverName = driverFullName;
       // details.driverPhone = driverPhone;
       // details.vehicle_Number= driverCarNumber;
-      details.rideID= rideRef?.key;
+      details.rideID = rideRef?.key;
 
       print('DRIVER ASSIGNED DETAILS IS HERE !!!!');
 
       print(details);
       print(details.driverName);
-
 
       if (!completer.isCompleted) {
         try {
@@ -393,9 +357,6 @@ class _sosPageState extends State<sosPage> {
     return completer.future;
     print(details);
     print(details.driverName);
-
-
-
   }
 
   // void fetchRideInfo(String? rideID){
@@ -462,14 +423,14 @@ class _sosPageState extends State<sosPage> {
   //
   // }
 
-
   @override
   void initState() {
     super.initState();
-    HelperMethods.getCurrentUserInfo();
+    // HelperMethods.getCurrentUserInfo();
+    // setupPositionLocator();
     getuser();
-    setupPositionLocator();
   }
+
   // void dispose() {
   //   GeofireListener.cancel();
   //   Geofire.removeGeoQuery('hospitalsAvailable');
@@ -478,7 +439,7 @@ class _sosPageState extends State<sosPage> {
   //
   // }
   void getuser() async {
-    final fetchedUser = await UserRepository().getUserProfile();
+    final fetchedUser = widget.user;
     final fetchedHasNewNotificaiton =
         await notifyRepo.NotificationRepository().hasNewNotification();
     setState(() {
@@ -489,7 +450,7 @@ class _sosPageState extends State<sosPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (user == null) {
+    if (hasNewNotification == null) {
       return loadingContainer();
     } else {
       return SafeArea(
@@ -522,7 +483,8 @@ class _sosPageState extends State<sosPage> {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => NotificationPage(),
+                            builder: (context) => NotificationPage(
+                                user: widget.user, relations: widget.relations),
                           ),
                         );
                         // Navigator.push( context, MaterialPageRoute( builder:
@@ -543,7 +505,9 @@ class _sosPageState extends State<sosPage> {
                           Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => Profileone(),
+                                builder: (context) => Profileone(
+                                    user: widget.user,
+                                    relations: widget.relations),
                               ));
                         },
                       ),
@@ -587,17 +551,29 @@ class _sosPageState extends State<sosPage> {
 
                 try {
                   await RequestRepository().createRequestAndNotifyCaregivers();
-                  createRideRequest();
-                  availableDrivers =FireHelper.nearbyDriverList;
-                  findDriver();
-                  details = await acceptTrip(rideRef?.key);
-                  print('Please Work');
-                  print(details);
-                  print(details.driverName);
-                  while (details == null ){
-                    await Future.delayed(Duration(milliseconds: 500));
-                  }
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => showMap( driverAssignedDetails: details,)),);
+                  /* -------------------------------------------------------------------------- */
+                  // createRideRequest();
+                  // availableDrivers = FireHelper.nearbyDriverList;
+                  // findDriver();
+                  // details = await 1107eacceptTrip(rideRef?.key);
+                  // print('Please Work');
+                  // print(details);
+                  // print(details.driverName);
+                  // while (details == null) {
+                  // await Future.delayed(Duration(milliseconds: 500));
+                  // }
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //       builder: (context) => showMap(
+                  //             driverAssignedDetails: details,
+                  //           )),
+                  // );
+                  /* -------------------------------------------------------------------------- */
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => MapsPage()),
+                  );
                 } catch (e) {
                   Fluttertoast.showToast(
                     msg: e.toString(),
@@ -653,11 +629,18 @@ class _sosPageState extends State<sosPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   InkWell(
-                    onTap: () {
+                    onTap: () async {
+                      if (await isNetworkAvailable() == false) {
+                        noInternetToast();
+                        return;
+                      }
                       Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => chatbotPage()));
+                              builder: (context) => chatbotPage(
+                                    user: widget.user,
+                                    relations: widget.relations,
+                                  )));
                     },
                     child: Container(
                       margin: langCode == 'en'

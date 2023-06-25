@@ -7,6 +7,8 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gradproject/main.dart';
+import 'package:gradproject/repository/relation_repository.dart';
+import 'package:gradproject/repository/user_repository.dart';
 import 'package:gradproject/sos.dart';
 import 'package:gradproject/style.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
@@ -25,17 +27,34 @@ class _splashScreenState extends State<splashScreen> {
   @override
   void initState() {
     super.initState();
+    if (FirebaseAuth.instance.currentUser == null) {
+      Timer(
+          Duration(seconds: 2),
+          () async => {
+                await context.setLocale(Locale(langCode)),
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => authPage()))
+              });
+    } else {
+      jumpToSOS();
+    }
+  }
+
+  void jumpToSOS() async {
+    final fetchedUser = await UserRepository().getUserProfile();
+    final fetchedRelations = await UserRepository().getCareGivers();
+
     Timer(
-        Duration(seconds: 3),
+        Duration(seconds: 2),
         () async => {
               await context.setLocale(Locale(langCode)),
               Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                      builder: (context) =>
-                          FirebaseAuth.instance.currentUser == null
-                              ? authPage()
-                              : sosPage()))
+                      builder: (context) => sosPage(
+                            user: fetchedUser,
+                            relations: fetchedRelations,
+                          )))
             });
   }
 

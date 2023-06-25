@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gradproject/button.dart';
 import 'package:gradproject/numericpad.dart';
+import 'package:gradproject/repository/relation_repository.dart';
 import 'package:gradproject/services/auth_service.dart';
 import 'package:gradproject/sos.dart';
 import 'package:gradproject/style.dart';
@@ -58,8 +59,15 @@ class _VerifyPhoneState extends State<VerifyPhone> {
         }
       }
       if (mounted) {
+        final fetchedUser = await UserRepository().getUserProfile();
+        final fetchedRelations = await UserRepository().getCareGivers();
         Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => sosPage()));
+            context,
+            MaterialPageRoute(
+                builder: (context) => sosPage(
+                      user: fetchedUser,
+                      relations: fetchedRelations,
+                    )));
       }
       Fluttertoast.showToast(msg: LocaleKeys.verification.tr());
     } catch (e) {
@@ -174,10 +182,17 @@ class _VerifyPhoneState extends State<VerifyPhone> {
                                       .updateUserProfile(user);
                                 }
                                 if (mounted) {
+                                  final fetchedUser =
+                                      await UserRepository().getUserProfile();
+                                  final fetchedRelations =
+                                      await UserRepository().getCareGivers();
                                   Navigator.pushReplacement(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => sosPage()));
+                                          builder: (context) => sosPage(
+                                                user: fetchedUser,
+                                                relations: fetchedRelations,
+                                              )));
                                 }
                               },
                               verificationFailed: (FirebaseAuthException e) {
@@ -233,7 +248,9 @@ class _VerifyPhoneState extends State<VerifyPhone> {
                     code = code + value.toString();
                   }
                 } else {
-                  code = code.substring(0, code.length - 1);
+                  if (code.length > 0) {
+                    code = code.substring(0, code.length - 1);
+                  }
                 }
               });
             },

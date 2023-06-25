@@ -17,10 +17,12 @@ class MapsPage extends StatefulWidget {
 }
 
 class _MapsPageState extends State<MapsPage> {
-  gmaps.LatLng startPosition = gmaps.LatLng(31.2407, 29.9874);
-  gmaps.LatLng endPosition = gmaps.LatLng(31.2500, 29.9752);
+  gmaps.LatLng startPosition =
+      gmaps.LatLng(31.251564761896724, 29.975737549014042);
+  gmaps.LatLng endPosition = gmaps.LatLng(31.2407, 29.9874);
   int velocity = 80; //km per hour
-  gmaps.LatLng currentPosition = gmaps.LatLng(31.2407, 29.9874);
+  gmaps.LatLng currentPosition =
+      gmaps.LatLng(31.251564761896724, 29.975737549014042);
   /* -------------------------------------------------------------------------- */
   gmaps.BitmapDescriptor? _carIcon;
   GlobalKey<ScaffoldState> scaffoldkey = new GlobalKey<ScaffoldState>();
@@ -184,9 +186,9 @@ class _MapsPageState extends State<MapsPage> {
                             Text(
                               _eta == ''
                                   ? 'Calculating ETA'
-                                  : 'the ambulance will reach you in ' +
+                                  : 'the ambulance will reach \nyou in ' +
                                       _eta +
-                                      '\n minutes at ' +
+                                      ' minutes at ' +
                                       _reachingTime,
                               textAlign: TextAlign.center,
                               style: TextStyle(
@@ -201,7 +203,10 @@ class _MapsPageState extends State<MapsPage> {
 
                         BrandDivider(),
 
-                        Text(isTripCompleted ? 'Trip Completed' : '',
+                        Text(
+                            isTripCompleted
+                                ? 'Trip Completed'
+                                : 'the ambulance is on the way from مستشفى الإقبال',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                                 fontSize: 18, fontFamily: 'Brand-Bold')),

@@ -3,6 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gradproject/repository/relation_repository.dart';
+import 'package:gradproject/services/auth_service.dart';
 import 'package:gradproject/utils/has_network.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -319,15 +320,18 @@ class UserRepository {
           .isBefore(DateTime.now().subtract(Duration(days: 1)))) {
         throw Exception(
             "Error deleting user account, as a security measure you need be recently logged in to delete your account");
+      } else {
+        Map<String, dynamic> relationMap =
+            await RelationRepository().getRelationsForCurrentUser();
+        List<String> relationsId = relationMap['relationsId'];
+        for (String relationId in relationsId) {
+          await RelationRepository().deleteRelation(relationId);
+        }
+        await StorageService().deleteImageFromFirebaseStorage('profileImages');
+        String userId = user!.uid;
+        await user!.delete();
+        await _usersRef.child(userId).remove();
       }
-      await user!.delete();
-      Map<String, dynamic> relationMap =
-          await RelationRepository().getRelationsForCurrentUser();
-      List<String> relationsId = relationMap['relationsId'];
-      for (String relationId in relationsId) {
-        await RelationRepository().deleteRelation(relationId);
-      }
-      await _usersRef.child(user!.uid).remove();
     }
   }
 

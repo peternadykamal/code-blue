@@ -39,4 +39,13 @@ class StorageService {
       return null;
     }
   }
+
+  // delete image from firebase storage
+  Future<void> deleteImageFromFirebaseStorage(String folderName) async {
+    try {
+      final Reference reference =
+          _firebaseStorage.ref().child(folderName).child(user!.uid);
+      await reference.delete();
+    } on FirebaseException catch (error) {}
+  }
 }

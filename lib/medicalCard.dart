@@ -4,12 +4,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:gradproject/loadingcontainer.dart';
 import 'package:gradproject/main.dart';
 import 'package:gradproject/profile1.dart';
 import 'package:gradproject/repository/user_repository.dart';
 import 'package:gradproject/repository/user_repository.dart';
 import 'package:gradproject/style.dart';
 import 'package:flutter_toggle_tab/flutter_toggle_tab.dart';
+import 'package:gradproject/utils/has_network.dart';
+import 'package:gradproject/utils/no_inernet_toast.dart';
 import 'package:time_picker_spinner_pop_up/time_picker_spinner_pop_up.dart';
 import 'package:bottom_picker/bottom_picker.dart';
 import 'package:custom_radio_grouped_button/custom_radio_grouped_button.dart';
@@ -17,14 +20,16 @@ import 'package:horizontal_picker/horizontal_picker.dart';
 import 'package:age_calculator/age_calculator.dart';
 
 class profile2 extends StatefulWidget {
-  const profile2({super.key});
+  final UserProfile user;
+  final Map<String, dynamic> relations;
+  const profile2({required this.user, required this.relations, super.key});
 
   @override
   State<profile2> createState() => _profile2State();
 }
 
 class _profile2State extends State<profile2> {
-  DateTime? date;
+  DateTime? date;;
   TextEditingController _date = TextEditingController();
   final _medicalCond = TextEditingController();
   final _medications = TextEditingController();
@@ -65,7 +70,10 @@ class _profile2State extends State<profile2> {
                           Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => Profileone()));
+                                  builder: (context) => Profileone(
+                                        user: widget.user,
+                                        relations: widget.relations,
+                                      )));
                         },
                         child: Padding(
                           padding: langCode == 'en'
@@ -79,15 +87,21 @@ class _profile2State extends State<profile2> {
                             TextStyle(color: Mycolors.textcolor, fontSize: 20)),
                     GestureDetector(
                         onTap: () async {
+                          if (await isNetworkAvailable() == false) {
+                            noInternetToast();
+                            return;
+                          }
+                          showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (BuildContext context) {
+                              return loadingContainer(); // Show loading screen
+                            },
+                          );
                           UserProfile currentUser =
                               await UserRepository().getUserProfile();
                           String email = currentUser.email;
                           String username = currentUser.username;
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Profileone()));
-
                           await UserRepository().updateUserProfile(
                             UserProfile(
                               email: email,
@@ -113,6 +127,17 @@ class _profile2State extends State<profile2> {
                               birthDate: date,
                             ),
                           );
+                          Navigator.of(context, rootNavigator: true).pop();
+                          final fetchedUser =
+                              await UserRepository().getUserProfile();
+                          print(fetchedUser.age);
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Profileone(
+                                        user: fetchedUser,
+                                        relations: widget.relations,
+                                      )));
                         },
                         child: Padding(
                           padding: langCode == 'en'
@@ -279,8 +304,8 @@ class _profile2State extends State<profile2> {
                     activeItemTextColor: Mycolors.buttoncolor,
                     initialPosition: InitialPosition.center,
                     minValue: 50,
-                    maxValue: 362,
-                    divisions: 624,
+                    maxValue: 180,
+                    divisions: 260,
                     suffix: "kg",
                     height: 70,
                     onChanged: (value) {

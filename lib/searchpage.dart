@@ -93,7 +93,9 @@ class _searchPageState extends State<searchPage> {
                                 return users;
                               }
                             ]);
-                            return results[0] as List<UserProfile>;
+                            return results.length == 1
+                                ? results[0] as List<UserProfile>
+                                : [];
                           });
                         },
                         itemBuilder: (

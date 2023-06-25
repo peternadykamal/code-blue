@@ -6,6 +6,7 @@ import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gradproject/main.dart';
+import 'package:gradproject/repository/user_repository.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gradproject/services/chat_service.dart';
@@ -20,7 +21,10 @@ String randomString() {
 
 // ignore: camel_case_types
 class chatbotPage extends StatefulWidget {
-  const chatbotPage({super.key});
+  final UserProfile user;
+  final Map<String, dynamic> relations;
+
+  const chatbotPage({required this.user, required this.relations, super.key});
 
   @override
   State<chatbotPage> createState() => _chatbotPageState();
@@ -69,7 +73,12 @@ class _chatbotPageState extends State<chatbotPage> {
             onTap: () {
               _chatInstance.disconnect();
               Navigator.pushReplacement(
-                  context, MaterialPageRoute(builder: (context) => sosPage()));
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => sosPage(
+                            user: widget.user,
+                            relations: widget.relations,
+                          )));
             },
             child: Icon(Icons.arrow_back, color: Mycolors.textcolor)),
         title: Row(

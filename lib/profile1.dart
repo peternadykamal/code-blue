@@ -23,6 +23,7 @@ import 'package:gradproject/sos.dart';
 import 'package:gradproject/style.dart';
 import 'package:gradproject/translations/locale_keys.g.dart';
 import 'package:gradproject/utils/has_network.dart';
+import 'package:gradproject/utils/no_inernet_toast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:paginated_search_bar/paginated_search_bar_state_property.dart';
 import 'package:path/path.dart';
@@ -30,7 +31,10 @@ import 'package:gradproject/services/auth_service.dart';
 import 'package:paginated_search_bar/paginated_search_bar.dart';
 
 class Profileone extends StatefulWidget {
-  const Profileone({super.key});
+  final UserProfile user;
+  Map<String, dynamic> relations;
+
+  Profileone({required this.user, required this.relations, super.key});
 
   @override
   State<Profileone> createState() => _ProfileoneState();
@@ -55,8 +59,7 @@ class _ProfileoneState extends State<Profileone> {
 
   Future<void> _getCareGivers() async {
     try {
-      final Map<String, dynamic> result =
-          await UserRepository().getCareGivers();
+      final Map<String, dynamic> result = widget.relations;
       setState(() {
         _careGivers = result['careGivers'];
         _relations = result['relations'];
@@ -71,6 +74,7 @@ class _ProfileoneState extends State<Profileone> {
     try {
       final relationId = _relations[index];
       await RelationRepository().deleteRelation(relationId);
+      widget.relations = await UserRepository().getCareGivers();
       setState(() {
         _careGivers.removeAt(index);
         _relations.removeAt(index);
@@ -81,9 +85,9 @@ class _ProfileoneState extends State<Profileone> {
   }
 
   void _getuser() async {
-    final fetchedUser = await UserRepository().getUserProfile();
+    final fetchedUser = widget.user;
     final fetchedFirebaseUser = FirebaseAuth.instance.currentUser;
-    final fetchedUserProfileImage = await UserRepository().getProfileImage();
+    final fetchedUserProfileImage = widget.user.profileImage;
     setState(() {
       user = fetchedUser;
       firebaseUser = fetchedFirebaseUser;
@@ -93,14 +97,19 @@ class _ProfileoneState extends State<Profileone> {
 
   @override
   Widget build(BuildContext context) {
-    if (user == null || firebaseUser == null || userProfileImage == null) {
+    if (firebaseUser == null || userProfileImage == null) {
       return loadingContainer();
     } else {
       return WillPopScope(
         onWillPop: () async {
           // Do something here
           Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => sosPage()));
+              context,
+              MaterialPageRoute(
+                  builder: (context) => sosPage(
+                        user: widget.user,
+                        relations: widget.relations,
+                      )));
           return false;
         },
         child: SafeArea(
@@ -119,7 +128,10 @@ class _ProfileoneState extends State<Profileone> {
                             Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => sosPage()));
+                                    builder: (context) => sosPage(
+                                          user: widget.user,
+                                          relations: widget.relations,
+                                        )));
                           },
                           child: Icon(
                             Icons.close,
@@ -222,10 +234,30 @@ class _ProfileoneState extends State<Profileone> {
                           ),
                           GestureDetector(
                             onTap: () async {
+                              if (await isNetworkAvailable() == false) {
+                                noInternetToast();
+                                return;
+                              }
                               XFile? image = await ImagePicker()
                                   .pickImage(source: ImageSource.gallery);
                               if (image != null) {
-                                UserRepository().changeProfile(image);
+                                showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (BuildContext context) {
+                                    return loadingContainer(); // Show loading screen
+                                  },
+                                );
+                                await UserRepository().changeProfile(image);
+                                Image fetchedUserProfileImage =
+                                    await UserRepository().getProfileImage();
+                                Navigator.of(context, rootNavigator: true)
+                                    .pop();
+                                setState(() {
+                                  userProfileImage = fetchedUserProfileImage;
+                                  widget.user.profileImage =
+                                      fetchedUserProfileImage;
+                                });
                               }
                             },
                             child: CircleAvatar(
@@ -332,23 +364,17 @@ class _ProfileoneState extends State<Profileone> {
                                 Button2(
                                     textButton: LocaleKeys.fillout.tr(),
                                     onTap: () async {
-                                      if (await isNetworkAvailable != true) {
-                                        Navigator.pushReplacement(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    profile2()));
-                                      } else {
-                                        Fluttertoast.showToast(
-                                            msg: LocaleKeys.nointernet.tr(),
-                                            toastLength: Toast.LENGTH_SHORT,
-                                            gravity: ToastGravity.BOTTOM,
-                                            timeInSecForIosWeb: 1,
-                                            backgroundColor:
-                                                Mycolors.splashback,
-                                            textColor: Mycolors.textcolor,
-                                            fontSize: 16.0);
+                                      if (await isNetworkAvailable() == false) {
+                                        noInternetToast();
+                                        return;
                                       }
+                                      Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => profile2(
+                                                    user: widget.user,
+                                                    relations: widget.relations,
+                                                  )));
                                     },
                                     width: 220,
                                     height: 60),
@@ -408,12 +434,18 @@ class _ProfileoneState extends State<Profileone> {
                                   ),
                                 ),
                                 GestureDetector(
-                                  onTap: () {
+                                  onTap: () async {
+                                    if (await isNetworkAvailable() == false) {
+                                      noInternetToast();
+                                      return;
+                                    }
                                     Navigator.pushReplacement(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) =>
-                                                (profile2())));
+                                            builder: (context) => (profile2(
+                                                  user: widget.user,
+                                                  relations: widget.relations,
+                                                ))));
                                   },
                                   child: Container(
                                     width: 70,
@@ -700,7 +732,12 @@ class _ProfileoneState extends State<Profileone> {
                                         width: 300,
                                         height: 40,
                                         child: InkWell(
-                                            onTap: () {
+                                            onTap: () async {
+                                              if (await isNetworkAvailable() ==
+                                                  false) {
+                                                noInternetToast();
+                                                return;
+                                              }
                                               Navigator.push(
                                                   context,
                                                   MaterialPageRoute(

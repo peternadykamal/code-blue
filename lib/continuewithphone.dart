@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gradproject/auth.dart';
+import 'package:gradproject/repository/relation_repository.dart';
 import 'package:gradproject/repository/user_repository.dart';
 import 'package:gradproject/services/auth_service.dart';
 import 'package:gradproject/sos.dart';
@@ -154,11 +155,20 @@ class _ContinueWithPhoneState extends State<ContinueWithPhone> {
                                             .updateUserProfile(user);
                                       }
                                       if (mounted) {
+                                        final fetchedUser =
+                                            await UserRepository()
+                                                .getUserProfile();
+                                        final fetchedRelations =
+                                            await UserRepository()
+                                                .getCareGivers();
                                         Navigator.pushReplacement(
                                             context,
                                             MaterialPageRoute(
-                                                builder: (context) =>
-                                                    sosPage()));
+                                                builder: (context) => sosPage(
+                                                      user: fetchedUser,
+                                                      relations:
+                                                          fetchedRelations,
+                                                    )));
                                       }
                                     },
                                     verificationFailed:

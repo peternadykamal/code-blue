@@ -1,11 +1,13 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:gradproject/loadingcontainer.dart';
 import 'package:gradproject/main.dart';
 import 'package:gradproject/repository/notification_repository.dart'
     as notifyRepo;
 import 'package:gradproject/repository/request_repository.dart';
 import 'package:gradproject/repository/invite_repository.dart';
+import 'package:gradproject/repository/user_repository.dart';
 import 'package:gradproject/sos.dart';
 import 'package:gradproject/style.dart';
 import 'package:gradproject/utils/has_network.dart';
@@ -13,7 +15,10 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:gradproject/utils/has_network.dart';
 
 class NotificationPage extends StatefulWidget {
-  const NotificationPage({Key? key}) : super(key: key);
+  final UserProfile user;
+  Map<String, dynamic> relations;
+  NotificationPage({required this.user, required this.relations, Key? key})
+      : super(key: key);
 
   @override
   _NotificationPageState createState() => _NotificationPageState();
@@ -253,12 +258,32 @@ class _NotificationPageState extends State<NotificationPage> {
     }
   }
 
+  Future<void> updateUserRelations() async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return loadingContainer(); // Show loading screen
+      },
+    );
+    widget.relations = await UserRepository().getCareGivers();
+    Navigator.of(context, rootNavigator: true).pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => sosPage()));
+        await updateUserRelations();
+        if (mounted) {
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => sosPage(
+                        user: widget.user,
+                        relations: widget.relations,
+                      )));
+        }
         return false;
       },
       child: Scaffold(
@@ -270,8 +295,16 @@ class _NotificationPageState extends State<NotificationPage> {
           elevation: 0.0,
           leading: InkWell(
               onTap: () async {
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => sosPage()));
+                await updateUserRelations();
+                if (mounted) {
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => sosPage(
+                                user: widget.user,
+                                relations: widget.relations,
+                              )));
+                }
               },
               child: Icon(Icons.arrow_back, color: Mycolors.textcolor)),
           title: Text(langCode == 'en' ? "Notifications" : "اشعارات",

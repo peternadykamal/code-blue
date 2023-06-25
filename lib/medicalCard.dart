@@ -29,7 +29,7 @@ class profile2 extends StatefulWidget {
 }
 
 class _profile2State extends State<profile2> {
-  DateTime? date;;
+  DateTime? date;
   TextEditingController _date = TextEditingController();
   final _medicalCond = TextEditingController();
   final _medications = TextEditingController();

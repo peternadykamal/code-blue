@@ -13,7 +13,6 @@ import 'package:gradproject/services/auth_service.dart';
 import 'package:gradproject/services/settings_service.dart';
 import 'package:gradproject/splashscreen.dart';
 import 'package:gradproject/style.dart';
-// import 'package:flutter_native_contact_picker/flutter_native_contact_picker.dart';
 import 'package:gradproject/utils/has_network.dart';
 import 'package:gradproject/utils/no_inernet_toast.dart';
 
@@ -25,7 +24,6 @@ class settingsPage extends StatefulWidget {
 }
 
 class _settingsPageState extends State<settingsPage> {
-  // final FlutterContactPicker _contactPicker = new FlutterContactPicker();
   bool _switchValue = false;
   List<String> _phoneNumbers = [];
   String selectedLang = langCode;
@@ -365,26 +363,6 @@ class _settingsPageState extends State<settingsPage> {
                             } catch (UserCancelledPickingException) {
                               return;
                             }
-                            // Contact? contact =
-                            //     await _contactPicker.selectContact();
-                            // if (contact != null) {
-                            //   for (final element in contact.phoneNumbers!) {
-                            //     // remove spaces and dashes from phone number
-                            //     print(element);
-                            //     String addThisNumber = element
-                            //         .replaceAll(RegExp(r'\s+\b|\b\s'), '')
-                            //         .replaceAll('-', '');
-                            //     await SettingsService
-                            //         .addNonCaregiversPhoneNumbers(
-                            //             addThisNumber);
-                            //   }
-                            // }
-                            // Navigator.pushReplacement(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //       builder: (BuildContext context) =>
-                            //           settingsPage()),
-                            // );
                           },
                           width: 279,
                           height: 50),

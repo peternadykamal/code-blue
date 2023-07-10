@@ -247,12 +247,12 @@ class _settingsPageState extends State<settingsPage> {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 width: MediaQuery.of(context).size.width - 40,
-                height: MediaQuery.of(context).size.height - 450,
+                height: MediaQuery.of(context).size.height - 500,
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
                       Container(
-                        height: MediaQuery.of(context).size.height - 540,
+                        height: MediaQuery.of(context).size.height - 590,
                         child: ListView.builder(
                           shrinkWrap: true,
                           itemCount: _phoneNumbers.length,

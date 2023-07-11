@@ -17,9 +17,11 @@ class MapsPage extends StatefulWidget {
 }
 
 class _MapsPageState extends State<MapsPage> {
-  gmaps.LatLng startPosition =
-      gmaps.LatLng(31.251564761896724, 29.975737549014042);
-  gmaps.LatLng endPosition = gmaps.LatLng(31.2407, 29.9874);
+  // gmaps.LatLng startPosition =
+  //     gmaps.LatLng(31.251564761896724, 29.975737549014042);
+  // gmaps.LatLng endPosition = gmaps.LatLng(31.2407, 29.9874);
+  gmaps.LatLng startPosition = gmaps.LatLng(31.2980, 30.0571);
+  gmaps.LatLng endPosition = gmaps.LatLng(31.3085037, 30.0635744);
   int velocity = 80; //km per hour
   gmaps.LatLng currentPosition =
       gmaps.LatLng(31.251564761896724, 29.975737549014042);

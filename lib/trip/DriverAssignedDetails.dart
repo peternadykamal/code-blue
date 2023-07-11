@@ -6,8 +6,7 @@ class DriverAssignedDetails {
 
   String? rideID;
   String? driverName;
-  String? driverPhone;
-  String? vehicle_Number;
+  LatLng? hospitalLocation;
 
 
   DriverAssignedDetails({
@@ -15,8 +14,7 @@ class DriverAssignedDetails {
 
     this.rideID,
     this.driverName,
-    this.driverPhone,
-    this.vehicle_Number
+    this.hospitalLocation
 
 
 

@@ -1,25 +1,21 @@
 import 'dart:async';
-import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_geofire/flutter_geofire.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:gradproject/globalvariables.dart';
-import 'package:gradproject/trip/CarSimulationScreen.dart';
+import 'package:gradproject/maps.dart';
 import 'package:gradproject/trip/DriverAssignedDetails.dart';
 import 'package:gradproject/trip/NoDriverDialog.dart';
 import 'package:gradproject/trip/appdata.dart';
 import 'package:gradproject/trip/brand_colors.dart';
-import 'package:gradproject/trip/driver.dart';
 import 'package:gradproject/trip/firehelper.dart';
 import 'package:gradproject/trip/helpermethods.dart';
 import 'package:gradproject/trip/nearbydriver.dart';
 import 'package:gradproject/trip/safeHandsDialog.dart';
-import 'package:gradproject/trip/styles.dart';
 import 'package:provider/provider.dart';
 import 'BrandDivider.dart';
-import 'package:gradproject/sos.dart';
 
 class showMap extends StatefulWidget {
   //static const String id= 'showMap';
@@ -63,17 +59,28 @@ class _showMapState extends State<showMap> {
     return dName;
   }
 
+  LatLng? getHospitalLocation() {
+    LatLng? hLoc = widget.driverAssignedDetails.hospitalLocation;
+    return hLoc;
+  }
+
   static const CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(31.205753, 29.924526),
     zoom: 14.4746,
   );
 
   void setupPositionLocator() async {
-    currentPosition = await Geolocator.getCurrentPosition(
+    Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.bestForNavigation);
-    LatLng pos = LatLng(currentPosition.latitude, currentPosition.longitude);
+    currentPosition = position;
+
+    LatLng pos = LatLng(position.latitude, position.longitude);
     CameraPosition cp = new CameraPosition(target: pos, zoom: 14);
     mapController.animateCamera(CameraUpdate.newCameraPosition(cp));
+
+    // String address = await HelperMethods.findCordinateAddress(position, context);
+    // print(address);
+
     startGeofireListener();
   }
 
@@ -177,46 +184,61 @@ class _showMapState extends State<showMap> {
     Geofire.initialize('driversAvailable');
 
     Geofire.queryAtLocation(
-            currentPosition.latitude, currentPosition.longitude, 20)
+            currentPosition.latitude, currentPosition.longitude, 4)
         ?.listen((map) {
       print(map);
       print('AFTEEEEEEEER');
       if (map != null) {
         var callBack = map['callBack'];
 
+        //latitude will be retrieved from map['latitude']
+        //longitude will be retrieved from map['longitude']
+
         switch (callBack) {
-          case Geofire.onKeyEntered:
-            NearbyDriver nearbyDriver = NearbyDriver();
-            nearbyDriver.key = map['key'];
-            nearbyDriver.latitude = map['latitude'];
-            nearbyDriver.longitude = map['longitude'];
-            FireHelper.nearbyDriverList.add(nearbyDriver);
-            if (nearbyDriversKeysLoaded) {
-              print('NearbyDriverKeys is Loaded');
-            }
-            break;
-
-          case Geofire.onKeyExited:
-            FireHelper.removeFromList(map['key']);
-            break;
-
-          case Geofire.onKeyMoved:
-            // Update your key's location
-            NearbyDriver nearbyDriver = NearbyDriver();
-            nearbyDriver.key = map['key'];
-            nearbyDriver.latitude = map['latitude'];
-            nearbyDriver.longitude = map['longitude'];
-
-            FireHelper.updateNearbyLocation(nearbyDriver);
-            break;
+          // case Geofire.onKeyEntered:
+          //
+          //   NearbyDriver nearbyDriver = NearbyDriver();
+          //   nearbyDriver.key = map['key'];
+          //   nearbyDriver.latitude = map['latitude'];
+          //   nearbyDriver.longitude = map['longitude'];
+          //   FireHelper.nearbyDriverList.add(nearbyDriver);
+          //
+          //   if(nearbyDriversKeysLoaded){
+          //     //updateDriversOnMap();
+          //     print('NearbyDriverKeys is Loaded');
+          //   }
+          //
+          //   break;
+          //
+          // case Geofire.onKeyExited:
+          //   FireHelper.removeFromList(map['key']);
+          //   //updateDriversOnMap();
+          //   break;
+          //
+          // case Geofire.onKeyMoved:
+          // // Update your key's location
+          //   NearbyDriver nearbyDriver = NearbyDriver();
+          //   nearbyDriver.key = map['key'];
+          //   nearbyDriver.latitude = map['latitude'];
+          //   nearbyDriver.longitude = map['longitude'];
+          //
+          //   FireHelper.updateNearbyLocation(nearbyDriver);
+          //
+          //   //updateDriversOnMap();
+          //   break;
 
           case Geofire.onGeoQueryReady:
+            // All Intial Data is loaded
+            //print(map['result']);
+
             print('Firehelper length: ${FireHelper.nearbyDriverList.length}');
+
             nearbyDriversKeysLoaded = true;
             updateDriversOnMap();
             break;
         }
       }
+
       setState(() {});
     });
   }
@@ -225,7 +247,9 @@ class _showMapState extends State<showMap> {
     setState(() {
       _Markers.clear();
     });
+
     Set<Marker> tempMarkers = Set<Marker>();
+
     for (NearbyDriver driver in FireHelper.nearbyDriverList) {
       double latitudeDriver =
           driver.latitude ?? 0.0; // If driver.latitude is null, set it to 0.0
@@ -236,12 +260,14 @@ class _showMapState extends State<showMap> {
       Marker thisMarker = Marker(
         markerId: MarkerId('driver${driver.key}'),
         position: driverPosition,
-        icon: nearbyIcon!,
+        icon:
+            nearbyIcon!, //BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen)
         rotation: HelperMethods.generateRandomNumber(360),
       );
 
       tempMarkers.add(thisMarker);
     }
+
     setState(() {
       _Markers = tempMarkers;
     });
@@ -261,9 +287,12 @@ class _showMapState extends State<showMap> {
 
   restApp() {
     setState(() {
+      //searchSheetHeight = 300;
       mapBottomPadding = 300;
+      //requestSheetHeight=0;
       drawerCanOpen = true;
     });
+
     setupPositionLocator();
   }
 
@@ -289,24 +318,72 @@ class _showMapState extends State<showMap> {
     if (availableDrivers?.length == 0) {
       cancelRequest();
       restApp();
+      //No Driver
       noDriverFound();
       print('NO AVAILABLE DRIVERS');
       return;
     }
+
     var driver = availableDrivers?[0];
+
+    //notifyDriver(driver!);
+
+    //availableDrivers?.removeAt(0);
     print("DRIVER IS ASSIGNED222");
     print(driver?.key);
   }
+  //
+  // void notifyDriver(NearbyDriver driver){
+  //   DatabaseReference driverTripRef = FirebaseDatabase.instance.reference().child('drivers/${driver.key}/newtrip');
+  //   driverTripRef?.set(rideRef?.key);
+  //
+  //   //Get and notify driver using token
+  //   DatabaseReference tokenRef = FirebaseDatabase.instance.reference().child('drivers/${driver.key}/token');
+  //
+  //   tokenRef.once().then((DatabaseEvent databaseEvent) async {
+  //
+  //
+  //     dynamic rideData=databaseEvent.snapshot.value;
+  //     if(rideData !=null){
+  //
+  //       String token = rideData.toString();
+  //       print('Token from Database: $token');
+  //
+  //       //send notification to selected driver
+  //       //HelperMethods.sendNotification(token, context, rideRef?.key ?? '');
+  //
+  //
+  //
+  //     }
+  //
+  //
+  //   }).catchError((error) {
+  //     // Handle errors here
+  //     print('Error retrieving data: $error');
+  //
+  //   });
+  //
+  // }
 
   @override
   void initState() {
+    // TODO: implement initState
     super.initState();
-    HelperMethods.getCurrentUserInfo();
+    //HelperMethods.getCurrentUserInfo();
   }
 
   @override
   Widget build(BuildContext context) {
     createMarker();
+    print('CHECK THIS!');
+    print(widget.driverAssignedDetails.driverName);
+    print(widget.driverAssignedDetails.hospitalLocation);
+    print(widget.driverAssignedDetails.hospitalLocation?.latitude);
+    print(widget.driverAssignedDetails.hospitalLocation?.longitude);
+    String hospitalName = getDriverName()!;
+
+    LatLng? cat = widget.driverAssignedDetails.hospitalLocation;
+    print(cat);
 
     return Scaffold(
         key: scaffoldkey,
@@ -330,6 +407,7 @@ class _showMapState extends State<showMap> {
                 setupPositionLocator();
               },
             ),
+            //TripSheet
             Positioned(
               left: 0,
               right: 0,
@@ -439,7 +517,7 @@ class _showMapState extends State<showMap> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => CarWidget()),
+                                          builder: (context) => MapsPage()),
                                     );
                                   },
                                   child: Container(
@@ -460,28 +538,7 @@ class _showMapState extends State<showMap> {
                                 ),
                                 Text('Details'),
                               ],
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Container(
-                                  height: 50,
-                                  width: 50,
-                                  decoration: BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular((25))),
-                                    border: Border.all(
-                                        width: 1.0,
-                                        color: BrandColors.colorTextLight),
-                                  ),
-                                  child: Icon(Icons.person),
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Text('Show Bot'),
-                              ],
-                            ),
+                            )
                           ],
                         )
                       ],

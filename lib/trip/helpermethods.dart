@@ -24,15 +24,16 @@ class HelperMethods {
     userRef.once().then((DatabaseEvent databaseEvent) async {
       //final dataSnapshot = databaseEvent.snapshot;
       final snapshot= await userRef.get();
-        print('Outside IF');
+        //print('Outside IF');
       if (snapshot.value != null ){
-        print('Inside IF');
+        //print('Inside IF');
 
          currentUserInfo = User1.fromSnapshot(snapshot);
-        print('my name is ${currentUserInfo!.username}');
-        print('my email is ${currentUserInfo!.email}');
-        print('my phone is ${currentUserInfo!.phoneNumber}');
-        print('ID is ${currentUserInfo!.id}');
+         print('Accessing UserInfo Successfully');
+         print('my name is ${currentUserInfo!.username}');
+        // print('my email is ${currentUserInfo!.email}');
+        // print('my phone is ${currentUserInfo!.phoneNumber}');
+        // print('ID is ${currentUserInfo!.id}');
       }
 
     }).catchError((error) {

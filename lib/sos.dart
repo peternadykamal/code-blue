@@ -533,7 +533,7 @@ class _sosPageState extends State<sosPage> {
             RawMaterialButton(
               onPressed: () async {
                 try {
-                  // await RequestRepository().createRequestAndNotifyCaregivers();
+                  await RequestRepository().createRequestAndNotifyCaregivers();
                   /* -------------------------------------------------------------------------- */
                   createRideRequest();
                   availableDrivers = FireHelper.nearbyDriverList;
@@ -553,10 +553,10 @@ class _sosPageState extends State<sosPage> {
                             )),
                   );
                   /* -------------------------------------------------------------------------- */
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => MapsPage()),
-                  );
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(builder: (context) => MapsPage()),
+                  // );
                 } catch (e) {
                   Fluttertoast.showToast(
                     msg: e.toString(),
@@ -689,10 +689,10 @@ class _sosPageState extends State<sosPage> {
                     onTap: () {},
                     child: InkWell(
                       onTap: () {
-                        // Navigator.push(
-                        //     context,
-                        //     MaterialPageRoute(
-                        //         builder: ((context) => newMap())));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: ((context) => newMap())));
                       },
                       child: Container(
                         margin: langCode == 'en'

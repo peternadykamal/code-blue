@@ -1,22 +1,21 @@
 import 'package:firebase_database/firebase_database.dart';
 
 class Driver{
-  // String? fullName;
-  // String? email;
-  // String? phone;
+
   String? id;
-  // String? vehicleNumber;
+  String? hospitalLat;
+  String? hospitalLong;
   String? hospitalName;
   String? ambulances;
 
   Driver({
-    // this.fullName,
-    // this.email,
-    // this.phone,
+
     this.id,
     this.hospitalName,
     this.ambulances,
-    // this.vehicleNumber,
+    this.hospitalLat,
+    this.hospitalLong,
+
   });
 
 
@@ -34,10 +33,9 @@ class Driver{
     id = snapshot.key;
     hospitalName = cat['Hospitalname'];
     ambulances = cat['Ambulances'];
-    // phone = cat['phone'];
-    // email = cat['email'];
-    // fullName = cat['fullname'];
-    // vehicleNumber = cat['vehicle_number'];
+    hospitalLat = cat['Location'] ['Lat'];
+    hospitalLong = cat['Location'] ['Long'];
+
   }
 
 }

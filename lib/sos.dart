@@ -26,6 +26,7 @@ import 'package:gradproject/trip/driver.dart';
 import 'package:gradproject/trip/firehelper.dart';
 import 'package:gradproject/trip/helpermethods.dart';
 import 'package:gradproject/trip/nearbydriver.dart';
+import 'package:gradproject/trip/newmap.dart';
 import 'package:gradproject/trip/showMap.dart';
 import 'package:gradproject/trip/tripdetails.dart';
 import 'package:gradproject/trip/user.dart';
@@ -426,8 +427,8 @@ class _sosPageState extends State<sosPage> {
   @override
   void initState() {
     super.initState();
-    // HelperMethods.getCurrentUserInfo();
-    // setupPositionLocator();
+    HelperMethods.getCurrentUserInfo();
+    setupPositionLocator();
     getuser();
   }
 
@@ -531,44 +532,26 @@ class _sosPageState extends State<sosPage> {
             SizedBox(height: 40),
             RawMaterialButton(
               onPressed: () async {
-                // this return an errror await withInternetConnection([ () =>
-                // UserRepository().getUserById('halsdk;fj'), ]); to show how
-                //   deal with an results list final results = await
-                // withInternetConnection([ () => UserRepository()
-                // .getUserById('mOWCpqtfbKenJvEblEXEBTgy1uP2'), () =>
-                // UserRepository()
-                //   .checkUserExist('mOWCpqtfbKenJvEblEXEBTgy1uP2'), ]); for
-                //       (dynamic object in results) { if (object is
-                //   UserProfile) { print(object.username); } else if (object is
-                //       bool) { print(object); } } example on how try catch
-                // block works try { await
-                // UserRepository().getUserById('halsdk;fj'); } catch (e) {
-                //   print('object'); // print error in flutter toast
-                //     Fluttertoast.showToast( msg: e.toString(), toastLength:
-                //   Toast.LENGTH_SHORT, gravity: ToastGravity.BOTTOM,
-                //     timeInSecForIosWeb: 1, backgroundColor: Colors.red,
-                //   textColor: Colors.white, fontSize: 16.0); }
-
                 try {
-                  await RequestRepository().createRequestAndNotifyCaregivers();
+                  // await RequestRepository().createRequestAndNotifyCaregivers();
                   /* -------------------------------------------------------------------------- */
-                  // createRideRequest();
-                  // availableDrivers = FireHelper.nearbyDriverList;
-                  // findDriver();
-                  // details = await 1107eacceptTrip(rideRef?.key);
-                  // print('Please Work');
-                  // print(details);
-                  // print(details.driverName);
-                  // while (details == null) {
-                  // await Future.delayed(Duration(milliseconds: 500));
-                  // }
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //       builder: (context) => showMap(
-                  //             driverAssignedDetails: details,
-                  //           )),
-                  // );
+                  createRideRequest();
+                  availableDrivers = FireHelper.nearbyDriverList;
+                  findDriver();
+                  details = await acceptTrip(rideRef?.key);
+                  print('Please Work');
+                  print(details);
+                  print(details.driverName);
+                  while (details == null) {
+                    await Future.delayed(Duration(milliseconds: 500));
+                  }
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => showMap(
+                              driverAssignedDetails: details,
+                            )),
+                  );
                   /* -------------------------------------------------------------------------- */
                   Navigator.push(
                     context,
@@ -706,10 +689,10 @@ class _sosPageState extends State<sosPage> {
                     onTap: () {},
                     child: InkWell(
                       onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: ((context) => MapsPage())));
+                        // Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //         builder: ((context) => newMap())));
                       },
                       child: Container(
                         margin: langCode == 'en'
